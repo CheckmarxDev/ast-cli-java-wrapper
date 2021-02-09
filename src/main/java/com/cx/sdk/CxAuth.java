@@ -219,6 +219,10 @@ public class CxAuth {
 		}
 	}
 
+	public void scanShow(String id) {
+
+	}
+
 	public void cxAstScanList() throws IOException, InterruptedException {
 		List commands = new ArrayList<String>();
 		commands.add(exe.getPath());
