@@ -1,8 +1,13 @@
 package com.cx.sdk;
 
-import org.apache.commons.lang3.EnumUtils;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -15,6 +20,8 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+
+import org.apache.commons.lang3.EnumUtils;
 
 public class CxAuth {
 
@@ -36,7 +43,7 @@ public class CxAuth {
 	}
 
 	public CxAuth(String authType, String username, String password,
-			String baseurl) throws IOException, URISyntaxException {
+				  String baseurl) throws IOException, URISyntaxException {
 		this.exe = packageExecutable();
 		if (EnumUtils.isValidEnum(CxAuthType.class, authType.toUpperCase())) {
 			authRequest(authType, username, password, baseurl);
@@ -48,7 +55,7 @@ public class CxAuth {
 	}
 
 	private void authRequest(String authType, String username, String password,
-			String baseuri) throws IOException, URISyntaxException {
+							 String baseuri) throws IOException, URISyntaxException {
 
 		if (authType.equalsIgnoreCase("Token")) {
 			// token based auth implmentation
@@ -224,6 +231,8 @@ public class CxAuth {
 		commands.add("--key=" + keys.get("CX_AST_ACCESS_KEY_ID"));
 		commands.add("--secret=" + keys.get("CX_AST_ACCESS_KEY_SECRET"));
 		commands.add("--base-uri=" + baseuri);
+		commands.add("--format");
+		commands.add("json");
 		// ProcessBuilder lmBuilder = new ProcessBuilder(commands);
 		// lmBuilder.redirectErrorStream(true);
 		// final Process lmProcess = lmBuilder.start();
@@ -232,19 +241,18 @@ public class CxAuth {
 		// InputStreamReader isr = new InputStreamReader(is);
 		ExecutionService exec = new ExecutionService();
 		BufferedReader br = exec.executeCommand(commands);
-		List<String> resultList = new ArrayList<String>();
 		String line;
 		while ((line = br.readLine()) != null) {
-			System.out.println(line.replace("Â", " "));
-			resultList.add(line.replace("Â", " "));
-
+			System.out.println(line.replace("Ã‚", " "));
+			//resultList.add(line.replace("Ã‚", " "));
+			//resultList.add(transformToCxScanObject(line));
 		}
 
 		if (resultList.size() == 0) {
 			System.out.println("No scans found");
 		}
-		// resultList.remove(0);
-		// transformToCxScanObject(resultList);
+
+		// return scanList;
 
 	}
 
@@ -252,22 +260,18 @@ public class CxAuth {
 
 	}
 
-	// private void transformToCxScanObject(List<String> resultList) {
-	// // TODO Auto-generated method stub
-	// List<CxScan> scanList = new ArrayList<CxScan>();
-	// for (String result : resultList) {
-	// String[] ind = result.split(" ");
-	// CxScan cx = new CxScan();
-	// cx.(ind[0]);
-	// cx.setProjectID(ind[1]);
-	// cx.setStatus(ind[2]);
-	// cx.setCreatedAt(ind[3]);
-	// cx.setUpdatedAt(ind[4]);
-	// cx.setTags(ind[5]);
-	// cx.setInitiator(ind[6]);
-	// cx.setOrigin(ind[7]);
-	// scanList.add(cx);
-	// }
-	// }
+	private List<CxScan> transformToCxScanObject(String resultList) {
+		// TODO Auto-generated method stub
+		List<CxScan> scanList = new ArrayList<CxScan>();
+		for (String result : resultList) {
+			String[] ind = result.split(" Â ");
+			CxScan cx = CxScan.builder().scanID(ind[0]).ProjectID(ind[1])
+					.status(ind[2]).createdAt(ind[3]).updatedAt(ind[4])
+					.tags(ind[5]).initiator(ind[6]).origin(ind[7]).build();
+			scanList.add(cx);
+
+		}
+		return scanList;
+	}
 
 }
