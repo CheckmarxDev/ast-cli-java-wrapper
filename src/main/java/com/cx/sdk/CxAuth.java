@@ -231,8 +231,7 @@ public class CxAuth {
 		commands.add("--key=" + keys.get("CX_AST_ACCESS_KEY_ID"));
 		commands.add("--secret=" + keys.get("CX_AST_ACCESS_KEY_SECRET"));
 		commands.add("--base-uri=" + baseuri);
-		commands.add("--format");
-		commands.add("json");
+		commands.add("--format=json");
 		// ProcessBuilder lmBuilder = new ProcessBuilder(commands);
 		// lmBuilder.redirectErrorStream(true);
 		// final Process lmProcess = lmBuilder.start();
