@@ -248,7 +248,7 @@ public class CxAuth {
 			//resultList.add(transformToCxScanObject(line));
 		}
 
-		if (resultList.size() == 0) {
+		if (line == null) {
 			System.out.println("No scans found");
 		}
 
@@ -260,7 +260,7 @@ public class CxAuth {
 
 	}
 
-	private List<CxScan> transformToCxScanObject(String resultList) {
+	private List<CxScan> transformToCxScanObject(List<String> resultList) {
 		// TODO Auto-generated method stub
 		List<CxScan> scanList = new ArrayList<CxScan>();
 		for (String result : resultList) {
