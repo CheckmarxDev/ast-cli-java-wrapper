@@ -238,8 +238,8 @@ public class CxAuth {
 		List<String> resultList = new ArrayList<String>();
 		String line;
 		while ((line = br.readLine()) != null) {
-			System.out.println(line.replace("Â", " "));
-			resultList.add(line.replace("Â", " "));
+			System.out.println(line.replace("ï¿½", " "));
+			resultList.add(line.replace("ï¿½", " "));
 
 		}
 
@@ -260,16 +260,16 @@ public class CxAuth {
 	// List<CxScan> scanList = new ArrayList<CxScan>();
 	// for (String result : resultList) {
 	// String[] ind = result.split(" ");
-	// CxScan cx = new CxScan();
-	// cx.(ind[0]);
-	// cx.setProjectID(ind[1]);
-	// cx.setStatus(ind[2]);
-	// cx.setCreatedAt(ind[3]);
-	// cx.setUpdatedAt(ind[4]);
-	// cx.setTags(ind[5]);
-	// cx.setInitiator(ind[6]);
-	// cx.setOrigin(ind[7]);
-	// scanList.add(cx);
+	// CxScan cx-exe = new CxScan();
+	// cx-exe.(ind[0]);
+	// cx-exe.setProjectID(ind[1]);
+	// cx-exe.setStatus(ind[2]);
+	// cx-exe.setCreatedAt(ind[3]);
+	// cx-exe.setUpdatedAt(ind[4]);
+	// cx-exe.setTags(ind[5]);
+	// cx-exe.setInitiator(ind[6]);
+	// cx-exe.setOrigin(ind[7]);
+	// scanList.add(cx-exe);
 	// }
 	// }
 

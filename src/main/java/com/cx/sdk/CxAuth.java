@@ -32,10 +32,10 @@ public class CxAuth {
 
     private Map<String, String> keys = new HashMap<String, String>();
     private String baseuri;
-    private final URI exe;
+    private final URI executable;
 
     public CxAuth(String authType) throws IOException, URISyntaxException {
-        this.exe = packageExecutable();
+        this.executable = packageExecutable();
         if (EnumUtils.isValidEnum(CxAuthType.class, authType.toUpperCase())) {
             authRequest(authType, null, null, null);
         } else {
@@ -47,7 +47,7 @@ public class CxAuth {
 
     public CxAuth(String authType, String username, String password,
                   String baseurl) throws IOException, URISyntaxException {
-        this.exe = packageExecutable();
+        this.executable = packageExecutable();
         if (EnumUtils.isValidEnum(CxAuthType.class, authType.toUpperCase())) {
             authRequest(authType, username, password, baseurl);
         } else {
@@ -70,7 +70,7 @@ public class CxAuth {
             try {
 
                 if (username != null && password != null && baseuri != null) {
-                    String command = exe.getPath() + " " + "auth register -u"
+                    String command = executable.getPath() + " " + "auth register -u"
                             + username + " -p " + password + " --base-uri "
                             + baseuri;
                     String[] list = command.split(" ");
@@ -128,9 +128,18 @@ public class CxAuth {
         // fos.close();
 
         URI uri = getJarURI();
-        URI exe = getFile(uri, "cx.exe");
-        System.out.println(exe);
-        return exe;
+        URI executable = null;
+        if(System.getProperty("os.name").startsWith("WINDOWS")) {
+            executable = getFile(uri, "cx.exe");
+        }
+        else if(System.getProperty("os.name").startsWith("MAC")){
+            executable = getFile(uri, "cx-mac");
+        }
+        else {
+            executable = getFile(uri, "cx-exe");
+        }
+        System.out.println(executable);
+        return executable;
 
     }
 
@@ -224,7 +233,7 @@ public class CxAuth {
 
     public CxScan cxScanShow(String id) throws IOException, InterruptedException {
         List commands = new ArrayList<String>();
-        commands.add(exe.getPath());
+        commands.add(executable.getPath());
         commands.add("scan");
         commands.add("show");
         commands.add(id);
@@ -254,7 +263,7 @@ public class CxAuth {
 
     public List<CxScan> cxAstScanList() throws IOException, InterruptedException {
         List commands = new ArrayList<String>();
-        commands.add(exe.getPath());
+        commands.add(executable.getPath());
         commands.add("scan");
         commands.add("list");
         commands.add("--key=" + keys.get("CX_AST_ACCESS_KEY_ID"));
@@ -285,7 +294,7 @@ public class CxAuth {
 
     public void cxScanCreate(Map<CxParamType,String> params) throws IOException, InterruptedException {
         List<String> commands = new ArrayList<>();
-        commands.add(exe.getPath());
+        commands.add(executable.getPath());
         commands.add("scan");
         commands.add("create");
         commands.add("--key=" + keys.get("CX_AST_ACCESS_KEY_ID"));
