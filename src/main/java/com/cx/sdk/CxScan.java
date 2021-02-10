@@ -1,27 +1,74 @@
 package com.cx.sdk;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Value;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
+import java.util.Map;
 
 @Data
 @Builder
+@Value
+@JsonDeserialize()
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 
 public class CxScan {
 
-	public String scanID;
+	private String ID;
 
-	public String ProjectID;
+	private String ProjectID;
 
-	public String status;
+	private String Status;
 
-	public String createdAt;
+	private String CreatedAt;
 
-	public String updatedAt;
+	private String UpdatedAt;
 
-	public String tags;
+	private Map<String,String> Tags;
 
-	public String initiator;
+	private String Initiator;
 
-	public String origin;
+	private String Origin;
+
+	@JsonCreator
+	public CxScan(
+			@JsonProperty("ID") String ID, @JsonProperty("ProjectID") String ProjectID, @JsonProperty("Status") String Status,
+			@JsonProperty("CreatedAt") String CreatedAt, @JsonProperty("UpdatedAt") String UpdatedAt, @JsonProperty("Tags") Map<String,String> Tags,
+			@JsonProperty("Initiator") String Initiator, @JsonProperty("Origin") String Origin
+	) {
+		this.ID = ID;
+		this.ProjectID = ProjectID;
+		this.Status = Status;
+		this.CreatedAt = CreatedAt;
+		this.UpdatedAt = UpdatedAt;
+		this.Tags = Tags;
+		this.Initiator =Initiator;
+		this.Origin = Origin;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return EqualsBuilder.reflectionEquals(this, o);
+	}
+
+	@Override
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this);
+	}
+
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this);
+	}
+
 
 }
