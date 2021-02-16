@@ -13,30 +13,32 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.apache.commons.lang3.EnumUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
 public class CxAuth {
 
     // pass the argument as an enum
 
-    private Map<String, String> keys = new HashMap<String, String>();
+    private final Map<String, String> keys = new HashMap<>();
     private String baseuri;
     private final URI executable;
+    private static final Gson gson = new Gson();
 
-    public CxAuth(String authType) throws IOException, URISyntaxException {
+    public CxAuth( CxAuthType authType) throws IOException, URISyntaxException {
         this.executable = packageExecutable();
-        if (EnumUtils.isValidEnum(CxAuthType.class, authType.toUpperCase())) {
+        if (EnumUtils.isValidEnum(CxAuthType.class, authType.name())) {
             authRequest(authType, null, null, null);
         } else {
             System.out.println(
@@ -45,10 +47,10 @@ public class CxAuth {
 
     }
 
-    public CxAuth(String authType, String username, String password,
+    public CxAuth(CxAuthType authType, String username, String password,
                   String baseurl) throws IOException, URISyntaxException {
         this.executable = packageExecutable();
-        if (EnumUtils.isValidEnum(CxAuthType.class, authType.toUpperCase())) {
+        if (EnumUtils.isValidEnum(CxAuthType.class, authType.name())) {
             authRequest(authType, username, password, baseurl);
         } else {
             System.out.println(
@@ -57,14 +59,14 @@ public class CxAuth {
 
     }
 
-    private void authRequest(String authType, String username, String password,
-                             String baseuri) throws IOException, URISyntaxException {
+    private void authRequest(CxAuthType authType, String username, String password,
+                             String baseuri) {
 
-        if (authType.equalsIgnoreCase("Token")) {
+        if (authType.name() == "TOKEN") {
             // token based auth implmentation
         }
-        if (authType.equalsIgnoreCase("KeySecret")) {
-            List<String> commands = new ArrayList<String>();
+        if (authType.name() == "KEYSECRET") {
+            List<String> commands = new ArrayList<>();
             System.out.println("OS: " + System.getProperty("os.name"));
             this.baseuri = baseuri;
             try {
@@ -74,16 +76,18 @@ public class CxAuth {
                             + username + " -p " + password + " --base-uri "
                             + baseuri;
                     String[] list = command.split(" ");
-                    for (String str : list) {
-                        commands.add(str);
-                    }
+                    Collections.addAll(commands, list);
                     ExecutionService execute = new ExecutionService();
                     BufferedReader br = execute.executeCommand(commands);
                     String line;
                     while ((line = br.readLine()) != null) {
                         // extract the keys and write them to the credentials
                         // file
+                        if(line.contains("CX_AST_ACCESS_KEY_ID") || line.contains("CX_AST_ACCESS_KEY_SECRET"))
                         keys.put(line.split("=")[0], line.split("=")[1]);
+                        else {
+                            System.out.println(line);
+                        }
                     }
                     if (keys.size() == 2) {
                         System.out.println(
@@ -126,16 +130,15 @@ public class CxAuth {
         // fos.write(bytes, 0, k);
         // }
         // fos.close();
+        String osName = System.getProperty("os.name");
 
         URI uri = getJarURI();
         URI executable = null;
-        if(System.getProperty("os.name").startsWith("WINDOWS")) {
+        if (osName.toLowerCase().contains("windows")) {
             executable = getFile(uri, "cx.exe");
-        }
-        else if(System.getProperty("os.name").startsWith("MAC")){
+        } else if (osName.toLowerCase().contains("mac")) {
             executable = getFile(uri, "cx-mac");
-        }
-        else {
+        } else {
             executable = getFile(uri, "cx-exe");
         }
         System.out.println(executable);
@@ -158,7 +161,7 @@ public class CxAuth {
     }
 
     private static URI getFile(final URI where, final String fileName)
-            throws ZipException, IOException {
+            throws IOException {
         final File location;
         final URI fileURI;
 
@@ -247,6 +250,7 @@ public class CxAuth {
         CxScan scanObject = null;
         while ((line = br.readLine()) != null) {
             System.out.println(line.replace("Â", " "));
+            if(isJSONValid(line))
             scanObject = transformToCxScanObject(line);
             //resultList.add(line.replace("Â", " "));
             //resultList.add(transformToCxScanObject(line));
@@ -255,9 +259,15 @@ public class CxAuth {
         return scanObject;
     }
 
-    private CxScan transformToCxScanObject(String line) throws JsonProcessingException {
+    private CxScan transformToCxScanObject(String line)  {
         ObjectMapper objectMapper = new ObjectMapper();
-        CxScan scanObject = objectMapper.readValue(line,new TypeReference<CxScan>(){});
+        CxScan scanObject = null;
+        try {
+            scanObject = objectMapper.readValue(line, new TypeReference<CxScan>() {
+            });
+        } catch (JsonProcessingException e) {
+            return null;
+        }
         return scanObject;
     }
 
@@ -285,6 +295,7 @@ public class CxAuth {
 
             //resultList.add(line.replace("Â", " "));
             //resultList.add(transformToCxScanObject(line));
+            if(isJSONValid(line))
             list = transformToCxScanList(line);
         }
 
@@ -292,7 +303,7 @@ public class CxAuth {
 
     }
 
-    public void cxScanCreate(Map<CxParamType,String> params) throws IOException, InterruptedException {
+    public CxScan cxScanCreate(Map<CxParamType, String> params) throws IOException, InterruptedException {
         List<String> commands = new ArrayList<>();
         commands.add(executable.getPath());
         commands.add("scan");
@@ -301,33 +312,52 @@ public class CxAuth {
         commands.add("--secret=" + keys.get("CX_AST_ACCESS_KEY_SECRET"));
         commands.add("--base-uri=" + baseuri);
         commands.add("--format=json");
-        if(params.containsKey(CxParamType.INPUTFILE)){
-            commands.add("--input-file");
-            commands.add(params.get(CxParamType.INPUTFILE));
-            params.remove(CxParamType.INPUTFILE);
-        }
-        for(Map.Entry<CxParamType,String> param:params.entrySet()) {
-            commands.add("-"+param.getKey());
-            commands.add(param.getValue());
+
+        for (Map.Entry<CxParamType, String> param : params.entrySet()) {
+            if(param.getKey() == CxParamType.S || param.getKey() == CxParamType.V) {
+                commands.add("-" + param.getKey().toString().toLowerCase());
+                commands.add(param.getValue());
+            }
+            else {
+                String paramValue = param.getKey().toString();
+                paramValue = "--" + paramValue.replace("_","-").toLowerCase();
+                commands.add(paramValue);
+                commands.add(param.getValue());
+            }
         }
         ExecutionService exec = new ExecutionService();
         BufferedReader br = exec.executeCommand(commands);
         String line;
+        CxScan scanObject = null;
         while ((line = br.readLine()) != null) {
             System.out.println(line.replace("Â", " "));
-
-            //resultList.add(line.replace("Â", " "));
-            //resultList.add(transformToCxScanObject(line));
-            //list = transformToCxScanList(line);
+            if (isJSONValid(line))
+                scanObject = transformToCxScanObject(line);
         }
-
+        return scanObject;
     }
 
     private List<CxScan> transformToCxScanList(String line) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        List<CxScan> scanList = objectMapper.readValue(line,new TypeReference<List<CxScan>>(){});
+        List<CxScan> scanList = null;
+        try {
+            scanList = objectMapper.readValue(line, new TypeReference<List<CxScan>>() {
+            });
+        }
+        catch(JsonProcessingException e) {
+            return null;
+        }
         return scanList;
 
+    }
+
+    private boolean isJSONValid(String jsonInString) {
+        try {
+            gson.fromJson(jsonInString, Object.class);
+            return true;
+        } catch(com.google.gson.JsonSyntaxException ex) {
+            return false;
+        }
     }
 
 }
