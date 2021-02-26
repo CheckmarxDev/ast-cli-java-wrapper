@@ -1,4 +1,4 @@
-package com.cx.sdk;
+package com.cx.ast;
 
 public enum CxParamType {
     S,

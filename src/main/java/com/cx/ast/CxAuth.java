@@ -1,4 +1,4 @@
-package com.cx.sdk;
+package com.cx.ast;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -17,19 +17,16 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import lombok.extern.java.Log;
 import org.apache.commons.lang3.EnumUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
+
+@Log
 
 public class CxAuth {
-
-    // pass the argument as an enum
 
     private String baseuri;
     private String key;
@@ -49,12 +46,12 @@ public class CxAuth {
                     this.secret = secret;
                 }
                 else{
-                    System.out.println("Key or secret is null, please check and try again");
+                    log.info("Key or secret is null, please check and try again");
                 }
             }
             authRequest(authType, baseuri);
         } else {
-            System.out.println(
+            log.info(
                     "Invalid Auth Type. Valid ones are TOKEN, KEYSECRET, ENVIRONMENT");
         }
 
@@ -72,35 +69,36 @@ public class CxAuth {
         return uri;
     }
 
-    public CxAuth(CxAuthType authType, String baseurl, String token) throws IOException, URISyntaxException, InterruptedException {
+    public CxAuth(CxAuthType authType, String baseuri, String token) throws IOException, URISyntaxException, InterruptedException {
         this.executable = packageExecutable();
+        this.baseuri = baseuri;
         if (EnumUtils.isValidEnum(CxAuthType.class, authType.name())) {
             if(authType.equals(CxAuthType.TOKEN)) {
                 if(token != null) {
                     this.token = token;
                 }
                 else {
-                    System.out.println("Token not present");
+                    log.info("Token not present");
                 }
             }
 
-            authRequest(authType, baseurl);
+            authRequest(authType, baseuri);
         } else {
-            System.out.println(
+            log.info(
                     "Invalid Auth Type. Valid ones are TOKEN, KEYSECRET, ENVIRONMENT");
         }
 
     }
 
     private void authRequest(CxAuthType authType, String baseuri) {
-        System.out.println("CONTINUE WITH THE CALLS!");
+        log.info("CONTINUE WITH THE CALLS!");
     }
 
     private URI packageExecutable() throws IOException, URISyntaxException, InterruptedException {
         String osName = System.getProperty("os.name");
 
         URI uri = getJarURI();
-        System.out.println("getURI location: " + uri);
+        log.info("getURI location: " + uri);
         URI executable = null;
         if (osName.toLowerCase().contains("windows")) {
             executable = getFile(uri, "cx.exe");
@@ -109,7 +107,7 @@ public class CxAuth {
         } else {
             executable = getFile(uri, "cx-exe");
         }
-        System.out.println(executable);
+        log.info(executable + " ");
         return executable;
 
     }
@@ -136,7 +134,7 @@ public class CxAuth {
 
         if (location.isDirectory()) {
             fileURI = URI.create(where.toString() + fileName);
-            System.out.println("FILE URI: " + fileURI);
+            log.info("FILE URI: " + fileURI);
         } else {
             final ZipFile zipFile;
 
@@ -144,7 +142,7 @@ public class CxAuth {
 
             try {
                 fileURI = extract(zipFile, fileName);
-                System.out.println("FILE URI: " + fileURI);
+                log.info("FILE URI: " + fileURI);
             } finally {
                 zipFile.close();
             }
@@ -187,13 +185,13 @@ public class CxAuth {
         commands.add("-L");
         commands.add("https://github.com/CheckmarxDev/ast-cli/releases/download/v1.0.0_RC3/" + file);
         for(String command:commands){
-            System.out.println(command);
+            log.info(command);
         }
         ExecutionService exec = new ExecutionService();
         BufferedReader br = exec.executeCommand(commands);
         String line;
         while ((line = br.readLine()) != null) {
-            System.out.println(line.replace("Â", " "));
+            log.info(line.replace("Â", " "));
 
         }
     }
@@ -218,7 +216,7 @@ public class CxAuth {
             file.mkdirs();
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         Date date = new Date();
-        System.out.println(dateFormat.format(date));
+        log.info(dateFormat.format(date));
         //tempFile = File.createTempFile(fileName,
           //      dateFormat.format(date),file);
         tempFile = new File(file + fileName +dateFormat.format(date));
@@ -276,7 +274,7 @@ public class CxAuth {
         String line;
         CxScan scanObject = null;
         while ((line = br.readLine()) != null) {
-            System.out.println(line.replace("Â", " "));
+            log.info(line.replace("Â", " "));
             if(isJSONValid(line))
             scanObject = transformToCxScanObject(line);
         }
@@ -309,7 +307,7 @@ public class CxAuth {
         String line;
         List<CxScan> list = new ArrayList<>();
         while ((line = br.readLine()) != null) {
-            System.out.println(line.replace("Â", " "));
+            log.info(line.replace("Â", " "));
             if(isJSONValid(line))
             list = transformToCxScanList(line);
         }
@@ -341,15 +339,12 @@ public class CxAuth {
 
             }
         }
-        for(String command:commands){
-            System.out.println(command);
-        }
         ExecutionService exec = new ExecutionService();
         BufferedReader br = exec.executeCommand(commands);
         String line;
         CxScan scanObject = null;
         while ((line = br.readLine()) != null) {
-            System.out.println(line.replace("Â", " "));
+            log.info(line.replace("Â", " "));
             if (isJSONValid(line))
                 scanObject = transformToCxScanObject(line);
         }
@@ -365,7 +360,7 @@ public class CxAuth {
             commands.add("--token=" + token);
         }
         else {
-            System.out.println("KEY/SECRET/TOKEN not received");
+            log.info("KEY/SECRET/TOKEN not received");
         }
         return commands;
     }
