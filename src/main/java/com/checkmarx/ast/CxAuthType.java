@@ -1,4 +1,4 @@
-package com.cx.ast;
+package com.checkmarx.ast;
 
 public enum CxAuthType {
 	TOKEN,

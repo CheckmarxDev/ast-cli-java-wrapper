@@ -1,4 +1,4 @@
-package com.cx.ast;
+package com.checkmarx.ast;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -22,7 +22,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.extern.java.Log;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 
 @Log

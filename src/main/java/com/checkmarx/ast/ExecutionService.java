@@ -1,4 +1,4 @@
-package com.cx.ast;
+package com.checkmarx.ast;
 
 import java.io.BufferedReader;
 import java.io.IOException;

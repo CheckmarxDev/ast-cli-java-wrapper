@@ -1,4 +1,4 @@
-package com.cx.ast;
+package com.checkmarx.ast;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
