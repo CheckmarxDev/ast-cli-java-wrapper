@@ -22,21 +22,26 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 
 @Log
-
 public class CxAuth {
 
     private String baseuri;
     private String key;
     private String secret;
     private String token;
-    private final URI executable;
+    private  URI executable = null;
     private static final Gson gson = new Gson();
 
-    public CxAuth( CxAuthType authType,String baseuri, String key, String secret) throws IOException, URISyntaxException, InterruptedException {
-        this.executable = packageExecutable();
+    public CxAuth( CxAuthType authType,String baseuri, String key, String secret, String pathToExecutable) throws IOException, URISyntaxException, InterruptedException {
+        if(pathToExecutable == null || pathToExecutable.isEmpty()) {
+            this.executable = packageExecutable();
+        }
+        else {
+            this.executable = new URI(pathToExecutable);
+        }
         //this.executable = checkIfConfigExists();
         this.baseuri = baseuri;
         if (EnumUtils.isValidEnum(CxAuthType.class, authType.name())) {
@@ -69,8 +74,13 @@ public class CxAuth {
         return uri;
     }
 
-    public CxAuth(CxAuthType authType, String baseuri, String token) throws IOException, URISyntaxException, InterruptedException {
-        this.executable = packageExecutable();
+    public CxAuth(CxAuthType authType, String baseuri, String token, String pathToExecutable) throws IOException, URISyntaxException, InterruptedException {
+        if(pathToExecutable == null || pathToExecutable.isEmpty()) {
+            this.executable = packageExecutable();
+        }
+        else {
+            this.executable = URI.create(pathToExecutable);
+        }
         this.baseuri = baseuri;
         if (EnumUtils.isValidEnum(CxAuthType.class, authType.name())) {
             if(authType.equals(CxAuthType.TOKEN)) {
@@ -339,6 +349,7 @@ public class CxAuth {
 
             }
         }
+
         ExecutionService exec = new ExecutionService();
         BufferedReader br = exec.executeCommand(commands);
         String line;
@@ -353,11 +364,14 @@ public class CxAuth {
 
     private List<String> addAuthCredentials(List<String> commands) {
         if(key != null && secret != null) {
-            commands.add("--key=" + key);
-            commands.add("--secret=" + secret);
+            commands.add("--key");
+            commands.add(key);
+            commands.add("--secret");
+            commands.add(secret);
         }
         else if(token != null) {
-            commands.add("--token=" + token);
+            commands.add("--token");
+            commands.add(token);
         }
         else {
             log.info("KEY/SECRET/TOKEN not received");
