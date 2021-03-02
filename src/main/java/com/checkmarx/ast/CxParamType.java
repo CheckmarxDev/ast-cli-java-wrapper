@@ -4,6 +4,7 @@ public enum CxParamType {
     S,
     V,
     G,
+    D,
     INPUT_FILE,
     PROJECT_NAME,
     PROJECT_SOURCE_TYPE,
