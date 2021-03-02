@@ -219,17 +219,10 @@ public class CxAuth {
         final ZipEntry entry;
         final InputStream zipStream;
         OutputStream fileStream;
-        String user_dir = "./.checkmarx";
-        File file = new File(user_dir);
-        if(!file.exists())
-            file.mkdirs();
-        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-        Date date = new Date();
-        log.info(dateFormat.format(date));
-        //tempFile = File.createTempFile(fileName,
-          //      dateFormat.format(date),file);
-        tempFile = new File(file + fileName +dateFormat.format(date));
-        //tempFile.deleteOnExit();
+
+        tempFile = File.createTempFile(fileName,
+                Long.toString(System.currentTimeMillis()));
+        tempFile.deleteOnExit();
         entry = zipFile.getEntry(fileName);
 
         if (entry == null) {
@@ -257,6 +250,7 @@ public class CxAuth {
         }
 
         return (tempFile.toURI());
+
     }
 
     private static void close(final Closeable stream) {
