@@ -11,5 +11,6 @@ public enum CxParamType {
     PROJECT_TYPE,
     INCREMENTAL,
     PRESET_NAME,
-    FILTER
+    FILTER,
+    DIRECTORY
 }
