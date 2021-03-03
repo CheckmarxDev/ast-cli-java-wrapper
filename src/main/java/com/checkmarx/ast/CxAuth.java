@@ -39,7 +39,8 @@ public class CxAuth {
             this.executable = packageExecutable();
         }
         else {
-            this.executable = new URI(pathToExecutable);
+            File file = new File(pathToExecutable);
+            this.executable = file.toURI();
         }
         //this.executable = checkIfConfigExists();
         this.baseuri = baseuri;
