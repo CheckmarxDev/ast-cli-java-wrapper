@@ -53,7 +53,6 @@ public class CxAuth {
                     log.info("Key or secret is null, please check and try again");
                 }
             }
-            authRequest(authType, baseuri);
         } else {
             log.info(
                     "Invalid Auth Type. Valid ones are TOKEN, KEYSECRET, ENVIRONMENT");
@@ -61,17 +60,6 @@ public class CxAuth {
 
     }
 
-    private URI checkIfConfigExists() throws IOException, InterruptedException, URISyntaxException {
-        File fileLocation = new File("./.checkmarx");
-        URI uri = null;
-        if(!fileLocation.exists()) {
-            fileLocation.mkdirs();
-            //download the file from GitHub
-            downloadExecutables(fileLocation.toURI(),"cx.exe");
-            uri = new URI("./.checkmarx/cx.exe");
-        }
-        return uri;
-    }
 
     public CxAuth(CxAuthType authType, String baseuri, String token, String pathToExecutable) throws IOException, URISyntaxException, InterruptedException {
         if(pathToExecutable == null || pathToExecutable.isEmpty()) {
@@ -90,8 +78,6 @@ public class CxAuth {
                     log.info("Token not present");
                 }
             }
-
-            authRequest(authType, baseuri);
         } else {
             log.info(
                     "Invalid Auth Type. Valid ones are TOKEN, KEYSECRET, ENVIRONMENT");
@@ -99,15 +85,10 @@ public class CxAuth {
 
     }
 
-    private void authRequest(CxAuthType authType, String baseuri) {
-        log.info("CONTINUE WITH THE CALLS!");
-    }
-
     private URI packageExecutable() throws IOException, URISyntaxException, InterruptedException {
         String osName = System.getProperty("os.name");
 
         URI uri = getJarURI();
-        log.info("getURI location: " + uri);
         URI executable = null;
         if (osName.toLowerCase().contains("windows")) {
             executable = getFile(uri, "cx.exe");
@@ -135,15 +116,15 @@ public class CxAuth {
         return (uri);
     }
 
-    private static URI getFile( URI where, final String fileName)
+    private static URI getFile( URI jarLocation, final String fileName)
             throws IOException, InterruptedException {
         final File location;
         final URI fileURI;
-        location = new File(where);
+        location = new File(jarLocation);
 
         if (location.isDirectory()) {
-            fileURI = URI.create(where.toString() + fileName);
-            log.info("FILE URI: " + fileURI);
+            fileURI = URI.create(jarLocation.toString() + fileName);
+            log.info("Location of the jar file: " + fileURI);
         } else {
             final ZipFile zipFile;
 
@@ -151,66 +132,13 @@ public class CxAuth {
 
             try {
                 fileURI = extract(zipFile, fileName);
-                log.info("FILE URI: " + fileURI);
+                log.info("Location of the jar file: " + fileURI);
             } finally {
                 zipFile.close();
             }
         }
 
         return (fileURI);
-    }
-
-    private static void downloadExecutables(URI user_dir, String file) throws IOException, InterruptedException {
-//        String link =
-//                "https://github.com/CheckmarxDev/ast-cli/releases/download/v1.0.0_RC3/" + file;
-//        String            fileName = file;
-//        URL               url  = new URL( link );
-//        HttpURLConnection http = (HttpURLConnection)url.openConnection();
-//        Map< String, List< String >> header = http.getHeaderFields();
-//        while( isRedirected( header )) {
-//            link = header.get( "Location" ).get( 0 );
-//            url    = new URL( link );
-//            http   = (HttpURLConnection)url.openConnection();
-//            header = http.getHeaderFields();
-//        }
-//        InputStream  input  = http.getInputStream();
-//        byte[]       buffer = new byte[4096];
-//        int          n      = -1;
-//        OutputStream output = new FileOutputStream( new File( user_dir + file ));
-//        while ((n = input.read(buffer)) != -1) {
-//            output.write( buffer, 0, n );
-//        }
-//        output.close();
-        List<String> commands = new ArrayList<>();
-        commands.add("curl");
-        commands.add("-H");
-        commands.add("'Authorization: token 4a15d3330f198712cf4f50ff55fedf85e0f68532'");
-        commands.add("-H");
-        commands.add("'Accept: application/vnd.github.v3.raw'");
-       // commands.add("--create-dirs");
-        commands.add("-o");
-        commands.add(user_dir.getPath());
-        commands.add("-O");
-        commands.add("-L");
-        commands.add("https://github.com/CheckmarxDev/ast-cli/releases/download/v1.0.0_RC3/" + file);
-        for(String command:commands){
-            log.info(command);
-        }
-        ExecutionService exec = new ExecutionService();
-        BufferedReader br = exec.executeCommand(commands);
-        String line;
-        while ((line = br.readLine()) != null) {
-            log.info(line.replace("Â", " "));
-
-        }
-    }
-
-    private static boolean isRedirected( Map<String, List<String>> header ) {
-        for( String hv : header.get( null )) {
-            if(   hv.contains( " 301 " )
-                    || hv.contains( " 302 " )) return true;
-        }
-        return false;
     }
 
     private static URI extract(final ZipFile zipFile, final String fileName)
@@ -220,8 +148,7 @@ public class CxAuth {
         final InputStream zipStream;
         OutputStream fileStream;
 
-        tempFile = File.createTempFile(fileName,
-                Long.toString(System.currentTimeMillis()));
+        tempFile = new File(fileName);
         tempFile.deleteOnExit();
         entry = zipFile.getEntry(fileName);
 
@@ -264,14 +191,15 @@ public class CxAuth {
     }
 
     public CxScan cxScanShow(String id) throws IOException, InterruptedException {
-        List commands = new ArrayList<String>();
-        commands.add(executable.getPath());
+        List<String> commands = initialCommands();
         commands.add("scan");
         commands.add("show");
         commands.add(id);
-        commands = addAuthCredentials(commands);
-        commands.add("--base-uri=" + baseuri);
-        commands.add("--format=json");
+        CxScan scanObject = runExecutionCommands(commands);
+        return scanObject;
+    }
+
+    private CxScan runExecutionCommands(List<String> commands) throws IOException, InterruptedException {
         ExecutionService exec = new ExecutionService();
         BufferedReader br = exec.executeCommand(commands);
         String line;
@@ -279,7 +207,7 @@ public class CxAuth {
         while ((line = br.readLine()) != null) {
             log.info(line.replace("Â", " "));
             if(isJSONValid(line))
-            scanObject = transformToCxScanObject(line);
+                scanObject = transformToCxScanObject(line);
         }
         return scanObject;
     }
@@ -296,14 +224,21 @@ public class CxAuth {
         return scanObject;
     }
 
-    public List<CxScan> cxAstScanList() throws IOException, InterruptedException {
+    public List<String> initialCommands() {
         List commands = new ArrayList<String>();
         commands.add(executable.getPath());
+        commands = addAuthCredentials(commands);
+        commands.add("--base-uri");
+        commands.add(baseuri);
+        commands.add("--format");
+        commands.add("json");
+        return commands;
+    }
+
+    public List<CxScan> cxAstScanList() throws IOException, InterruptedException {
+        List<String> commands = initialCommands();
         commands.add("scan");
         commands.add("list");
-        commands = addAuthCredentials(commands);
-        commands.add("--base-uri=" + baseuri);
-        commands.add("--format=json");
 
         ExecutionService exec = new ExecutionService();
         BufferedReader br = exec.executeCommand(commands);
@@ -320,13 +255,9 @@ public class CxAuth {
     }
 
     public CxScan cxScanCreate(Map<CxParamType, String> params) throws IOException, InterruptedException {
-        List<String> commands = new ArrayList<>();
-        commands.add(executable.getPath());
+        List<String> commands = initialCommands();
         commands.add("scan");
         commands.add("create");
-        commands = addAuthCredentials(commands);
-        commands.add("--base-uri=" + baseuri);
-        commands.add("--format=json");
 
         for (Map.Entry<CxParamType, String> param : params.entrySet()) {
             if(param.getKey().toString().length() == 1 ) {
@@ -343,15 +274,7 @@ public class CxAuth {
             }
         }
 
-        ExecutionService exec = new ExecutionService();
-        BufferedReader br = exec.executeCommand(commands);
-        String line;
-        CxScan scanObject = null;
-        while ((line = br.readLine()) != null) {
-            log.info(line.replace("Â", " "));
-            if (isJSONValid(line))
-                scanObject = transformToCxScanObject(line);
-        }
+        CxScan scanObject = runExecutionCommands(commands);
         return scanObject;
     }
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ExecutionService {
 
-	public BufferedReader executeCommand(List commands)
+	public BufferedReader executeCommand(List<String> commands)
 			throws IOException, InterruptedException {
 
 		// List commands = new ArrayList<String>();
