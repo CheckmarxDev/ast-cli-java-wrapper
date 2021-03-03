@@ -11,8 +11,6 @@ public class ExecutionService {
 	public BufferedReader executeCommand(List<String> commands)
 			throws IOException, InterruptedException {
 
-		// List commands = new ArrayList<String>();
-		// commands.add(System.getProperty("user.dir")+ "\\ast.exe");
 		ProcessBuilder lmBuilder = new ProcessBuilder(commands);
 		lmBuilder.redirectErrorStream(true);
 		final Process lmProcess = lmBuilder.start();
@@ -20,10 +18,6 @@ public class ExecutionService {
 		InputStream is = lmProcess.getInputStream();
 		InputStreamReader isr = new InputStreamReader(is);
 		BufferedReader br = new BufferedReader(isr);
-		// String line;
-		// while ((line = br.readLine()) != null) {
-		// System.out.println(line);
-		// }
 		return br;
 
 	}
