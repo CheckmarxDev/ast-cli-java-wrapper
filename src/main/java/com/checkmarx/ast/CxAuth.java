@@ -22,11 +22,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Log
 public class CxAuth {
-
+    //private static final Logger log = LoggerFactory.getLogger(CxAuth.class.getName());
     private String baseuri;
     private String key;
     private String secret;
@@ -103,7 +106,7 @@ public class CxAuth {
 
     }
 
-    private static URI getJarURI() throws URISyntaxException {
+    private URI getJarURI() throws URISyntaxException {
         final ProtectionDomain domain;
         final CodeSource source;
         final URL url;
@@ -117,7 +120,7 @@ public class CxAuth {
         return (uri);
     }
 
-    private static URI getFile( URI jarLocation, final String fileName)
+    private URI getFile( URI jarLocation, final String fileName)
             throws IOException, InterruptedException {
         final File location;
         final URI fileURI;
@@ -197,19 +200,22 @@ public class CxAuth {
         commands.add("show");
         commands.add(id);
         CxScan scanObject = runExecutionCommands(commands);
+        log.info("In create scan method:end");
         return scanObject;
     }
 
     private CxScan runExecutionCommands(List<String> commands) throws IOException, InterruptedException {
+        log.info("In run execution commands:start");
         ExecutionService exec = new ExecutionService();
         BufferedReader br = exec.executeCommand(commands);
         String line;
         CxScan scanObject = null;
         while ((line = br.readLine()) != null) {
-            log.info(line.replace("Â", " "));
+            log.info(line);
             if(isJSONValid(line))
                 scanObject = transformToCxScanObject(line);
         }
+        log.info("In run execution commands:end");
         return scanObject;
     }
 
@@ -256,6 +262,7 @@ public class CxAuth {
     }
 
     public CxScan cxScanCreate(Map<CxParamType, String> params) throws IOException, InterruptedException {
+        log.info("In create scan method:start");
         List<String> commands = initialCommands();
         commands.add("scan");
         commands.add("create");
@@ -263,14 +270,20 @@ public class CxAuth {
         for (Map.Entry<CxParamType, String> param : params.entrySet()) {
             if(param.getKey().toString().length() == 1 ) {
                 commands.add("-" + param.getKey().toString().toLowerCase());
-                commands.add(param.getValue());
+                if(param.getValue() != null)
+                    commands.add(param.getValue());
+                else
+                    commands.add(" ");
 
             }
             else {
                 String paramValue = param.getKey().toString();
                 paramValue = "--" + paramValue.replace("_","-").toLowerCase();
                 commands.add(paramValue);
-                commands.add(param.getValue());
+                if(param.getValue() != null)
+                    commands.add(param.getValue());
+                else
+                    commands.add(" ");
 
             }
         }
