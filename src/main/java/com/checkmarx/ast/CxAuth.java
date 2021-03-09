@@ -1,35 +1,28 @@
 package com.checkmarx.ast;
 
-import java.io.BufferedReader;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.*;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import lombok.extern.java.Log;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Log
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+
 public class CxAuth {
-    //private static final Logger log = LoggerFactory.getLogger(CxAuth.class.getName());
+    private static Logger log = LoggerFactory.getLogger(CxAuth.class.getName());
     private String baseuri;
     private String key;
     private String secret;
@@ -62,6 +55,30 @@ public class CxAuth {
                     "Invalid Auth Type. Valid ones are TOKEN, KEYSECRET, ENVIRONMENT");
         }
 
+    }
+
+    public CxAuth(CxScanConfig scanConfig, Logger log) throws InterruptedException, IOException, URISyntaxException {
+        if(scanConfig != null && log != null) {
+            this.baseuri = scanConfig.getBaseuri();
+            this.log = log;
+            if(scanConfig.getKey() != null && scanConfig.getSecret() != null) {
+                this.key = scanConfig.getKey();
+                this.secret = scanConfig.getSecret();
+            }
+            else if (scanConfig.getToken() != null) {
+                this.token = scanConfig.getToken();
+            }
+            else {
+                log.info("Did not receive Key/Secret/Token");
+            }
+            if(scanConfig.getPathToExecutable() != null && !scanConfig.getPathToExecutable().isEmpty()) {
+                File file = new File(scanConfig.getPathToExecutable());
+                this.executable = file.toURI();
+            }
+            else {
+                this.executable = packageExecutable();
+            }
+        }
     }
 
 
@@ -152,7 +169,8 @@ public class CxAuth {
         final InputStream zipStream;
         OutputStream fileStream;
 
-        tempFile = new File(fileName);
+        //tempFile = new File(fileName);
+        tempFile = File.createTempFile(fileName," ");
         tempFile.deleteOnExit();
         entry = zipFile.getEntry(fileName);
 

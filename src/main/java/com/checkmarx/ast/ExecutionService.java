@@ -1,6 +1,8 @@
 package com.checkmarx.ast;
 
 import lombok.extern.java.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,9 +10,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-@Log
-public class ExecutionService {
 
+public class ExecutionService {
+	private static Logger log = LoggerFactory.getLogger(ExecutionService.class.getName());
 	public BufferedReader executeCommand(List<String> commands)
 			throws IOException, InterruptedException {
 		log.info("In ExecutionService, executeCommand:start");
