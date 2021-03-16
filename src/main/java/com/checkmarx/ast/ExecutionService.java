@@ -19,6 +19,7 @@ public class ExecutionService {
 		ProcessBuilder lmBuilder = new ProcessBuilder(commands);
 		lmBuilder.redirectErrorStream(true);
 		final Process lmProcess = lmBuilder.start();
+		//lmProcess.waitFor();
 		//int result = lmProcess.waitFor(); // result becomes 0
 		InputStream is = lmProcess.getInputStream();
 		InputStreamReader isr = new InputStreamReader(is);

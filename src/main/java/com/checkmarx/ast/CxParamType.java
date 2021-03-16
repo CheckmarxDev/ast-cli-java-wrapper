@@ -12,5 +12,6 @@ public enum CxParamType {
     INCREMENTAL,
     PRESET_NAME,
     FILTER,
-    DIRECTORY
+    DIRECTORY,
+    ADDITIONAL_PARAMETERS
 }

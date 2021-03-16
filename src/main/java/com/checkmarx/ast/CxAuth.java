@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -17,6 +18,7 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -58,9 +60,8 @@ public class CxAuth {
     }
 
     public CxAuth(CxScanConfig scanConfig, Logger log) throws InterruptedException, IOException, URISyntaxException {
-        if(scanConfig != null && log != null) {
+        if(scanConfig != null) {
             this.baseuri = scanConfig.getBaseuri();
-            this.log = log;
             if(scanConfig.getKey() != null && scanConfig.getSecret() != null) {
                 this.key = scanConfig.getKey();
                 this.secret = scanConfig.getSecret();
@@ -78,6 +79,9 @@ public class CxAuth {
             else {
                 this.executable = packageExecutable();
             }
+        }
+        if(log != null) {
+            this.log = log;
         }
     }
 
@@ -230,7 +234,7 @@ public class CxAuth {
         CxScan scanObject = null;
         while ((line = br.readLine()) != null) {
             log.info(line);
-            if(isJSONValid(line))
+            if(isJSONValid(line,CxScan.class))
                 scanObject = transformToCxScanObject(line);
         }
         log.info("In run execution commands:end");
@@ -271,9 +275,10 @@ public class CxAuth {
         List<CxScan> list = new ArrayList<>();
         while ((line = br.readLine()) != null) {
             log.info(line.replace("Â", " "));
-            if(isJSONValid(line))
-            list = transformToCxScanList(line);
+            if(isJSONValid(line,List.class) && !line.isEmpty())
+                list = transformToCxScanList(line);
         }
+        br.close();
 
         return list;
 
@@ -286,7 +291,10 @@ public class CxAuth {
         commands.add("create");
 
         for (Map.Entry<CxParamType, String> param : params.entrySet()) {
-            if(param.getKey().toString().length() == 1 ) {
+            if(param.getKey() == CxParamType.ADDITIONAL_PARAMETERS){
+                commands = addIndividualParams(commands,param.getValue());
+            }
+            else if(param.getKey().toString().length() == 1 ) {
                 commands.add("-" + param.getKey().toString().toLowerCase());
                 if(param.getValue() != null)
                     commands.add(param.getValue());
@@ -308,6 +316,17 @@ public class CxAuth {
 
         CxScan scanObject = runExecutionCommands(commands);
         return scanObject;
+    }
+
+    private List<String> addIndividualParams(List<String> commands, String value) {
+        String [] params = value.split(" ");
+        for(String indParam : params) {
+            if(indParam != null)
+                commands.add(indParam);
+            else
+                commands.add(" ");
+        }
+        return commands;
     }
 
     private List<String> addAuthCredentials(List<String> commands) {
@@ -341,9 +360,9 @@ public class CxAuth {
 
     }
 
-    private boolean isJSONValid(String jsonInString) {
+    private boolean isJSONValid(String jsonInString , Object object) {
         try {
-            gson.fromJson(jsonInString, Object.class);
+            gson.fromJson(jsonInString, (Type) object);
             return true;
         } catch(com.google.gson.JsonSyntaxException ex) {
             return false;
