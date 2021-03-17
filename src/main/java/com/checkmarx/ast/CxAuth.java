@@ -18,6 +18,8 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -293,6 +295,7 @@ public class CxAuth {
         for (Map.Entry<CxParamType, String> param : params.entrySet()) {
             if(param.getKey() == CxParamType.ADDITIONAL_PARAMETERS){
                 commands = addIndividualParams(commands,param.getValue());
+               // commands.add(param.getValue());
             }
             else if(param.getKey().toString().length() == 1 ) {
                 commands.add("-" + param.getKey().toString().toLowerCase());
@@ -319,13 +322,9 @@ public class CxAuth {
     }
 
     private List<String> addIndividualParams(List<String> commands, String value) {
-        String [] params = value.split(" ");
-        for(String indParam : params) {
-            if(indParam != null)
-                commands.add(indParam);
-            else
-                commands.add(" ");
-        }
+        Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(value);
+        while(m.find())
+            commands.add(m.group(1));
         return commands;
     }
 
