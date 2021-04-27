@@ -242,7 +242,7 @@ public class CxAuth {
         commands.add("create");
 
         for (Map.Entry<CxParamType, String> param : params.entrySet()) {
-            if(param.getKey() == CxParamType.ADDITIONAL_PARAMETERS){
+            if(param.getKey() == CxParamType.ADDITIONAL_PARAMETERS && param.getValue() != null){
                 addIndividualParams(commands, param.getValue());
             }
             else if(param.getKey().toString().length() == 1 ) {
@@ -276,7 +276,7 @@ public class CxAuth {
 
     private void addAuthCredentials(List<String> commands) {
         if(key != null && secret != null) {
-            commands.add("--key");
+            commands.add("--client-id");
             commands.add(key);
             commands.add("--secret");
             commands.add(secret);
