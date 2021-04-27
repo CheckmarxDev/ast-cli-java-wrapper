@@ -253,7 +253,7 @@ public class CxAuth {
                     commands.add(" ");
 
             }
-            else {
+            else if(param.getKey() != CxParamType.ADDITIONAL_PARAMETERS) {
                 String paramValue = param.getKey().toString();
                 paramValue = "--" + paramValue.replace("_","-").toLowerCase();
                 commands.add(paramValue);
