@@ -10,5 +10,6 @@ public enum CxParamType {
     PRESET_NAME,
     FILTER,
     DIRECTORY,
-    ADDITIONAL_PARAMETERS
+    ADDITIONAL_PARAMETERS,
+    AGENT
 }
