@@ -6,7 +6,7 @@ public enum CxParamType {
     G,
     D,
     PROJECT_NAME,
-    PROJECT_TYPE,
+    SCAN_TYPES,
     PRESET_NAME,
     FILTER,
     DIRECTORY,
