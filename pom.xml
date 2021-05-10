@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.checkmarx.ast</groupId>
-  <artifactId>ast-cli-wrapper</artifactId>
+  <artifactId>ast-cli-java-wrapper</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
 
@@ -74,7 +74,13 @@
       </plugin>
     </plugins>
   </build>
-
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>CheckmarxDev</name>
+      <url>https://maven.pkg.github.com/CheckmarxDev/ast-cli-java-wrapper</url>
+    </repository>
+  </distributionManagement>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
