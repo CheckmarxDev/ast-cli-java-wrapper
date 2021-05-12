@@ -50,6 +50,12 @@
       <artifactId>slf4j-simple</artifactId>
       <version>1.7.5</version>
     </dependency>
+      <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter</artifactId>
+          <version>RELEASE</version>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 
   <build>
@@ -66,6 +72,18 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          <stagingProgressTimeoutMinutes>10</stagingProgressTimeoutMinutes>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <distributionManagement>
@@ -74,9 +92,21 @@
       <name>CheckmarxDev</name>
       <url>https://maven.pkg.github.com/CheckmarxDev/ast-cli-java-wrapper</url>
     </repository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
   </distributionManagement>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
+  <developers>
+    <developer>
+      <name>Jay Nanduri</name>
+      <email>jay.nanduri@checkmarx.com</email>
+      <organization>Checkmarx Ltd</organization>
+      <organizationUrl>https://www.checkmarx.com/</organizationUrl>
+    </developer>
+  </developers>
 </project>
