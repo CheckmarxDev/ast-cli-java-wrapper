@@ -35,9 +35,9 @@ public class CxAuth {
     public CxAuth(CxScanConfig scanConfig, Logger log) throws InterruptedException, IOException, URISyntaxException {
         if(scanConfig != null) {
             this.baseuri = scanConfig.getBaseuri();
-            if(scanConfig.getKey() != null && scanConfig.getSecret() != null) {
-                this.key = scanConfig.getKey();
-                this.secret = scanConfig.getSecret();
+            if(scanConfig.getClient_id() != null && scanConfig.getClient_secret() != null) {
+                this.key = scanConfig.getClient_id();
+                this.secret = scanConfig.getClient_secret();
             }
             else if (scanConfig.getToken() != null) {
                 this.token = scanConfig.getToken();
@@ -278,11 +278,11 @@ public class CxAuth {
         if(key != null && secret != null) {
             commands.add("--client-id");
             commands.add(key);
-            commands.add("--secret");
+            commands.add("--client-secret");
             commands.add(secret);
         }
         else if(token != null) {
-            commands.add("--token");
+            commands.add("--apikey");
             commands.add(token);
         }
         else {

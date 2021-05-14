@@ -14,8 +14,8 @@ public class CxScanConfig implements Serializable {
     private String baseuri;
     private String pathToExecutable;
     private CxAuthType authType;
-    private String key;
-    private String secret;
+    private String client_id;
+    private String client_secret;
     private String token;
 
 
