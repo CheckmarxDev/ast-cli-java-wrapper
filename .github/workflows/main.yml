@@ -30,7 +30,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Permissions to executable
-        run: chmod +rwx ./src/main/resources/cx-exe
+        run: chmod 777 ./src/main/resources/cx-exe
       - name: Run tests with Maven
         env:
           CX_CLIENT_ID: ${{ secrets.CLIENT_ID}}
