@@ -2,7 +2,6 @@ package com.checkmarx.ast;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +49,12 @@ public class CxAuthTest {
     }
 
     @Test
-    @Order(2)
+
     public void cxScanShow() throws InterruptedException, IOException, URISyntaxException {
         init();
+        if(scanList == null || scanList.size() == 0) {
+            cxAstScanList();
+        }
         if(auth != null && scanList.size()>0) {
             for(int index=0; index < 5; index++) {
                 assertTrue(scanList.get(index) instanceof CxScan);
@@ -62,7 +64,6 @@ public class CxAuthTest {
     }
 
     @Test
-    @Order(1)
     public void cxAstScanList() throws IOException, InterruptedException, URISyntaxException {
         init();
         if(auth != null) {
@@ -73,7 +74,6 @@ public class CxAuthTest {
     }
 
     @Test
-    @Order(3)
     public void cxScanCreationWrongPreset() throws InterruptedException, IOException, URISyntaxException {
         init();
         if(auth != null) {
@@ -85,7 +85,6 @@ public class CxAuthTest {
     }
 
     @Test
-    @Order(4)
     public void cxScanCreationSuccess() throws InterruptedException, IOException, URISyntaxException {
         init();
         if(auth != null) {          
