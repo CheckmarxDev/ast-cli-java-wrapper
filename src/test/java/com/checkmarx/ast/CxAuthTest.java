@@ -22,18 +22,21 @@ public class CxAuthTest {
     CxScanConfig config = new CxScanConfig();
     List<CxScan> scanList = new ArrayList<CxScan>();
     Map<CxParamType,String> params = new HashMap<>();
+    String client_id = System.getenv("CX_CLIENT_ID");
+    String secret = System.getenv("CX_CLIENT_SECRET");
+    String apikey = System.getenv("CX_APIKEY");
     
 
     @Before
     public void init() {
-    if(System.getenv("CX_CLIENT_ID") != null) {
-        config.setClient_id(System.getenv("CX_CLIENT_ID"));
+    if(client_id != null) {
+        config.setClient_id(client_id);
     }
-    if(System.getenv("CX_CLIENT_SECRET") != null) {
-        config.setClient_id(System.getenv("CX_CLIENT_SECRET"));
+    if( secret != null) {
+        config.setClient_id(secret);
     }
-    if(System.getenv("CX_APIKEY") != null) {
-        config.setClient_id(System.getenv("CX_APIKEY"));
+    if(apikey != null) {
+        config.setClient_id(apikey);
     }
     params.put(CxParamType.PROJECT_NAME,"TestCaseWrapper");
     params.put(CxParamType.SCAN_TYPES,"sast");
