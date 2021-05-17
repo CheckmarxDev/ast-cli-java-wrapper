@@ -13,8 +13,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Copy executable
+        run: cp ./src/main/resources/cx-exe /tmp/
       - name: Permissions to executable
-        run: sudo chmod 777 ./src/main/resources/cx-exe
+        run: sudo chmod 777 /tmp/cx-exe
       - name: Run tests with Maven
         env:
           CX_CLIENT_ID: ${{ secrets.CLIENT_ID}}
