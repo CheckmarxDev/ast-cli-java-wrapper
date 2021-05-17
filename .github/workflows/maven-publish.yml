@@ -5,7 +5,7 @@ name: Maven Package
 
 on:
   release:
-    types: [created]
+    types: [created] 
 
 jobs:
   build:
@@ -24,8 +24,16 @@ jobs:
         distribution: 'adopt'
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
-
+    - name: Copy executable
+      run: cp ./src/main/resources/cx-exe /tmp/
+    - name: Permissions to executable
+      run: sudo chmod 777 /tmp/cx-exe
     - name: Build with Maven
+      env:
+          CX_CLIENT_ID: ${{ secrets.CLIENT_ID}}
+          CX_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET}}
+          CX_BASE_URI	: ${{ secrets.BASE_URI }}
+          PATH_TO_EXECUTABLE: /tmp/cx-exe
       run: mvn -B package --file pom.xml
 
     - name: Publish to GitHub Packages Apache Maven

@@ -1,7 +1,16 @@
 
 name: Integration Tests
 
-on: push
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    types: [opened, reopened, synchronize] 
+    branches:
+      - master
+      - main   
 
 jobs:
   run_tests:

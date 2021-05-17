@@ -2,6 +2,7 @@ package com.checkmarx.ast;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import static org.junit.Assert.*;
 
 public class CxAuthTest {
     CxAuth auth = null;
+    private Logger log = LoggerFactory.getLogger(CxAuthTest.class.getName());
     CxScanConfig config = new CxScanConfig();
     List<CxScan> scanList = new ArrayList<CxScan>();
     Map<CxParamType,String> params = new HashMap<>();
@@ -43,25 +45,24 @@ public class CxAuthTest {
     params.put(CxParamType.SCAN_TYPES,"sast");
     params.put(CxParamType.D,".");    
     params.put(CxParamType.FILTER,"*.java");
+    auth = new CxAuth(config,log);
         
     }
 
     @Test
+    @Order(2)
     public void cxScanShow() throws InterruptedException, IOException, URISyntaxException {
         init();
         if(auth != null && scanList.size()>0) {
             for(int index=0; index < 5; index++) {
                 assertTrue(scanList.get(index) instanceof CxScan);
             }
-        }  
-        else {
-            cxAstScanList();
-            cxScanShow();
         }
 
     }
 
     @Test
+    @Order(1)
     public void cxAstScanList() throws IOException, InterruptedException, URISyntaxException {
         init();
         if(auth != null) {
@@ -72,6 +73,7 @@ public class CxAuthTest {
     }
 
     @Test
+    @Order(3)
     public void cxScanCreationWrongPreset() throws InterruptedException, IOException, URISyntaxException {
         init();
         if(auth != null) {
@@ -83,6 +85,7 @@ public class CxAuthTest {
     }
 
     @Test
+    @Order(4)
     public void cxScanCreationSuccess() throws InterruptedException, IOException, URISyntaxException {
         init();
         if(auth != null) {          
