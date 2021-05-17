@@ -44,7 +44,6 @@ public class CxAuthTest {
     if(environmentVariables.containsKey("CX_BASE_URI")) {
         config.setBaseuri(environmentVariables.get("CX_BASE_URI"));
     }
-    config.setPathToExecutable("/tmp/cx-exe");
     params.put(CxParamType.PROJECT_NAME,"TestCaseWrapper");
     params.put(CxParamType.SCAN_TYPES,"sast");
     params.put(CxParamType.D,".");    

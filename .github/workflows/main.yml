@@ -4,17 +4,6 @@ name: Integration Tests
 on: push
 
 jobs:
-  # build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-
-  #     - uses: actions/checkout@v2
-  #     - name: Build with Maven
-  #       env:
-  #         CX_CLIENT_ID: ${{ secrets.CLIENT_ID}}
-  #         CX_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET}}
-  #         CX_BASE_URI	: ${{ secrets.BASE_URI }}
-  #       run: mvn install
   run_tests:
     runs-on: ubuntu-latest
     steps:
@@ -24,16 +13,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      # - name: Cache Maven packages
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: ~/.m2
-      #     key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-      #     restore-keys: ${{ runner.os }}-m2
-      - name: Copy executable
-        run: cp ./src/main/resources/cx-exe /tmp/
       - name: Permissions to executable
-        run: sudo chmod 777 /tmp/cx-exe
+        run: sudo chmod 777 ./src/main/resources/cx-exe
       - name: Run tests with Maven
         env:
           CX_CLIENT_ID: ${{ secrets.CLIENT_ID}}
