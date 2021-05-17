@@ -28,7 +28,7 @@ public class CxAuth {
     private String baseuri;
     private String key;
     private String secret;
-    private String token;
+    private String apikey;
     private  URI executable = null;
     private static final Gson gson = new Gson();
 
@@ -39,8 +39,8 @@ public class CxAuth {
                 this.key = scanConfig.getClient_id();
                 this.secret = scanConfig.getClient_secret();
             }
-            else if (scanConfig.getToken() != null) {
-                this.token = scanConfig.getToken();
+            else if (scanConfig.getApikey() != null) {
+                this.apikey = scanConfig.getApikey();
             }
             else {
                 log.info("Did not receive Key/Secret/Token");
@@ -281,9 +281,9 @@ public class CxAuth {
             commands.add("--client-secret");
             commands.add(secret);
         }
-        else if(token != null) {
+        else if(apikey != null) {
             commands.add("--apikey");
-            commands.add(token);
+            commands.add(apikey);
         }
         else {
             log.info("KEY/SECRET/TOKEN not received");

@@ -1,0 +1,16 @@
+
+name: Integration Tests
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build with Maven
+        env:
+          CX_CLIENT_ID: ${{ secrets.CLIENT_ID}}
+          CX_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET}}
+          CX_BASE_URI	: ${{ secrets.BASE_URI }}
+          run: mvn install
