@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.Assert.*;
@@ -22,21 +23,26 @@ public class CxAuthTest {
     CxScanConfig config = new CxScanConfig();
     List<CxScan> scanList = new ArrayList<CxScan>();
     Map<CxParamType,String> params = new HashMap<>();
-    String client_id = System.getenv("CX_CLIENT_ID");
-    String secret = System.getenv("CX_CLIENT_SECRET");
-    String apikey = System.getenv("CX_APIKEY");
+    // String client_id = System.getenv("CX_CLIENT_ID");
+    // String secret = System.getenv("CX_CLIENT_SECRET");
+    // String apikey = System.getenv("CX_APIKEY");
+    // String baseuri = System.getenv("CX_BASE_URI");
+    Map<String,String> environmentVariables = System.getenv();
     
 
     @Before
-    public void init() {
-    if(client_id != null) {
-        config.setClient_id(client_id);
+    public void init() {     
+    if(environmentVariables.containsKey("CX_CLIENT_ID")) {
+        config.setClient_id(environmentVariables.get("CX_CLIENT_ID"));
     }
-    if( secret != null) {
-        config.setClient_id(secret);
+    if( environmentVariables.containsKey("CX_CLIENT_SECRET")) {
+        config.setClient_secret(environmentVariables.get("CX_CLIENT_SECRET"));
     }
-    if(apikey != null) {
-        config.setClient_id(apikey);
+    if(environmentVariables.containsKey("CX_APIKEY")) {
+        config.setApikey(environmentVariables.get("CX_APIKEY"));
+    }
+    if(environmentVariables.containsKey("CX_BASE_URI")) {
+        config.setBaseuri(environmentVariables.get("CX_BASE_URI"));
     }
     params.put(CxParamType.PROJECT_NAME,"TestCaseWrapper");
     params.put(CxParamType.SCAN_TYPES,"sast");
@@ -54,7 +60,7 @@ public class CxAuthTest {
     }
 
     @Test
-    public void cxScanShow() {
+    public void cxScanShow() throws JsonProcessingException {
         init();
         if(auth != null && scanList.size()>0) {
             for(int index=0; index < 5; index++) {

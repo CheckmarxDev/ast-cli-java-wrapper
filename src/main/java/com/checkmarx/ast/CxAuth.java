@@ -42,9 +42,6 @@ public class CxAuth {
             else if (scanConfig.getApikey() != null) {
                 this.apikey = scanConfig.getApikey();
             }
-            else {
-                log.info("Did not receive Key/Secret/Token");
-            }
             if(scanConfig.getPathToExecutable() != null && !scanConfig.getPathToExecutable().isEmpty()) {
                 File file = new File(scanConfig.getPathToExecutable());
                 this.executable = file.toURI();
