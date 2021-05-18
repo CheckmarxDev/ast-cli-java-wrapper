@@ -29,7 +29,7 @@ jobs:
     - name: Permissions to executable
       run: sudo chmod 777 /tmp/cx-exe
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml -DskipTests
       env:
         CX_CLIENT_ID: ${{ secrets.CLIENT_ID}}
         CX_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET}}
