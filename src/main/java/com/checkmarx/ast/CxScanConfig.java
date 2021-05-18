@@ -10,11 +10,11 @@ import java.io.Serializable;
 
 public class CxScanConfig implements Serializable {
 
-    private String baseuri;
+    private String baseUri;
     private String pathToExecutable;
     private CxAuthType authType;
     private String clientId;
     private String clientSecret;
-    private String apikey;
+    private String apiKey;
 
 }

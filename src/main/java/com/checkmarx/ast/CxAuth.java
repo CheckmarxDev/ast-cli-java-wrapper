@@ -34,12 +34,12 @@ public class CxAuth {
     public CxAuth(CxScanConfig scanConfig, Logger log)
             throws InterruptedException, IOException, URISyntaxException, CxExeception {
         if (scanConfig == null) throw new CxExeception("CxScanConfig object returned as null!");   
-        this.baseuri = scanConfig.getBaseuri();
+        this.baseuri = scanConfig.getBaseUri();
         if (scanConfig.getClientId() != null && scanConfig.getClientSecret() != null) {
             this.key = scanConfig.getClientId();
             this.secret = scanConfig.getClientSecret();
-        } else if (scanConfig.getApikey() != null) {
-            this.apikey = scanConfig.getApikey();
+        } else if (scanConfig.getApiKey() != null) {
+            this.apikey = scanConfig.getApiKey();
         }
         if (scanConfig.getPathToExecutable() != null && !scanConfig.getPathToExecutable().isEmpty()) {
             File file = new File(scanConfig.getPathToExecutable());

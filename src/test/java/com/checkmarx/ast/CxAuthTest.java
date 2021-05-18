@@ -31,10 +31,10 @@ public class CxAuthTest {
             config.setClientSecret(environmentVariables.get("CX_CLIENT_SECRET"));
         }
         if (environmentVariables.containsKey("CX_APIKEY")) {
-            config.setApikey(environmentVariables.get("CX_APIKEY"));
+            config.setApiKey(environmentVariables.get("CX_APIKEY"));
         }
         if (environmentVariables.containsKey("CX_BASE_URI")) {
-            config.setBaseuri(environmentVariables.get("CX_BASE_URI"));
+            config.setBaseUri(environmentVariables.get("CX_BASE_URI"));
         }
         if (environmentVariables.containsKey("PATH_TO_EXECUTABLE")) {
             config.setPathToExecutable(environmentVariables.get("PATH_TO_EXECUTABLE"));
