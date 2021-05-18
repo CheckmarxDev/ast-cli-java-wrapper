@@ -31,25 +31,23 @@ public class CxAuth {
     private URI executable = null;
     private static final Gson gson = new Gson();
 
-    public CxAuth(CxScanConfig scanConfig, Logger log) throws InterruptedException, IOException, URISyntaxException, CheckmarxExeception {
-        if (scanConfig != null) {
-            this.baseuri = scanConfig.getBaseuri();
-            if (scanConfig.getClientId() != null && scanConfig.getClientSecret() != null) {
-                this.key = scanConfig.getClientId();
-                this.secret = scanConfig.getClientSecret();
-            } else if (scanConfig.getApikey() != null) {
-                this.apikey = scanConfig.getApikey();
-            }
-            if (scanConfig.getPathToExecutable() != null && !scanConfig.getPathToExecutable().isEmpty()) {
-                File file = new File(scanConfig.getPathToExecutable());
-                this.executable = file.toURI();
-            } else {
-                this.executable = packageExecutable();
-            }
-        } else {
-            log.info("CxScanConfig object is passed as null");
-            throw new CheckmarxExeception("CxScanConfig object returned as null!");
+    public CxAuth(CxScanConfig scanConfig, Logger log)
+            throws InterruptedException, IOException, URISyntaxException, CxExeception {
+        if (scanConfig == null) throw new CxExeception("CxScanConfig object returned as null!");   
+        this.baseuri = scanConfig.getBaseuri();
+        if (scanConfig.getClientId() != null && scanConfig.getClientSecret() != null) {
+            this.key = scanConfig.getClientId();
+            this.secret = scanConfig.getClientSecret();
+        } else if (scanConfig.getApikey() != null) {
+            this.apikey = scanConfig.getApikey();
         }
+        if (scanConfig.getPathToExecutable() != null && !scanConfig.getPathToExecutable().isEmpty()) {
+            File file = new File(scanConfig.getPathToExecutable());
+            this.executable = file.toURI();
+        } else {
+            this.executable = packageExecutable();
+        }
+
         if (log != null) {
             this.log = log;
         }

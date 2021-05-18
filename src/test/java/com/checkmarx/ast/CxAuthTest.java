@@ -55,9 +55,7 @@ public class CxAuthTest {
             cxAstScanList();
         }
         if (scanList.size() > 0) {
-            for (int index = 0; index < 5; index++) {
-                assertTrue(scanList.get(index) instanceof CxScan);
-            }
+            assertTrue(scanList.get(0) instanceof CxScan);
         }
 
     }
