@@ -22,42 +22,36 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-
 public class CxAuth {
     private Logger log = LoggerFactory.getLogger(CxAuth.class.getName());
     private String baseuri;
     private String key;
     private String secret;
-    private String token;
-    private  URI executable = null;
+    private String apikey;
+    private URI executable = null;
     private static final Gson gson = new Gson();
 
-    public CxAuth(CxScanConfig scanConfig, Logger log) throws InterruptedException, IOException, URISyntaxException {
-        if(scanConfig != null) {
-            this.baseuri = scanConfig.getBaseuri();
-            if(scanConfig.getKey() != null && scanConfig.getSecret() != null) {
-                this.key = scanConfig.getKey();
-                this.secret = scanConfig.getSecret();
-            }
-            else if (scanConfig.getToken() != null) {
-                this.token = scanConfig.getToken();
-            }
-            else {
-                log.info("Did not receive Key/Secret/Token");
-            }
-            if(scanConfig.getPathToExecutable() != null && !scanConfig.getPathToExecutable().isEmpty()) {
-                File file = new File(scanConfig.getPathToExecutable());
-                this.executable = file.toURI();
-            }
-            else {
-                this.executable = packageExecutable();
-            }
+    public CxAuth(CxScanConfig scanConfig, Logger log)
+            throws InterruptedException, IOException, URISyntaxException, CxExeception {
+        if (scanConfig == null) throw new CxExeception("CxScanConfig object returned as null!");   
+        this.baseuri = scanConfig.getBaseuri();
+        if (scanConfig.getClientId() != null && scanConfig.getClientSecret() != null) {
+            this.key = scanConfig.getClientId();
+            this.secret = scanConfig.getClientSecret();
+        } else if (scanConfig.getApikey() != null) {
+            this.apikey = scanConfig.getApikey();
         }
-        if(log != null) {
+        if (scanConfig.getPathToExecutable() != null && !scanConfig.getPathToExecutable().isEmpty()) {
+            File file = new File(scanConfig.getPathToExecutable());
+            this.executable = file.toURI();
+        } else {
+            this.executable = packageExecutable();
+        }
+
+        if (log != null) {
             this.log = log;
         }
     }
-
 
     private URI packageExecutable() throws IOException, URISyntaxException {
         String osName = System.getProperty("os.name");
@@ -89,8 +83,7 @@ public class CxAuth {
         return (uri);
     }
 
-    private URI getFile( URI jarLocation, final String fileName)
-            throws IOException {
+    private URI getFile(URI jarLocation, final String fileName) throws IOException {
         final File location;
         final URI fileURI;
         location = new File(jarLocation);
@@ -113,20 +106,18 @@ public class CxAuth {
         return (fileURI);
     }
 
-    private static URI extract(final ZipFile zipFile, final String fileName)
-            throws IOException {
+    private static URI extract(final ZipFile zipFile, final String fileName) throws IOException {
         final File tempFile;
         final ZipEntry entry;
         final InputStream zipStream;
         OutputStream fileStream;
 
-        tempFile = File.createTempFile(fileName," ");
+        tempFile = File.createTempFile(fileName, " ");
         tempFile.deleteOnExit();
         entry = zipFile.getEntry(fileName);
 
         if (entry == null) {
-            throw new FileNotFoundException("cannot find file: " + fileName
-                    + " in archive: " + zipFile.getName());
+            throw new FileNotFoundException("cannot find file: " + fileName + " in archive: " + zipFile.getName());
         }
 
         zipStream = zipFile.getInputStream(entry);
@@ -162,13 +153,13 @@ public class CxAuth {
     }
 
     public CxScan cxScanShow(String id) throws IOException, InterruptedException {
-        log.info("Initialized scan retrieval for id: " +  id);
+        log.info("Initialized scan retrieval for id: " + id);
         List<String> commands = initialCommands();
         commands.add("scan");
         commands.add("show");
         commands.add(id);
         CxScan scanObject = runExecutionCommands(commands);
-        if(scanObject != null)
+        if (scanObject != null)
             log.info("Scan retrieved");
         else
             log.info("Did not receive the scan");
@@ -183,14 +174,14 @@ public class CxAuth {
         CxScan scanObject = null;
         while ((line = br.readLine()) != null) {
             log.info(line);
-            if(isJSONValid(line,CxScan.class))
+            if (isJSONValid(line, CxScan.class))
                 scanObject = transformToCxScanObject(line);
         }
         log.info("Process returned from the executor");
         return scanObject;
     }
 
-    private CxScan transformToCxScanObject(String line)  {
+    private CxScan transformToCxScanObject(String line) {
         ObjectMapper objectMapper = new ObjectMapper();
         CxScan scanObject;
         try {
@@ -224,11 +215,11 @@ public class CxAuth {
         String line;
         List<CxScan> list = new ArrayList<>();
         while ((line = br.readLine()) != null) {
-            if(isJSONValid(line,List.class) && !line.isEmpty())
+            if (isJSONValid(line, List.class) && !line.isEmpty())
                 list = transformToCxScanList(line);
         }
         br.close();
-        if(list != null && !list.isEmpty())
+        if (list != null && !list.isEmpty())
             log.info("Retrieved scan list with size: " + list.size());
         else
             log.info("Not able to retrieve scan list");
@@ -242,22 +233,20 @@ public class CxAuth {
         commands.add("create");
 
         for (Map.Entry<CxParamType, String> param : params.entrySet()) {
-            if(param.getKey() == CxParamType.ADDITIONAL_PARAMETERS && param.getValue() != null){
+            if (param.getKey() == CxParamType.ADDITIONAL_PARAMETERS && param.getValue() != null) {
                 addIndividualParams(commands, param.getValue());
-            }
-            else if(param.getKey().toString().length() == 1 ) {
+            } else if (param.getKey().toString().length() == 1) {
                 commands.add("-" + param.getKey().toString().toLowerCase());
-                if(param.getValue() != null)
+                if (param.getValue() != null)
                     commands.add(param.getValue());
                 else
                     commands.add(" ");
 
-            }
-            else if(param.getKey() != CxParamType.ADDITIONAL_PARAMETERS) {
+            } else if (param.getKey() != CxParamType.ADDITIONAL_PARAMETERS) {
                 String paramValue = param.getKey().toString();
-                paramValue = "--" + paramValue.replace("_","-").toLowerCase();
+                paramValue = "--" + paramValue.replace("_", "-").toLowerCase();
                 commands.add(paramValue);
-                if(param.getValue() != null)
+                if (param.getValue() != null)
                     commands.add(param.getValue());
                 else
                     commands.add(" ");
@@ -270,22 +259,20 @@ public class CxAuth {
 
     private void addIndividualParams(List<String> commands, String value) {
         Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(value);
-        while(m.find())
+        while (m.find())
             commands.add(m.group(1));
     }
 
     private void addAuthCredentials(List<String> commands) {
-        if(key != null && secret != null) {
+        if (key != null && secret != null) {
             commands.add("--client-id");
             commands.add(key);
-            commands.add("--secret");
+            commands.add("--client-secret");
             commands.add(secret);
-        }
-        else if(token != null) {
-            commands.add("--token");
-            commands.add(token);
-        }
-        else {
+        } else if (apikey != null) {
+            commands.add("--apikey");
+            commands.add(apikey);
+        } else {
             log.info("KEY/SECRET/TOKEN not received");
         }
     }
@@ -296,23 +283,20 @@ public class CxAuth {
         try {
             scanList = objectMapper.readValue(line, new TypeReference<List<CxScan>>() {
             });
-        }
-        catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             return null;
         }
         return scanList;
 
     }
 
-    private boolean isJSONValid(String jsonInString , Object object) {
+    private boolean isJSONValid(String jsonInString, Object object) {
         try {
             gson.fromJson(jsonInString, (Type) object);
             return true;
-        } catch(com.google.gson.JsonSyntaxException ex) {
+        } catch (com.google.gson.JsonSyntaxException ex) {
             return false;
         }
     }
 
 }
-
-
