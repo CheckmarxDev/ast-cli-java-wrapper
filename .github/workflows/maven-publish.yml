@@ -17,10 +17,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 11
+    - name: Set up JDK 8
       uses: actions/setup-java@v2
       with:
-        java-version: '11'
+        java-version: '8'
         distribution: 'adopt'
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
@@ -28,15 +28,11 @@ jobs:
       run: cp ./src/main/resources/cx-exe /tmp/
     - name: Permissions to executable
       run: sudo chmod 777 /tmp/cx-exe
-    - name: Build with Maven
-      env:
-          CX_CLIENT_ID: ${{ secrets.CLIENT_ID}}
-          CX_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET}}
-          CX_BASE_URI	: ${{ secrets.BASE_URI }}
-          PATH_TO_EXECUTABLE: /tmp/cx-exe
-      run: mvn -B package --file pom.xml
-
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
       env:
+        CX_CLIENT_ID: ${{ secrets.CLIENT_ID}}
+        CX_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET}}
+        CX_BASE_URI	: ${{ secrets.BASE_URI }}
+        PATH_TO_EXECUTABLE: /tmp/cx-exe
         GITHUB_TOKEN: ${{ github.token }}
