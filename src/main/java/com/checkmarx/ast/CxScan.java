@@ -33,25 +33,24 @@ public class CxScan {
 
 	private String UpdatedAt;
 
-	private Map<String,String> Tags;
+	private Map<String, String> Tags;
 
 	private String Initiator;
 
 	private String Origin;
 
 	@JsonCreator
-	public CxScan(
-			@JsonProperty("ID") String ID, @JsonProperty("ProjectID") String ProjectID, @JsonProperty("Status") String Status,
-			@JsonProperty("CreatedAt") String CreatedAt, @JsonProperty("UpdatedAt") String UpdatedAt, @JsonProperty("Tags") Map<String,String> Tags,
-			@JsonProperty("Initiator") String Initiator, @JsonProperty("Origin") String Origin
-	) {
+	public CxScan(@JsonProperty("ID") String ID, @JsonProperty("ProjectID") String ProjectID,
+			@JsonProperty("Status") String Status, @JsonProperty("CreatedAt") String CreatedAt,
+			@JsonProperty("UpdatedAt") String UpdatedAt, @JsonProperty("Tags") Map<String, String> Tags,
+			@JsonProperty("Initiator") String Initiator, @JsonProperty("Origin") String Origin) {
 		this.ID = ID;
 		this.ProjectID = ProjectID;
 		this.Status = Status;
 		this.CreatedAt = CreatedAt;
 		this.UpdatedAt = UpdatedAt;
 		this.Tags = Tags;
-		this.Initiator =Initiator;
+		this.Initiator = Initiator;
 		this.Origin = Origin;
 	}
 
@@ -69,6 +68,5 @@ public class CxScan {
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this);
 	}
-
 
 }

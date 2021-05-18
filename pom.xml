@@ -98,25 +98,10 @@
       <name>CheckmarxDev</name>
       <url>https://maven.pkg.github.com/CheckmarxDev/ast-cli-java-wrapper</url>
     </repository>
-<!--    <repository>-->
-<!--      <id>ossrh</id>-->
-<!--      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-<!--    </repository>-->
   </distributionManagement>
-<!--  <distributionManagement>-->
-<!--        <repository>-->
-<!--          <id>github</id>-->
-<!--          <name>CheckmarxDev</name>-->
-<!--          <url>https://maven.pkg.github.com/CheckmarxDev/ast-cli-java-wrapper</url>-->
-<!--        </repository>-->
-<!--&lt;!&ndash;    <repository>&ndash;&gt;-->
-<!--&lt;!&ndash;      <id>ossrh</id>&ndash;&gt;-->
-<!--&lt;!&ndash;      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>&ndash;&gt;-->
-<!--&lt;!&ndash;    </repository>&ndash;&gt;-->
-<!--  </distributionManagement>-->
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
   <developers>
     <developer>
