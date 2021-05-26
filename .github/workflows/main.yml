@@ -23,13 +23,13 @@ jobs:
         with:
           java-version: 8
       - name: Copy executable
-        run: cp ./src/main/resources/cx-exe /tmp/
+        run: cp ./src/main/resources/cx-linux /tmp/
       - name: Permissions to executable
-        run: sudo chmod 777 /tmp/cx-exe
+        run: sudo chmod 777 /tmp/cx-linux
       - name: Run tests with Maven
         env:
           CX_CLIENT_ID: ${{ secrets.CLIENT_ID}}
           CX_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET}}
           CX_BASE_URI	: ${{ secrets.BASE_URI }}
-          PATH_TO_EXECUTABLE: /tmp/cx-exe
+          PATH_TO_EXECUTABLE: /tmp/cx-linux
         run: mvn -B test --file pom.xml
