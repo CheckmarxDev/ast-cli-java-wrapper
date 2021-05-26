@@ -63,7 +63,7 @@ public class CxAuth {
         } else if (osName.toLowerCase().contains("mac")) {
             executablePath = getFile(uri, "cx-mac");
         } else {
-            executablePath = getFile(uri, "cx-exe");
+            executablePath = getFile(uri, "cx-linux");
         }
         return executablePath;
 

@@ -25,14 +25,14 @@ jobs:
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
     - name: Copy executable
-      run: cp ./src/main/resources/cx-exe /tmp/
+      run: cp ./src/main/resources/cx-linux /tmp/
     - name: Permissions to executable
-      run: sudo chmod 777 /tmp/cx-exe
+      run: sudo chmod 777 /tmp/cx-linux
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml -DskipTests
       env:
         CX_CLIENT_ID: ${{ secrets.CLIENT_ID}}
         CX_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET}}
         CX_BASE_URI	: ${{ secrets.BASE_URI }}
-        PATH_TO_EXECUTABLE: /tmp/cx-exe
+        PATH_TO_EXECUTABLE: /tmp/cx-linux
         GITHUB_TOKEN: ${{ github.token }}
