@@ -18,12 +18,12 @@ public class CxAuthTest {
     CxAuth auth = null;
     private Logger log = LoggerFactory.getLogger(CxAuthTest.class.getName());
     CxScanConfig config = new CxScanConfig();
-    List<CxScan> scanList = new ArrayList<CxScan>();
+    List<CxScan> scanList = new ArrayList<>();
     Map<CxParamType, String> params = new HashMap<>();
     Map<String, String> environmentVariables = System.getenv();
 
     @Before
-    public void init() throws InterruptedException, IOException, URISyntaxException {
+    public void init() throws IOException, URISyntaxException {
         if (environmentVariables.containsKey("CX_CLIENT_ID")) {
             config.setClientId(environmentVariables.get("CX_CLIENT_ID"));
         }
@@ -36,15 +36,21 @@ public class CxAuthTest {
         if (environmentVariables.containsKey("CX_BASE_URI")) {
             config.setBaseUri(environmentVariables.get("CX_BASE_URI"));
         }
+        if (environmentVariables.containsKey("CX_BASE_AUTH_URI")) {
+            config.setBaseAuthUri(environmentVariables.get("CX_BASE_AUTH_URI"));
+        }
+        if (environmentVariables.containsKey("CX_TENANT")) {
+            config.setTenant(environmentVariables.get("CX_TENANT"));
+        }
         if (environmentVariables.containsKey("PATH_TO_EXECUTABLE")) {
             config.setPathToExecutable(environmentVariables.get("PATH_TO_EXECUTABLE"));
         }
+
         params.put(CxParamType.PROJECT_NAME, "TestCaseWrapper");
         params.put(CxParamType.SCAN_TYPES, "sast");
         params.put(CxParamType.S, ".");
         params.put(CxParamType.FILTER, "*.java");
         auth = new CxAuth(config, log);
-
     }
 
     @Test
@@ -83,5 +89,4 @@ public class CxAuthTest {
         CxScan scanResult = auth.cxScanCreate(params);
         assertTrue(auth.cxScanShow(scanResult.getID()).getStatus().equalsIgnoreCase("completed"));
     }
-
 }
