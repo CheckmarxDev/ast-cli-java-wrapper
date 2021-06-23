@@ -39,16 +39,16 @@ public class CxAuthTest {
         if (environmentVariables.containsKey("PATH_TO_EXECUTABLE")) {
             config.setPathToExecutable(environmentVariables.get("PATH_TO_EXECUTABLE"));
         }
+
         params.put(CxParamType.PROJECT_NAME, "TestCaseWrapper");
         params.put(CxParamType.SCAN_TYPES, "sast");
         params.put(CxParamType.S, ".");
         params.put(CxParamType.FILTER, "*.java");
-        auth = new CxAuth(config, log);
 
+        auth = new CxAuth(config, log);
     }
 
     @Test
-
     public void cxScanShow() throws InterruptedException, IOException, URISyntaxException {
         init();
         if (scanList == null || scanList.size() == 0) {
@@ -57,7 +57,13 @@ public class CxAuthTest {
         if (scanList.size() > 0) {
             assertTrue(scanList.get(0) instanceof CxScan);
         }
+    }
 
+    @Test
+    public void cxAstAuthValidate() throws IOException, InterruptedException, URISyntaxException {
+        init();
+        Integer validate = auth.cxAuthValidate();
+        assertEquals(0, validate.intValue());
     }
 
     @Test
@@ -73,7 +79,6 @@ public class CxAuthTest {
         params.put(CxParamType.SAST_PRESET_NAME, "Checkmarx Default Jay");
         CxScan scanResult = auth.cxScanCreate(params);
         assertTrue(auth.cxScanShow(scanResult.getID()).getStatus().equalsIgnoreCase("failed"));
-
     }
 
     @Test
