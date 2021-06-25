@@ -161,6 +161,7 @@ public class CxAuth {
         List<String> commands = initialCommands();
         commands.add("scan");
         commands.add("show");
+        commands.add("--scan-id");
         commands.add(id);
         CxScan scanObject = runExecutionCommands(commands);
         if (scanObject != null)
