@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,8 @@ import java.util.zip.ZipFile;
 public class CxAuth {
     private Logger log = LoggerFactory.getLogger(CxAuth.class.getName());
     private String baseuri;
+    private String baseAuthUri;
+    private String tenant;
     private String key;
     private String secret;
     private String apikey;
@@ -32,15 +35,16 @@ public class CxAuth {
     private static final Gson gson = new Gson();
 
     public CxAuth(CxScanConfig scanConfig, Logger log)
-            throws InterruptedException, IOException, URISyntaxException, CxExeception {
-        if (scanConfig == null) throw new CxExeception("CxScanConfig object returned as null!");   
+            throws IOException, URISyntaxException, CxException {
+        if (scanConfig == null) throw new CxException("CxScanConfig object returned as null!");
+
         this.baseuri = scanConfig.getBaseUri();
-        if (scanConfig.getClientId() != null && scanConfig.getClientSecret() != null) {
-            this.key = scanConfig.getClientId();
-            this.secret = scanConfig.getClientSecret();
-        } else if (scanConfig.getApiKey() != null) {
-            this.apikey = scanConfig.getApiKey();
-        }
+        this.baseAuthUri = scanConfig.getBaseAuthUri();
+        this.tenant = scanConfig.getTenant();
+        this.key = scanConfig.getClientId();
+        this.secret = scanConfig.getClientSecret();
+        this.apikey = scanConfig.getApiKey();
+
         if (scanConfig.getPathToExecutable() != null && !scanConfig.getPathToExecutable().isEmpty()) {
             File file = new File(scanConfig.getPathToExecutable());
             this.executable = file.toURI();
@@ -157,6 +161,7 @@ public class CxAuth {
         List<String> commands = initialCommands();
         commands.add("scan");
         commands.add("show");
+        commands.add("--scan-id");
         commands.add(id);
         CxScan scanObject = runExecutionCommands(commands);
         if (scanObject != null)
@@ -197,10 +202,23 @@ public class CxAuth {
         List<String> commands = new ArrayList<String>();
         commands.add(executable.getPath());
         addAuthCredentials(commands);
+
+        if (!StringUtils.isEmpty(this.tenant)) {
+            commands.add("--tenant");
+            commands.add(this.tenant);
+        }
+
         commands.add("--base-uri");
         commands.add(baseuri);
+
+        if (!StringUtils.isEmpty(this.baseAuthUri)) {
+            commands.add("--base-auth-uri");
+            commands.add(this.baseAuthUri);
+        }
+
         commands.add("--format");
         commands.add("json");
+
         return commands;
     }
 
