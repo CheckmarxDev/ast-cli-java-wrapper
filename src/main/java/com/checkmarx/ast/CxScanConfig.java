@@ -8,10 +8,12 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class CxScanConfig implements Serializable {
+
     private String baseUri;
-    private String pathToExecutable;
-    private CxAuthType authType;
+    private String baseAuthUri;
+    private String tenant;
     private String clientId;
     private String clientSecret;
     private String apiKey;
+    private String pathToExecutable;
 }
