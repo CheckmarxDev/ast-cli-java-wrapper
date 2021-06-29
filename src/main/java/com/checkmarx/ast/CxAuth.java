@@ -198,7 +198,7 @@ public class CxAuth {
         return scanObject;
     }
 
-    public List<String> initialCommands() {
+    public List<String> initialCommandsCommon() {
         List<String> commands = new ArrayList<String>();
         commands.add(executable.getPath());
         addAuthCredentials(commands);
@@ -216,10 +216,25 @@ public class CxAuth {
             commands.add(this.baseAuthUri);
         }
 
+        return commands;
+    }
+
+    public List<String> initialCommands() {
+        List<String> commands = initialCommandsCommon();
         commands.add("--format");
         commands.add("json");
 
         return commands;
+    }
+
+    public Integer cxAuthValidate() throws IOException, InterruptedException {
+        log.info("Initialize auth validate command");
+        List<String> commands = initialCommandsCommon();
+        commands.add("auth");
+        commands.add("validate");
+
+        ExecutionService executionService = new ExecutionService();
+        return executionService.executeCommandSync(commands);
     }
 
     public List<CxScan> cxAstScanList() throws IOException, InterruptedException {
@@ -241,6 +256,7 @@ public class CxAuth {
             log.info("Retrieved scan list with size: " + list.size());
         else
             log.info("Not able to retrieve scan list");
+
         return list;
     }
 

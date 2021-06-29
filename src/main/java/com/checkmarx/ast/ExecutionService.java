@@ -16,4 +16,12 @@ public class ExecutionService {
 		BufferedReader br = new BufferedReader(isr);
 		return br;
 	}
+
+	public Integer executeCommandSync(List<String> commands) throws IOException, InterruptedException {
+		ProcessBuilder lmBuilder = new ProcessBuilder(commands);
+		lmBuilder.redirectErrorStream(true);
+		final Process process = lmBuilder.start();
+
+		return process.waitFor();
+	}
 }
