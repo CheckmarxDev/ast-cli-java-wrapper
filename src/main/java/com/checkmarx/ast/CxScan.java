@@ -20,7 +20,6 @@ import java.util.Map;
 @JsonDeserialize()
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-
 public class CxScan {
 
 	private String ID;

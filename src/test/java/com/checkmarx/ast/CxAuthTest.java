@@ -77,6 +77,15 @@ public class CxAuthTest {
     }
 
     @Test
+    public void cxScanCreationWithBranchName() throws InterruptedException, IOException {
+        Map<CxParamType, String> params = createParams();
+        params.put(CxParamType.BRANCH, "test");
+
+        CxScan scanResult = auth.cxScanCreate(params);
+        assertTrue(auth.cxScanShow(scanResult.getID()).getStatus().equalsIgnoreCase(COMPLETED));
+    }
+
+    @Test
     public void cxScanCreationWrongPreset() throws InterruptedException, IOException {
         Map<CxParamType, String> params = createParams();
         params.put(CxParamType.SAST_PRESET_NAME, "Checkmarx Default Jay");
