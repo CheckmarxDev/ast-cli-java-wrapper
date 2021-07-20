@@ -14,8 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class CxAuthTest {
@@ -57,23 +56,20 @@ public class CxAuthTest {
 
     @Test
     public void cxScanShow() throws InterruptedException, IOException {
-        List<CxScan> scanList = auth.cxAstScanList();
-
-        assertTrue(scanList.get(0) instanceof CxScan);
+        CxCommandOutput scanList = auth.cxAstScanList(); //scan ID
+        assertNotNull(scanList.getScanObjectList().get(0));
     }
 
     @Test
     public void cxAstAuthValidate() throws IOException, InterruptedException {
         Integer validate = auth.cxAuthValidate();
-
         assertEquals(VALID_RETURN_CODE, validate.intValue());
     }
 
     @Test
     public void cxAstScanList() throws IOException, InterruptedException {
-        List<CxScan> scanList = auth.cxAstScanList();
-
-        assertTrue(scanList.size() > 0);
+        CxCommandOutput scanList = auth.cxAstScanList();
+        assertTrue(scanList.getScanObjectList().size() > 0);
     }
 
     @Test
@@ -81,8 +77,8 @@ public class CxAuthTest {
         Map<CxParamType, String> params = createParams();
         params.put(CxParamType.BRANCH, "test");
 
-        CxScan scanResult = auth.cxScanCreate(params);
-        assertTrue(auth.cxScanShow(scanResult.getID()).getStatus().equalsIgnoreCase(COMPLETED));
+        CxCommandOutput scanResult = auth.cxScanCreate(params);
+        assertTrue(auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus().equalsIgnoreCase(COMPLETED));
     }
 
     @Test
@@ -90,17 +86,19 @@ public class CxAuthTest {
         Map<CxParamType, String> params = createParams();
         params.put(CxParamType.SAST_PRESET_NAME, "Checkmarx Default Jay");
 
-        CxScan scanResult = auth.cxScanCreate(params);
+        CxCommandOutput scanResult = auth.cxScanCreate(params);
 
-        assertTrue(auth.cxScanShow(scanResult.getID()).getStatus().equalsIgnoreCase(FAILED));
+        assertTrue(auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus().equalsIgnoreCase(FAILED));
     }
+
 
     @Test
     public void cxScanCreationSuccess() throws InterruptedException, IOException {
         Map<CxParamType, String> params = createParams();
         params.put(CxParamType.SAST_PRESET_NAME, "Checkmarx Default");
+        //params.put(CxParamType.ADDITIONAL_PARAMETERS,"--nowait");
 
-        CxScan scanResult = auth.cxScanCreate(params);
-        assertTrue(auth.cxScanShow(scanResult.getID()).getStatus().equalsIgnoreCase(COMPLETED));
+        CxCommandOutput scanResult = auth.cxScanCreate(params);
+        assertTrue(auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus().equalsIgnoreCase(COMPLETED));
     }
 }
