@@ -46,7 +46,7 @@ public class CxAuthTest {
     @NotNull
     private Map<CxParamType, String> createParams() {
         Map<CxParamType, String> params = new HashMap<>();
-        params.put(CxParamType.PROJECT_NAME, "TestCaseWrapper");
+        params.put(CxParamType.PROJECT_NAME, "JavaWrapperTestCases");
         params.put(CxParamType.SCAN_TYPES, "sast");
         params.put(CxParamType.S, ".");
         params.put(CxParamType.FILTER, "*.java");
