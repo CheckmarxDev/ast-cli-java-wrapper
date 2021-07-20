@@ -30,6 +30,6 @@ jobs:
         env:
           CX_CLIENT_ID: ${{ secrets.CLIENT_ID}}
           CX_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET}}
-          CX_BASE_URI	: ${{ secrets.BASE_URI }}
+          CX_BASE_URI: ${{ secrets.BASE_URI }}
           PATH_TO_EXECUTABLE: /tmp/cx-linux
         run: mvn -B test --file pom.xml
