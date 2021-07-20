@@ -192,8 +192,10 @@ public class CxAuth {
             }
         }
         br.close();
-        cxCommandOutput.setExitCode(process.exitValue());
-        log.info("Exit code from AST-CLI: {}" , process.exitValue());
+        if(!process.isAlive()) {
+            cxCommandOutput.setExitCode(process.exitValue());
+            log.info("Exit code from AST-CLI: {}", process.exitValue());
+        }
         log.info("Process returned from the executor");
         process.destroy();
         return cxCommandOutput;
