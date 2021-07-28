@@ -1,4 +1,4 @@
-package com.checkmarx.ast;
+package com.checkmarx.ast.scanhandler;
 
 
 import lombok.*;

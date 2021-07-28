@@ -1,5 +1,10 @@
-package com.checkmarx.ast;
+package com.checkmarx.ast.scanhandler;
 
+import com.checkmarx.ast.exceptionhandler.CxException;
+import com.checkmarx.ast.executionservice.ExecutionService;
+import com.checkmarx.ast.resultshandler.CxResultFormatType;
+import com.checkmarx.ast.resultshandler.CxResultOutput;
+import com.checkmarx.ast.resultshandler.CxResultType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,9 +39,9 @@ public class CxAuth {
     private final URI executable;
     private static final Gson gson = new Gson();
 
-    public CxAuth(CxScanConfig scanConfig, Logger log)
-            throws IOException, URISyntaxException, CxException {
-        if (scanConfig == null) throw new CxException("CxScanConfig object returned as null!");
+    public CxAuth(CxScanConfig scanConfig, Logger log) throws IOException, URISyntaxException, CxException {
+        if (scanConfig == null)
+            throw new CxException("CxScanConfig object returned as null!");
 
         this.baseuri = scanConfig.getBaseUri();
         this.baseAuthUri = scanConfig.getBaseAuthUri();
@@ -101,7 +106,7 @@ public class CxAuth {
 
             try {
                 fileURI = extract(zipFile, fileName);
-                log.info("Location of the jar file: {}",fileURI) ;
+                log.info("Location of the jar file: {}", fileURI);
             } finally {
                 zipFile.close();
             }
@@ -157,7 +162,7 @@ public class CxAuth {
     }
 
     public CxCommandOutput cxScanShow(String id) throws IOException, InterruptedException {
-        log.info("Initialized scan retrieval for id: {}" , id);
+        log.info("Initialized scan retrieval for id: {}", id);
         List<String> commands = initialCommands();
         commands.add("scan");
         commands.add("show");
@@ -172,6 +177,61 @@ public class CxAuth {
         return scanObject;
     }
 
+    public CxResultOutput cxGetResults(CxResultType resultType, String scanID, CxResultFormatType formatType,
+            String target) throws IOException, InterruptedException {
+        log.info("Inititalized result retrieval for id: {}", scanID);
+        CxResultOutput resultOutput = null;
+        List<String> commands = initialCommandsCommon();
+        commands.add("result");
+        commands.add(resultType.name().toLowerCase());
+        commands.add("--scan-id");
+        commands.add(scanID);
+        if (formatType != null) {
+            commands.add("--format");
+            commands.add(formatType.name().toLowerCase());
+        }
+
+        if (resultType.equals(CxResultType.SUMMARY)) {
+            ProcessBuilder tempProcess = new ProcessBuilder(commands);
+            tempProcess.redirectErrorStream(true);
+            File file = new File(target != null ? target : System.getProperty("user.dir") + "/cx-ast-results.html");
+            tempProcess.redirectOutput(file);
+            Process proc = tempProcess.start();
+            proc.waitFor();
+            if (!proc.isAlive())
+                log.info("Exit code from CLI: {}", proc.exitValue());
+            proc.destroy();
+        } else {
+            ExecutionService exec = new ExecutionService();
+            Process process = exec.executeCommand(commands);
+            String line;
+            InputStream is = process.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            while ((line = br.readLine()) != null) {
+                log.info(line);
+                if (isJSONValid(line, CxResultOutput.class)) {
+                    resultOutput = transformToCxResultOutputObject(line);
+
+                }
+            }
+
+        }
+        return resultOutput;
+    }
+
+    private CxResultOutput transformToCxResultOutputObject(String line) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        CxResultOutput resultObject;
+        try {
+            resultObject = objectMapper.readValue(line, new TypeReference<CxResultOutput>() {
+            });
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+        return resultObject;
+    }
+
     private CxCommandOutput runExecutionCommands(List<String> commands) throws IOException, InterruptedException {
         log.info("Process submitting to the executor");
         ExecutionService exec = new ExecutionService();
@@ -179,9 +239,9 @@ public class CxAuth {
         String line;
         CxScan scanObject = null;
         InputStream is = process.getInputStream();
-		InputStreamReader isr = new InputStreamReader(is);
-		BufferedReader br = new BufferedReader(isr);
-		CxCommandOutput cxCommandOutput = new CxCommandOutput();
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr);
+        CxCommandOutput cxCommandOutput = new CxCommandOutput();
         while ((line = br.readLine()) != null) {
             log.info(line);
             if (!StringUtils.isBlank(line) && isJSONValid(line, CxScan.class)) {
@@ -193,7 +253,6 @@ public class CxAuth {
         }
         br.close();
         process.waitFor();
-
         if(!process.isAlive()) {
             cxCommandOutput.setExitCode(process.exitValue());
             log.info("Exit code from AST-CLI: {}", process.exitValue());
@@ -278,7 +337,7 @@ public class CxAuth {
         cxCommandOutput.setScanObjectList(list);
         cxCommandOutput.setExitCode(process.exitValue());
         if (list != null && !list.isEmpty())
-            log.info("Retrieved scan list with size: {}" , list.size());
+            log.info("Retrieved scan list with size: {}", list.size());
         else
             log.info("Not able to retrieve scan list");
 
@@ -315,8 +374,6 @@ public class CxAuth {
 
         return runExecutionCommands(commands);
     }
-
-
 
     private void addIndividualParams(List<String> commands, String value) {
         Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(value);
