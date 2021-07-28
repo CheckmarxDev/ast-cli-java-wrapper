@@ -4,7 +4,7 @@ name: Integration Tests
 on:
   push:
     branches:
-      - main
+      - feature/results-parameters
       - master
   pull_request:
     types: [opened, reopened, synchronize] 
