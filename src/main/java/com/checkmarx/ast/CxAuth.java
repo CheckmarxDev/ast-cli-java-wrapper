@@ -193,6 +193,7 @@ public class CxAuth {
         }
         br.close();
         process.waitFor();
+
         if(!process.isAlive()) {
             cxCommandOutput.setExitCode(process.exitValue());
             log.info("Exit code from AST-CLI: {}", process.exitValue());
@@ -271,6 +272,8 @@ public class CxAuth {
                 list = transformToCxScanList(line);
         }
         br.close();
+        process.waitFor();
+
         CxCommandOutput cxCommandOutput = new CxCommandOutput();
         cxCommandOutput.setScanObjectList(list);
         cxCommandOutput.setExitCode(process.exitValue());
