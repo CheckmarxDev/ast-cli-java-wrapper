@@ -184,7 +184,7 @@ public class CxAuth {
 		CxCommandOutput cxCommandOutput = new CxCommandOutput();
         while ((line = br.readLine()) != null) {
             log.info(line);
-            if (isJSONValid(line, CxScan.class)) {
+            if (!StringUtils.isBlank(line) && isJSONValid(line, CxScan.class)) {
                 scanObject = transformToCxScanObject(line);
                 List<CxScan> scanList = new ArrayList<>();
                 scanList.add(scanObject);
@@ -192,6 +192,8 @@ public class CxAuth {
             }
         }
         br.close();
+        process.waitFor();
+
         if(!process.isAlive()) {
             cxCommandOutput.setExitCode(process.exitValue());
             log.info("Exit code from AST-CLI: {}", process.exitValue());
@@ -270,6 +272,8 @@ public class CxAuth {
                 list = transformToCxScanList(line);
         }
         br.close();
+        process.waitFor();
+
         CxCommandOutput cxCommandOutput = new CxCommandOutput();
         cxCommandOutput.setScanObjectList(list);
         cxCommandOutput.setExitCode(process.exitValue());
