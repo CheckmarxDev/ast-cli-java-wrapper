@@ -1,4 +1,4 @@
-package com.checkmarx.ast.scanhandler;
+package com.checkmarx.ast.scans;
 
 import lombok.Getter;
 import lombok.Setter;

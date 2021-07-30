@@ -1,20 +1,17 @@
-package com.checkmarx.ast.scanhandler;
+package com.checkmarx.ast.scans;
 
-import com.checkmarx.ast.exceptionhandler.CxException;
+import com.checkmarx.ast.exceptions.CxException;
 import com.checkmarx.ast.executionservice.ExecutionService;
-import com.checkmarx.ast.resultshandler.CxResultFormatType;
-import com.checkmarx.ast.resultshandler.CxResultOutput;
-import com.checkmarx.ast.resultshandler.CxResultType;
+import com.checkmarx.ast.results.CxCommandOutput;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -37,7 +34,6 @@ public class CxAuth {
     private final String secret;
     private final String apikey;
     private final URI executable;
-    private static final Gson gson = new Gson();
 
     public CxAuth(CxScanConfig scanConfig, Logger log) throws IOException, URISyntaxException, CxException {
         if (scanConfig == null)
@@ -177,59 +173,61 @@ public class CxAuth {
         return scanObject;
     }
 
-    public CxResultOutput cxGetResults(CxResultType resultType, String scanID, CxResultFormatType formatType,
-            String target) throws IOException, InterruptedException {
-        log.info("Inititalized result retrieval for id: {}", scanID);
-        CxResultOutput resultOutput = null;
+    public String cxGetResultsSummary(String scanID, String formatType, String target)
+            throws IOException {
         List<String> commands = initialCommandsCommon();
         commands.add("result");
-        commands.add(resultType.name().toLowerCase());
+        commands.add("summary");
+        if (scanID.isEmpty()) {
+            throw new CxException("Please provide the scan id ");
+        }
         commands.add("--scan-id");
         commands.add(scanID);
-        if (formatType != null) {
+        if (!formatType.isEmpty()) {
             commands.add("--format");
-            commands.add(formatType.name().toLowerCase());
+            commands.add(formatType);
         }
-
-        if (resultType.equals(CxResultType.SUMMARY)) {
-            ProcessBuilder tempProcess = new ProcessBuilder(commands);
-            tempProcess.redirectErrorStream(true);
-            File file = new File(target != null ? target : System.getProperty("user.dir") + "/cx-ast-results.html");
-            tempProcess.redirectOutput(file);
-            Process proc = tempProcess.start();
-            proc.waitFor();
-            if (!proc.isAlive())
-                log.info("Exit code from CLI: {}", proc.exitValue());
-            proc.destroy();
-        } else {
-            ExecutionService exec = new ExecutionService();
-            Process process = exec.executeCommand(commands);
-            String line;
-            InputStream is = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            while ((line = br.readLine()) != null) {
-                log.info(line);
-                if (isJSONValid(line, CxResultOutput.class)) {
-                    resultOutput = transformToCxResultOutputObject(line);
-
-                }
-            }
-
+        if (!target.isEmpty()) {
+            commands.add("--target");
+            commands.add(target);
         }
-        return resultOutput;
+        return runResultExecutionCommands(commands);
     }
 
-    private CxResultOutput transformToCxResultOutputObject(String line) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        CxResultOutput resultObject;
-        try {
-            resultObject = objectMapper.readValue(line, new TypeReference<CxResultOutput>() {
-            });
-        } catch (JsonProcessingException e) {
-            return null;
+    public String cxGetResultsList(String scanID, String formatType)
+            throws IOException {
+        List<String> commands = initialCommandsCommon();
+        commands.add("result");
+        commands.add("list");
+        if (scanID.isEmpty()) {
+            throw new CxException("Please provide the scan id ");
         }
-        return resultObject;
+        commands.add("--scan-id");
+        commands.add(scanID);
+        if (!formatType.isEmpty()) {
+            commands.add("--format");
+            commands.add(formatType);
+        }
+    
+        return runResultExecutionCommands(commands);
+    }
+
+    private String runResultExecutionCommands(List<String> commands) throws IOException {
+        log.info("Process submitting to the executor");
+        ExecutionService exec = new ExecutionService();
+        Process process = exec.executeCommand(commands);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        StringBuilder builder = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            builder.append(line);
+            builder.append(System.getProperty("line.separator"));
+        }
+        if(!process.isAlive() && process.exitValue()!= 0) {
+            log.info("Exit code from CLI is: {} ", process.exitValue());
+            return "";
+        }
+        return builder.toString();
     }
 
     private CxCommandOutput runExecutionCommands(List<String> commands) throws IOException, InterruptedException {
@@ -244,7 +242,7 @@ public class CxAuth {
         CxCommandOutput cxCommandOutput = new CxCommandOutput();
         while ((line = br.readLine()) != null) {
             log.info(line);
-            if (!StringUtils.isBlank(line) && isJSONValid(line, CxScan.class)) {
+            if (!StringUtils.isBlank(line) && isValidJSON(line)) {
                 scanObject = transformToCxScanObject(line);
                 List<CxScan> scanList = new ArrayList<>();
                 scanList.add(scanObject);
@@ -253,7 +251,7 @@ public class CxAuth {
         }
         br.close();
         process.waitFor();
-        if(!process.isAlive()) {
+        if (!process.isAlive()) {
             cxCommandOutput.setExitCode(process.exitValue());
             log.info("Exit code from AST-CLI: {}", process.exitValue());
         }
@@ -318,7 +316,6 @@ public class CxAuth {
         List<String> commands = initialCommands();
         commands.add("scan");
         commands.add("list");
-
         ExecutionService exec = new ExecutionService();
         Process process = exec.executeCommand(commands);
         String line;
@@ -327,7 +324,7 @@ public class CxAuth {
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
         while ((line = br.readLine()) != null) {
-            if (isJSONValid(line, List.class) && !line.isEmpty())
+            if (isValidJSON(line) && !line.isEmpty())
                 list = transformToCxScanList(line);
         }
         br.close();
@@ -408,13 +405,17 @@ public class CxAuth {
 
     }
 
-    private boolean isJSONValid(String jsonInString, Object object) {
+    public boolean isValidJSON(final String json) {
+        boolean valid = false;
         try {
-            gson.fromJson(jsonInString, (Type) object);
-            return true;
-        } catch (com.google.gson.JsonSyntaxException ex) {
-            return false;
+            final JsonParser parser = new ObjectMapper().createParser(json);
+            while (parser.nextToken() != null) {
+            }
+            valid = true;
+        } catch (IOException ignored) {
         }
+        ;
+        return valid;
     }
 
 }

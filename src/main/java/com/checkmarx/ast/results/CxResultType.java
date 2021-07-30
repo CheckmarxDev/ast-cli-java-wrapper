@@ -1,4 +1,4 @@
-package com.checkmarx.ast.resultshandler;
+package com.checkmarx.ast.results;
 
 public enum CxResultType {
     LIST, SUMMARY
