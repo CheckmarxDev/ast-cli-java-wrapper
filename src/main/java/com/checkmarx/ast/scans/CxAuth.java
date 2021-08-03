@@ -1,15 +1,17 @@
-package com.checkmarx.ast;
+package com.checkmarx.ast.scans;
 
+import com.checkmarx.ast.exceptions.CxException;
+import com.checkmarx.ast.executionservice.ExecutionService;
+import com.checkmarx.ast.results.CxCommandOutput;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -32,11 +34,10 @@ public class CxAuth {
     private final String secret;
     private final String apikey;
     private final URI executable;
-    private static final Gson gson = new Gson();
 
-    public CxAuth(CxScanConfig scanConfig, Logger log)
-            throws IOException, URISyntaxException, CxException {
-        if (scanConfig == null) throw new CxException("CxScanConfig object returned as null!");
+    public CxAuth(CxScanConfig scanConfig, Logger log) throws IOException, URISyntaxException, CxException {
+        if (scanConfig == null)
+            throw new CxException("CxScanConfig object returned as null!");
 
         this.baseuri = scanConfig.getBaseUri();
         this.baseAuthUri = scanConfig.getBaseAuthUri();
@@ -101,7 +102,7 @@ public class CxAuth {
 
             try {
                 fileURI = extract(zipFile, fileName);
-                log.info("Location of the jar file: {}",fileURI) ;
+                log.info("Location of the jar file: {}", fileURI);
             } finally {
                 zipFile.close();
             }
@@ -157,7 +158,7 @@ public class CxAuth {
     }
 
     public CxCommandOutput cxScanShow(String id) throws IOException, InterruptedException {
-        log.info("Initialized scan retrieval for id: {}" , id);
+        log.info("Initialized scan retrieval for id: {}", id);
         List<String> commands = initialCommands();
         commands.add("scan");
         commands.add("show");
@@ -172,6 +173,63 @@ public class CxAuth {
         return scanObject;
     }
 
+    public String cxGetResultsSummary(String scanID, String formatType, String target)
+            throws IOException {
+        List<String> commands = initialCommandsCommon();
+        commands.add("result");
+        commands.add("summary");
+        if (scanID.isEmpty()) {
+            throw new CxException("Please provide the scan id ");
+        }
+        commands.add("--scan-id");
+        commands.add(scanID);
+        if (!formatType.isEmpty()) {
+            commands.add("--format");
+            commands.add(formatType);
+        }
+        if (!target.isEmpty()) {
+            commands.add("--target");
+            commands.add(target);
+        }
+        return runResultExecutionCommands(commands);
+    }
+
+    public String cxGetResultsList(String scanID, String formatType)
+            throws IOException {
+        List<String> commands = initialCommandsCommon();
+        commands.add("result");
+        commands.add("list");
+        if (scanID.isEmpty()) {
+            throw new CxException("Please provide the scan id ");
+        }
+        commands.add("--scan-id");
+        commands.add(scanID);
+        if (!formatType.isEmpty()) {
+            commands.add("--format");
+            commands.add(formatType);
+        }
+    
+        return runResultExecutionCommands(commands);
+    }
+
+    private String runResultExecutionCommands(List<String> commands) throws IOException {
+        log.info("Process submitting to the executor");
+        ExecutionService exec = new ExecutionService();
+        Process process = exec.executeCommand(commands);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        StringBuilder builder = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            builder.append(line);
+            builder.append(System.getProperty("line.separator"));
+        }
+        if(!process.isAlive() && process.exitValue()!= 0) {
+            log.info("Exit code from CLI is: {} ", process.exitValue());
+            return "";
+        }
+        return builder.toString();
+    }
+
     private CxCommandOutput runExecutionCommands(List<String> commands) throws IOException, InterruptedException {
         log.info("Process submitting to the executor");
         ExecutionService exec = new ExecutionService();
@@ -179,12 +237,12 @@ public class CxAuth {
         String line;
         CxScan scanObject = null;
         InputStream is = process.getInputStream();
-		InputStreamReader isr = new InputStreamReader(is);
-		BufferedReader br = new BufferedReader(isr);
-		CxCommandOutput cxCommandOutput = new CxCommandOutput();
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr);
+        CxCommandOutput cxCommandOutput = new CxCommandOutput();
         while ((line = br.readLine()) != null) {
             log.info(line);
-            if (!StringUtils.isBlank(line) && isJSONValid(line, CxScan.class)) {
+            if (!StringUtils.isBlank(line) && isValidJSON(line)) {
                 scanObject = transformToCxScanObject(line);
                 List<CxScan> scanList = new ArrayList<>();
                 scanList.add(scanObject);
@@ -193,8 +251,7 @@ public class CxAuth {
         }
         br.close();
         process.waitFor();
-
-        if(!process.isAlive()) {
+        if (!process.isAlive()) {
             cxCommandOutput.setExitCode(process.exitValue());
             log.info("Exit code from AST-CLI: {}", process.exitValue());
         }
@@ -259,7 +316,6 @@ public class CxAuth {
         List<String> commands = initialCommands();
         commands.add("scan");
         commands.add("list");
-
         ExecutionService exec = new ExecutionService();
         Process process = exec.executeCommand(commands);
         String line;
@@ -268,7 +324,7 @@ public class CxAuth {
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
         while ((line = br.readLine()) != null) {
-            if (isJSONValid(line, List.class) && !line.isEmpty())
+            if (isValidJSON(line) && !line.isEmpty())
                 list = transformToCxScanList(line);
         }
         br.close();
@@ -278,7 +334,7 @@ public class CxAuth {
         cxCommandOutput.setScanObjectList(list);
         cxCommandOutput.setExitCode(process.exitValue());
         if (list != null && !list.isEmpty())
-            log.info("Retrieved scan list with size: {}" , list.size());
+            log.info("Retrieved scan list with size: {}", list.size());
         else
             log.info("Not able to retrieve scan list");
 
@@ -316,8 +372,6 @@ public class CxAuth {
         return runExecutionCommands(commands);
     }
 
-
-
     private void addIndividualParams(List<String> commands, String value) {
         Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(value);
         while (m.find())
@@ -351,13 +405,17 @@ public class CxAuth {
 
     }
 
-    private boolean isJSONValid(String jsonInString, Object object) {
+    public boolean isValidJSON(final String json) {
+        boolean valid = false;
         try {
-            gson.fromJson(jsonInString, (Type) object);
-            return true;
-        } catch (com.google.gson.JsonSyntaxException ex) {
-            return false;
+            final JsonParser parser = new ObjectMapper().createParser(json);
+            while (parser.nextToken() != null) {
+            }
+            valid = true;
+        } catch (IOException ignored) {
         }
+        ;
+        return valid;
     }
 
 }

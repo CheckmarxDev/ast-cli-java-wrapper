@@ -8,13 +8,19 @@ import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import com.checkmarx.ast.scans.CxAuth;
+import com.checkmarx.ast.results.CxCommandOutput;
+import com.checkmarx.ast.scans.CxParamType;
+import com.checkmarx.ast.scans.CxScanConfig;
+
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(JUnit4.class)
 public class CxAuthTest {
@@ -78,7 +84,8 @@ public class CxAuthTest {
         params.put(CxParamType.BRANCH, "test");
 
         CxCommandOutput scanResult = auth.cxScanCreate(params);
-        assertTrue(auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus().equalsIgnoreCase(COMPLETED));
+        String status = auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus();
+        assertTrue(status.equalsIgnoreCase(COMPLETED));
     }
 
     @Test
@@ -87,8 +94,8 @@ public class CxAuthTest {
         params.put(CxParamType.SAST_PRESET_NAME, "Checkmarx Default Jay");
 
         CxCommandOutput scanResult = auth.cxScanCreate(params);
-
-        assertTrue(auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus().equalsIgnoreCase(FAILED));
+        String status = auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus();
+        assertTrue(status.equalsIgnoreCase(FAILED));
     }
 
 
@@ -100,5 +107,31 @@ public class CxAuthTest {
 
         CxCommandOutput scanResult = auth.cxScanCreate(params);
         assertTrue(auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus().equalsIgnoreCase(COMPLETED));
+    }
+
+
+    @Test
+    public void cxGenerateHTMLResults() throws InterruptedException, IOException {
+        CxCommandOutput scanList = auth.cxAstScanList();
+        String id = scanList.getScanObjectList().get(0).getID();
+        String filePath = System.getProperty("user.dir") + "/index.html";
+        auth.cxGetResultsSummary( id, "", filePath);
+        assertTrue(new File(filePath).length() > 0);
+    }
+
+    @Test
+    public void cxGetResultsSummaryString() throws InterruptedException, IOException {
+        CxCommandOutput scanList = auth.cxAstScanList();
+        String id = scanList.getScanObjectList().get(0).getID();
+        String op = auth.cxGetResultsSummary(id,"","");
+        assertTrue(op.length() > 0);
+    }
+
+    @Test
+    public void cxGetResultsListString() throws InterruptedException, IOException {
+        CxCommandOutput scanList = auth.cxAstScanList();
+        String id = scanList.getScanObjectList().get(0).getID();
+        String op = auth.cxGetResultsList(id,"json");
+        assertTrue(op.length() > 0);
     }
 }

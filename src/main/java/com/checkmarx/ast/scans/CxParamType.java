@@ -1,4 +1,4 @@
-package com.checkmarx.ast;
+package com.checkmarx.ast.scans;
 
 public enum CxParamType {
     S, V, G, PROJECT_NAME, SCAN_TYPES, SAST_PRESET_NAME, FILTER, DIRECTORY, ADDITIONAL_PARAMETERS, AGENT, SOURCES, BRANCH

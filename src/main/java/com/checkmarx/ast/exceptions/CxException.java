@@ -1,4 +1,4 @@
-package com.checkmarx.ast;
+package com.checkmarx.ast.exceptions;
 
 public class CxException extends RuntimeException{
     public CxException(String errorMessage) {
