@@ -55,7 +55,7 @@ public class CxAuthTest {
         params.put(CxParamType.PROJECT_NAME, "JavaWrapperTestCases");
         params.put(CxParamType.SCAN_TYPES, "sast");
         params.put(CxParamType.S, ".");
-        params.put(CxParamType.FILTER, "*.java");
+        params.put(CxParamType.FILE_FILTER, "*.java");
 
         return params;
     }
