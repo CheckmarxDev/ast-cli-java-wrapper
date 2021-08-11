@@ -46,6 +46,8 @@ public class CxAuth {
         this.secret = scanConfig.getClientSecret();
         this.apikey = scanConfig.getApiKey();
 
+        validateConfigValues();
+
         if (scanConfig.getPathToExecutable() != null && !scanConfig.getPathToExecutable().isEmpty()) {
             File file = new File(scanConfig.getPathToExecutable());
             this.executable = file.toURI();
@@ -55,6 +57,20 @@ public class CxAuth {
 
         if (log != null) {
             this.log = log;
+        }
+    }
+
+    private void validateConfigValues(){
+        if ( this.baseuri == null || this.baseuri.isEmpty() ) {
+            throw new CxException("Checkmarx server URL was not set");
+        }
+
+        if ( this.tenant == null || this.tenant.isEmpty() ) {
+            throw new CxException("Tenant value was not set");
+        }
+
+        if ( this.apikey == null || this.apikey.isEmpty() ) {
+            throw new CxException("Credentials were not set");
         }
     }
 
