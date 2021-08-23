@@ -1,6 +1,5 @@
 package com.checkmarx.ast;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,13 +48,12 @@ public class CxAuthTest {
         auth = new CxAuth(config, log);
     }
 
-    @NotNull
     private Map<CxParamType, String> createParams() {
         Map<CxParamType, String> params = new HashMap<>();
         params.put(CxParamType.PROJECT_NAME, "JavaWrapperTestCases");
         params.put(CxParamType.SCAN_TYPES, "sast");
         params.put(CxParamType.S, ".");
-        params.put(CxParamType.FILTER, "*.java");
+        params.put(CxParamType.FILE_FILTER, "*.java");
 
         return params;
     }
