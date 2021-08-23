@@ -61,15 +61,11 @@ public class CxAuth {
     }
 
     private void validateConfigValues(){
-        if ( this.baseuri == null || this.baseuri.isEmpty() ) {
+        if (StringUtils.isEmpty(this.baseuri)) {
             throw new CxException("Checkmarx server URL was not set");
         }
 
-        if ( this.tenant == null || this.tenant.isEmpty() ) {
-            throw new CxException("Tenant value was not set");
-        }
-
-        if ( this.apikey == null || this.apikey.isEmpty() ) {
+        if (StringUtils.isEmpty(this.apikey) && (StringUtils.isEmpty(this.key) && StringUtils.isEmpty(this.secret))) {
             throw new CxException("Credentials were not set");
         }
     }
@@ -110,7 +106,7 @@ public class CxAuth {
         location = new File(jarLocation);
 
         if (location.isDirectory()) {
-            fileURI = URI.create(jarLocation.toString() + fileName);
+            fileURI = URI.create(jarLocation + fileName);
         } else {
             final ZipFile zipFile;
 
@@ -234,7 +230,7 @@ public class CxAuth {
         Process process = exec.executeCommand(commands);
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         StringBuilder builder = new StringBuilder();
-        String line = null;
+        String line;
         while ((line = reader.readLine()) != null) {
             builder.append(line);
             builder.append(System.getProperty("line.separator"));
@@ -251,7 +247,7 @@ public class CxAuth {
         ExecutionService exec = new ExecutionService();
         Process process = exec.executeCommand(commands);
         String line;
-        CxScan scanObject = null;
+        CxScan scanObject;
         InputStream is = process.getInputStream();
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
@@ -363,6 +359,10 @@ public class CxAuth {
         commands.add("scan");
         commands.add("create");
 
+        if (!params.containsKey(CxParamType.PROJECT_NAME)) {
+            throw new CxException("Checkmarx project name was not set");
+        }
+
         for (Map.Entry<CxParamType, String> param : params.entrySet()) {
             if (param.getKey() == CxParamType.ADDITIONAL_PARAMETERS && param.getValue() != null) {
                 addIndividualParams(commands, param.getValue());
@@ -408,9 +408,9 @@ public class CxAuth {
         }
     }
 
-    private List<CxScan> transformToCxScanList(String line) throws IOException {
+    private List<CxScan> transformToCxScanList(String line) {
         ObjectMapper objectMapper = new ObjectMapper();
-        List<CxScan> scanList = null;
+        List<CxScan> scanList;
         try {
             scanList = objectMapper.readValue(line, new TypeReference<List<CxScan>>() {
             });
@@ -425,12 +425,12 @@ public class CxAuth {
         boolean valid = false;
         try {
             final JsonParser parser = new ObjectMapper().createParser(json);
+            //noinspection StatementWithEmptyBody
             while (parser.nextToken() != null) {
             }
             valid = true;
         } catch (IOException ignored) {
         }
-        ;
         return valid;
     }
 
