@@ -1,6 +1,5 @@
 package com.checkmarx.ast;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +48,6 @@ public class CxAuthTest {
         auth = new CxAuth(config, log);
     }
 
-    @NotNull
     private Map<CxParamType, String> createParams() {
         Map<CxParamType, String> params = new HashMap<>();
         params.put(CxParamType.PROJECT_NAME, "JavaWrapperTestCases");
