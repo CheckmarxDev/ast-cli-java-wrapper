@@ -3,6 +3,8 @@ package com.checkmarx.ast.scans;
 import com.checkmarx.ast.exceptions.CxException;
 import com.checkmarx.ast.executionservice.ExecutionService;
 import com.checkmarx.ast.results.CxCommandOutput;
+import com.checkmarx.ast.results.CxResultFormatType;
+import com.checkmarx.ast.results.structure.CxResultOutput;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -222,6 +224,13 @@ public class CxAuth {
         }
     
         return runResultExecutionCommands(commands);
+    }
+
+    public CxResultOutput cxGetResults(String scanId) throws IOException {
+        String results = cxGetResultsList(scanId, String.valueOf(CxResultFormatType.JSON));
+        return new ObjectMapper()
+                .readerFor(CxResultOutput.class)
+                .readValue(results);
     }
 
     private String runResultExecutionCommands(List<String> commands) throws IOException {

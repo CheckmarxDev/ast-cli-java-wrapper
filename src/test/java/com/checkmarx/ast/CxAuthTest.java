@@ -154,19 +154,11 @@ public class CxAuthTest {
         } catch (IOException | InterruptedException e) {
             fail("Failed getting a scan id");
         }
-        String results = null;
         try {
-            results = auth.cxGetResultsList(scanID, String.valueOf(CxResultFormatType.JSON));
-        } catch (IOException e) {
-            fail("Failed getting results for scan id " + scanID);
-        }
-        try {
-            CxResultOutput resultOutput = new ObjectMapper()
-                    .readerFor(CxResultOutput.class)
-                    .readValue(results);
+            CxResultOutput resultOutput = auth.cxGetResults(scanID);
             Assert.assertEquals(resultOutput.getTotalCount(), resultOutput.getResults().size());
         } catch (IOException e) {
-            fail("Failed parsing results json: " + e.getMessage());
+            fail("Failed getting results object: " + e.getMessage());
         }
     }
 }
