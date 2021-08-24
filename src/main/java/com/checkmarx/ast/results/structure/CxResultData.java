@@ -19,7 +19,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CxResultData {
 
-    BigInteger queryId;
+    String queryId;
     String queryName;
     String group;
     String resultHash;
@@ -27,7 +27,7 @@ public class CxResultData {
     String description;
     List<CxResultDataNode> nodes;
 
-    public CxResultData(@JsonProperty("queryId") BigInteger queryId,
+    public CxResultData(@JsonProperty("queryId") String queryId,
                         @JsonProperty("queryName") String queryName,
                         @JsonProperty("group") String group,
                         @JsonProperty("resultHash") String resultHash,

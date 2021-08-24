@@ -31,6 +31,7 @@ public class CxResult {
     String recommendations;
     CxResultData data;
     CxResultComments comments;
+    CxResultVulnerabilityDetails vulnerabilityDetails;
 
     public CxResult(@JsonProperty("type") String type,
                     @JsonProperty("id") String id,
@@ -46,7 +47,8 @@ public class CxResult {
                     @JsonProperty("publishedAt") String publishedAt,
                     @JsonProperty("recommendations") String recommendations,
                     @JsonProperty("data") CxResultData data,
-                    @JsonProperty("comments") CxResultComments comments) {
+                    @JsonProperty("comments") CxResultComments comments,
+                    @JsonProperty("vulnerabilityDetails") CxResultVulnerabilityDetails vulnerabilityDetails) {
         this.type = type;
         this.id = id;
         this.similarityId = similarityId;
@@ -62,5 +64,6 @@ public class CxResult {
         this.recommendations = recommendations;
         this.data = data;
         this.comments = comments;
+        this.vulnerabilityDetails = vulnerabilityDetails;
     }
 }
