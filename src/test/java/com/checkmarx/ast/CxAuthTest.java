@@ -1,5 +1,13 @@
 package com.checkmarx.ast;
 
+import com.checkmarx.ast.results.CxCommandOutput;
+import com.checkmarx.ast.results.CxResultFormatType;
+import com.checkmarx.ast.results.structure.CxResultOutput;
+import com.checkmarx.ast.scans.CxAuth;
+import com.checkmarx.ast.scans.CxParamType;
+import com.checkmarx.ast.scans.CxScanConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,11 +20,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.checkmarx.ast.scans.CxAuth;
-import com.checkmarx.ast.results.CxCommandOutput;
-import com.checkmarx.ast.scans.CxParamType;
-import com.checkmarx.ast.scans.CxScanConfig;
 
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -82,7 +85,10 @@ public class CxAuthTest {
         params.put(CxParamType.BRANCH, "test");
 
         CxCommandOutput scanResult = auth.cxScanCreate(params);
-        String status = auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus();
+        String status = auth.cxScanShow(scanResult.getScanObjectList().get(0).getID())
+                            .getScanObjectList()
+                            .get(0)
+                            .getStatus();
         assertTrue(status.equalsIgnoreCase(COMPLETED));
     }
 
@@ -92,7 +98,10 @@ public class CxAuthTest {
         params.put(CxParamType.SAST_PRESET_NAME, "Checkmarx Default Jay");
 
         CxCommandOutput scanResult = auth.cxScanCreate(params);
-        String status = auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus();
+        String status = auth.cxScanShow(scanResult.getScanObjectList().get(0).getID())
+                            .getScanObjectList()
+                            .get(0)
+                            .getStatus();
         assertTrue(status.equalsIgnoreCase(FAILED));
     }
 
@@ -104,7 +113,11 @@ public class CxAuthTest {
         //params.put(CxParamType.ADDITIONAL_PARAMETERS,"--nowait");
 
         CxCommandOutput scanResult = auth.cxScanCreate(params);
-        assertTrue(auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus().equalsIgnoreCase(COMPLETED));
+        assertTrue(auth.cxScanShow(scanResult.getScanObjectList().get(0).getID())
+                       .getScanObjectList()
+                       .get(0)
+                       .getStatus()
+                       .equalsIgnoreCase(COMPLETED));
     }
 
 
@@ -113,7 +126,7 @@ public class CxAuthTest {
         CxCommandOutput scanList = auth.cxAstScanList();
         String id = scanList.getScanObjectList().get(0).getID();
         String filePath = System.getProperty("user.dir") + "/index.html";
-        auth.cxGetResultsSummary( id, "", filePath);
+        auth.cxGetResultsSummary(id, "", filePath);
         assertTrue(new File(filePath).length() > 0);
     }
 
@@ -121,7 +134,7 @@ public class CxAuthTest {
     public void cxGetResultsSummaryString() throws InterruptedException, IOException {
         CxCommandOutput scanList = auth.cxAstScanList();
         String id = scanList.getScanObjectList().get(0).getID();
-        String op = auth.cxGetResultsSummary(id,"","");
+        String op = auth.cxGetResultsSummary(id, "", "");
         assertTrue(op.length() > 0);
     }
 
@@ -129,7 +142,31 @@ public class CxAuthTest {
     public void cxGetResultsListString() throws InterruptedException, IOException {
         CxCommandOutput scanList = auth.cxAstScanList();
         String id = scanList.getScanObjectList().get(0).getID();
-        String op = auth.cxGetResultsList(id,"json");
+        String op = auth.cxGetResultsList(id, String.valueOf(CxResultFormatType.JSON));
         assertTrue(op.length() > 0);
+    }
+
+    @Test
+    public void cxResultsStructure() {
+        String scanID = null;
+        try {
+            scanID = auth.cxAstScanList().getScanObjectList().get(0).getID();
+        } catch (IOException | InterruptedException e) {
+            fail("Failed getting a scan id");
+        }
+        String results = null;
+        try {
+            results = auth.cxGetResultsList(scanID, String.valueOf(CxResultFormatType.JSON));
+        } catch (IOException e) {
+            fail("Failed getting results for scan id " + scanID);
+        }
+        try {
+            CxResultOutput resultOutput = new ObjectMapper()
+                    .readerFor(CxResultOutput.class)
+                    .readValue(results);
+            Assert.assertEquals(resultOutput.getTotalCount(), resultOutput.getResults().size());
+        } catch (IOException e) {
+            fail("Failed parsing results json: " + e.getMessage());
+        }
     }
 }
