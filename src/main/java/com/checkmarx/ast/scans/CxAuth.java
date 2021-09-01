@@ -246,7 +246,7 @@ public class CxAuth {
     }
 
     public CxResultOutput cxGetResults(String scanId) throws IOException {
-        String results = cxGetResultsList(scanId, String.valueOf(CxResultFormatType.JSON));
+        String results = cxGetResultsList(scanId);
         return new ObjectMapper()
                 .readerFor(CxResultOutput.class)
                 .readValue(results);
