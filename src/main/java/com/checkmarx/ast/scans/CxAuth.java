@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,10 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
@@ -187,43 +192,57 @@ public class CxAuth {
         return scanObject;
     }
 
-    public String cxGetResultsSummary(String scanID, String formatType, String target)
-            throws IOException {
-        List<String> commands = initialCommandsCommon();
-        commands.add("result");
-        commands.add("summary");
-        if (scanID.isEmpty()) {
-            throw new CxException("Please provide the scan id ");
-        }
-        commands.add("--scan-id");
-        commands.add(scanID);
-        if (!formatType.isEmpty()) {
-            commands.add("--format");
-            commands.add(formatType);
-        }
-        if (!target.isEmpty()) {
-            commands.add("--target");
-            commands.add(target);
-        }
-        return runResultExecutionCommands(commands);
+    public String cxGetResultsSummary(String scanID) throws IOException {
+        return runResultExecutionCommands(scanID, "summaryHTML", ".html");
     }
 
-    public String cxGetResultsList(String scanID, String formatType)
+    public String cxGetResultsList(String scanID) throws IOException {
+        return runResultExecutionCommands(scanID, "json", ".json");
+    }
+
+    public void cxGetResults(String resultType, String scanID, String fileName, String target)
             throws IOException {
-        List<String> commands = initialCommandsCommon();
-        commands.add("result");
-        commands.add("list");
-        if (scanID.isEmpty()) {
+
+        List<String> commands = buildResultCommand(resultType, scanID, fileName, target);
+
+        runResultExecutionCommands(commands);
+    }
+
+    private List<String> buildResultCommand(String resultType, String scanId, String outputName, String outputTarget) {
+        if (scanId.isEmpty()) {
             throw new CxException("Please provide the scan id ");
         }
+
+        List<String> commands = initialCommandsCommon();
+        commands.add("result");
         commands.add("--scan-id");
-        commands.add(scanID);
-        if (!formatType.isEmpty()) {
-            commands.add("--format");
-            commands.add(formatType);
+        commands.add(scanId);
+        commands.add("--report-format");
+        commands.add(resultType);
+
+        if (StringUtils.isNotBlank(outputName)) {
+            commands.add("--output-name");
+            commands.add(outputName);
         }
-    
-        return runResultExecutionCommands(commands);
+
+        if (StringUtils.isNotBlank(outputTarget)) {
+            commands.add("--output-path");
+            commands.add(outputTarget);
+        }
+
+        return commands;
+    }
+
+
+
+    private String runResultExecutionCommands(String scanId, String resultType, String extension) throws IOException {
+        Path tempDir = Files.createTempDirectory("cx");
+        String fileName = Long.toString(System.nanoTime());
+        List<String> commands = buildResultCommand(resultType, scanId, fileName, tempDir.toAbsolutePath().toString());
+        runResultExecutionCommands(commands);
+
+        File outputFile = new File(tempDir.toAbsolutePath().toString(), fileName + extension);
+        return new String(Files.readAllBytes(Paths.get(outputFile.getAbsolutePath())), StandardCharsets.UTF_8);
     }
 
     public CxResultOutput cxGetResults(String scanId) throws IOException {
