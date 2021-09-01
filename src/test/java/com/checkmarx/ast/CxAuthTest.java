@@ -1,5 +1,13 @@
 package com.checkmarx.ast;
 
+import com.checkmarx.ast.results.CxCommandOutput;
+import com.checkmarx.ast.results.CxResultFormatType;
+import com.checkmarx.ast.results.structure.CxResultOutput;
+import com.checkmarx.ast.scans.CxAuth;
+import com.checkmarx.ast.scans.CxParamType;
+import com.checkmarx.ast.scans.CxScanConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,11 +20,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.checkmarx.ast.scans.CxAuth;
-import com.checkmarx.ast.results.CxCommandOutput;
-import com.checkmarx.ast.scans.CxParamType;
-import com.checkmarx.ast.scans.CxScanConfig;
 
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -131,5 +134,21 @@ public class CxAuthTest {
         String id = scanList.getScanObjectList().get(0).getID();
         String op = auth.cxGetResultsList(id);
         assertTrue(op.length() > 0);
+    }
+
+    @Test
+    public void cxResultsStructure() {
+        String scanID = null;
+        try {
+            scanID = auth.cxAstScanList().getScanObjectList().get(0).getID();
+        } catch (IOException | InterruptedException e) {
+            fail("Failed getting a scan id");
+        }
+        try {
+            CxResultOutput resultOutput = auth.cxGetResults(scanID);
+            Assert.assertEquals(resultOutput.getTotalCount(), resultOutput.getResults().size());
+        } catch (IOException e) {
+            fail("Failed getting results object: " + e.getMessage());
+        }
     }
 }
