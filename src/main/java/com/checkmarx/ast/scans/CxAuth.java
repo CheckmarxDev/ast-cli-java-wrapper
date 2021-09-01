@@ -194,16 +194,16 @@ public class CxAuth {
         return runResultExecutionCommands(scanID, "summaryHTML", ".html");
     }
 
+    public String cxGetResultsList(String scanID) throws IOException {
+        return runResultExecutionCommands(scanID, "json", ".json");
+    }
+
     public void cxGetResults(String resultType, String scanID, String fileName, String target)
             throws IOException {
 
         List<String> commands = buildResultCommand(resultType, scanID, fileName, target);
 
         runResultExecutionCommands(commands);
-    }
-
-    public String cxGetResultsList(String scanID) throws IOException {
-        return runResultExecutionCommands(scanID, "json", ".json");
     }
 
     private List<String> buildResultCommand(String resultType, String scanId, String outputName, String outputTarget) {
