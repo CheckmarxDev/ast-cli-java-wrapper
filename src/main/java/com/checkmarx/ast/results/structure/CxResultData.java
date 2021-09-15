@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 
-import java.math.BigInteger;
 import java.util.List;
 
 @Data
@@ -26,6 +25,7 @@ public class CxResultData {
     String languageName;
     String description;
     List<CxResultDataNode> nodes;
+    List<CxResultPackageData> packageData;
 
     public CxResultData(@JsonProperty("queryId") String queryId,
                         @JsonProperty("queryName") String queryName,
@@ -33,7 +33,8 @@ public class CxResultData {
                         @JsonProperty("resultHash") String resultHash,
                         @JsonProperty("languageName") String languageName,
                         @JsonProperty("description") String description,
-                        @JsonProperty("nodes") List<CxResultDataNode> nodes) {
+                        @JsonProperty("nodes") List<CxResultDataNode> nodes,
+                        @JsonProperty("packageData") List<CxResultPackageData> packageData) {
         this.queryId = queryId;
         this.queryName = queryName;
         this.group = group;
@@ -41,5 +42,6 @@ public class CxResultData {
         this.languageName = languageName;
         this.description = description;
         this.nodes = nodes;
+        this.packageData = packageData;
     }
 }
