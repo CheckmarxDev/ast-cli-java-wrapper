@@ -1,12 +1,10 @@
 package com.checkmarx.ast;
 
 import com.checkmarx.ast.results.CxCommandOutput;
-import com.checkmarx.ast.results.CxResultFormatType;
 import com.checkmarx.ast.results.structure.CxResultOutput;
 import com.checkmarx.ast.scans.CxAuth;
 import com.checkmarx.ast.scans.CxParamType;
 import com.checkmarx.ast.scans.CxScanConfig;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,8 +82,12 @@ public class CxAuthTest {
         Map<CxParamType, String> params = createParams();
         params.put(CxParamType.BRANCH, "test");
 
-        CxCommandOutput scanResult = auth.cxScanCreate(params);
-        String status = auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus();
+        CxCommandOutput scanResult = validateCommandOutput(auth.cxScanCreate(params));
+        String status = validateCommandOutput(auth.cxScanShow(scanResult.getScanObjectList()
+                                                                        .get(0)
+                                                                        .getID())).getScanObjectList()
+                                                                                  .get(0)
+                                                                                  .getStatus();
         assertTrue(status.equalsIgnoreCase(COMPLETED));
     }
 
@@ -94,8 +96,11 @@ public class CxAuthTest {
         Map<CxParamType, String> params = createParams();
         params.put(CxParamType.SAST_PRESET_NAME, "Checkmarx Default Jay");
 
-        CxCommandOutput scanResult = auth.cxScanCreate(params);
-        String status = auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus();
+        CxCommandOutput scanResult = validateCommandOutput(auth.cxScanCreate(params));
+        String status = validateCommandOutput(auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()))
+                .getScanObjectList()
+                .get(0)
+                .getStatus();
         assertTrue(status.equalsIgnoreCase(FAILED));
     }
 
@@ -106,8 +111,12 @@ public class CxAuthTest {
         params.put(CxParamType.SAST_PRESET_NAME, "Checkmarx Default");
         //params.put(CxParamType.ADDITIONAL_PARAMETERS,"--nowait");
 
-        CxCommandOutput scanResult = auth.cxScanCreate(params);
-        assertTrue(auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()).getScanObjectList().get(0).getStatus().equalsIgnoreCase(COMPLETED));
+        CxCommandOutput scanResult = validateCommandOutput(auth.cxScanCreate(params));
+        assertTrue(validateCommandOutput(auth.cxScanShow(scanResult.getScanObjectList().get(0).getID()))
+                           .getScanObjectList()
+                           .get(0)
+                           .getStatus()
+                           .equalsIgnoreCase(COMPLETED));
     }
 
 
@@ -150,5 +159,18 @@ public class CxAuthTest {
         } catch (IOException e) {
             fail("Failed getting results object: " + e.getMessage());
         }
+    }
+
+    private static CxCommandOutput validateCommandOutput(CxCommandOutput output) {
+        if (output == null) {
+            fail("invalid output for command: output is null");
+        }
+        if (output.getScanObjectList() == null) {
+            fail("invalid output for command: scan object list is null");
+        }
+        if (output.getScanObjectList().size() == 0) {
+            fail("invalid output for command: scan object list is empty");
+        }
+        return output;
     }
 }
