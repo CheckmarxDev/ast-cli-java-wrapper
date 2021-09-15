@@ -1,12 +1,12 @@
 package com.checkmarx.ast.scans;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
+@Data
 public class CxScanConfig implements Serializable {
 
     private String baseUri;
@@ -16,4 +16,5 @@ public class CxScanConfig implements Serializable {
     private String clientSecret;
     private String apiKey;
     private String pathToExecutable;
+    private String additionalParameters;
 }
