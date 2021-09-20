@@ -2,6 +2,7 @@ package com.checkmarx.ast;
 
 import com.checkmarx.ast.results.CxCommandOutput;
 import com.checkmarx.ast.results.CxResultFormatType;
+import com.checkmarx.ast.results.CxValidateOutput;
 import com.checkmarx.ast.results.structure.CxResultOutput;
 import com.checkmarx.ast.scans.CxAuth;
 import com.checkmarx.ast.scans.CxParamType;
@@ -69,8 +70,8 @@ public class CxAuthTest {
 
     @Test
     public void cxAstAuthValidate() throws IOException, InterruptedException {
-        Integer validate = auth.cxAuthValidate();
-        assertEquals(VALID_RETURN_CODE, validate.intValue());
+        CxValidateOutput validate = auth.cxAuthValidate();
+        assertEquals(VALID_RETURN_CODE, validate.getExitCode());
     }
 
     @Test
