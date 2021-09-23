@@ -1,0 +1,41 @@
+name: AST Java Wrapper CI
+
+on: [pull_request]
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Copy executable
+        run: cp ./src/main/resources/cx-linux /tmp/
+      - name: Permissions to executable
+        run: sudo chmod 777 /tmp/cx-linux
+      - name: Run tests with Maven
+        env:
+          CX_CLIENT_ID: ${{ secrets.CLIENT_ID}}
+          CX_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET}}
+          CX_BASE_URI: ${{ secrets.BASE_URI }}
+          CX_TENANT: ${{ secrets.TENANT }}
+          PATH_TO_EXECUTABLE: /tmp/cx-linux
+        run: mvn -B test --file pom.xml
+  cx-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Checkmarx AST CLI Action
+        uses: checkmarxDev/ast-github-action@master
+        with:
+          project_name: ast-cli-java-wrapper
+          branch: master
+          base_uri: ${{ secrets.BASE_URI }}
+          cx_tenant: ${{ secrets.TENANT }}
+          cx_client_id: ${{ secrets.CLIENT_ID }}
+          cx_client_secret: ${{ secrets.CLIENT_SECRET }}
+          additional_params: --tags galactica-team

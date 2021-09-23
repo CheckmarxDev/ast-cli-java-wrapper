@@ -26,6 +26,7 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -39,11 +40,13 @@ public class CxAuth {
     private final String key;
     private final String secret;
     private final String apikey;
+    private final List<String> additionalParameters = new ArrayList<>();
     private final URI executable;
 
     public CxAuth(CxScanConfig scanConfig, Logger log) throws IOException, URISyntaxException, CxException {
-        if (scanConfig == null)
+        if (scanConfig == null) {
             throw new CxException("CxScanConfig object returned as null!");
+        }
 
         this.baseuri = scanConfig.getBaseUri();
         this.baseAuthUri = scanConfig.getBaseAuthUri();
@@ -51,6 +54,8 @@ public class CxAuth {
         this.key = scanConfig.getClientId();
         this.secret = scanConfig.getClientSecret();
         this.apikey = scanConfig.getApiKey();
+        addIndividualParams(this.additionalParameters,
+                            Optional.ofNullable(scanConfig.getAdditionalParameters()).orElse(""));
 
         validateConfigValues();
 
@@ -66,7 +71,7 @@ public class CxAuth {
         }
     }
 
-    private void validateConfigValues(){
+    private void validateConfigValues() {
         if (StringUtils.isEmpty(this.baseuri)) {
             throw new CxException("Checkmarx server URL was not set");
         }
@@ -183,10 +188,11 @@ public class CxAuth {
         commands.add("--scan-id");
         commands.add(id);
         CxCommandOutput scanObject = runExecutionCommands(commands);
-        if (scanObject.getScanObjectList() != null && scanObject.getScanObjectList().size() == 1)
+        if (scanObject.getScanObjectList() != null && scanObject.getScanObjectList().size() == 1) {
             log.info("Scan retrieved");
-        else
+        } else {
             log.info("Did not receive the scan");
+        }
 
         return scanObject;
     }
@@ -233,7 +239,6 @@ public class CxAuth {
     }
 
 
-
     private String runResultExecutionCommands(String scanId, String resultType, String extension) throws IOException {
         Path tempDir = Files.createTempDirectory("cx");
         String fileName = Long.toString(System.nanoTime());
@@ -262,7 +267,7 @@ public class CxAuth {
             builder.append(line);
             builder.append(System.getProperty("line.separator"));
         }
-        if(!process.isAlive() && process.exitValue()!= 0) {
+        if (!process.isAlive() && process.exitValue() != 0) {
             log.info("Exit code from CLI is: {} ", process.exitValue());
             return "";
         }
@@ -329,6 +334,8 @@ public class CxAuth {
             commands.add(this.baseAuthUri);
         }
 
+        commands.addAll(this.additionalParameters);
+
         return commands;
     }
 
@@ -372,8 +379,9 @@ public class CxAuth {
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
         while ((line = br.readLine()) != null) {
-            if (isValidJSON(line) && !line.isEmpty())
+            if (isValidJSON(line) && !line.isEmpty()) {
                 list = transformToCxScanList(line);
+            }
         }
         br.close();
         process.waitFor();
@@ -381,10 +389,11 @@ public class CxAuth {
         CxCommandOutput cxCommandOutput = new CxCommandOutput();
         cxCommandOutput.setScanObjectList(list);
         cxCommandOutput.setExitCode(process.exitValue());
-        if (list != null && !list.isEmpty())
+        if (list != null && !list.isEmpty()) {
             log.info("Retrieved scan list with size: {}", list.size());
-        else
+        } else {
             log.info("Not able to retrieve scan list");
+        }
 
         return cxCommandOutput;
     }
@@ -404,30 +413,26 @@ public class CxAuth {
                 addIndividualParams(commands, param.getValue());
             } else if (param.getKey().toString().length() == 1) {
                 commands.add("-" + param.getKey().toString().toLowerCase());
-                if (param.getValue() != null)
+                if (param.getValue() != null) {
                     commands.add(param.getValue());
-                else
+                } else {
                     commands.add(" ");
+                }
 
             } else if (param.getKey() != CxParamType.ADDITIONAL_PARAMETERS) {
                 String paramValue = param.getKey().toString();
                 paramValue = "--" + paramValue.replace("_", "-").toLowerCase();
                 commands.add(paramValue);
-                if (param.getValue() != null)
+                if (param.getValue() != null) {
                     commands.add(param.getValue());
-                else
+                } else {
                     commands.add(" ");
+                }
 
             }
         }
 
         return runExecutionCommands(commands);
-    }
-
-    private void addIndividualParams(List<String> commands, String value) {
-        Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(value);
-        while (m.find())
-            commands.add(m.group(1));
     }
 
     private void addAuthCredentials(List<String> commands) {
@@ -444,7 +449,14 @@ public class CxAuth {
         }
     }
 
-    private List<CxScan> transformToCxScanList(String line) {
+    private static void addIndividualParams(List<String> commands, String value) {
+        Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(value);
+        while (m.find()) {
+            commands.add(m.group(1));
+        }
+    }
+
+    private static List<CxScan> transformToCxScanList(String line) {
         ObjectMapper objectMapper = new ObjectMapper();
         List<CxScan> scanList;
         try {
@@ -457,7 +469,7 @@ public class CxAuth {
 
     }
 
-    public boolean isValidJSON(final String json) {
+    public static boolean isValidJSON(final String json) {
         boolean valid = false;
         try {
             final JsonParser parser = new ObjectMapper().createParser(json);
@@ -469,5 +481,4 @@ public class CxAuth {
         }
         return valid;
     }
-
 }
