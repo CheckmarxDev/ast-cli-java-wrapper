@@ -3,6 +3,7 @@ package com.checkmarx.ast.scans;
 import com.checkmarx.ast.exceptions.CxException;
 import com.checkmarx.ast.executionservice.ExecutionService;
 import com.checkmarx.ast.results.CxCommandOutput;
+import com.checkmarx.ast.results.CxValidateOutput;
 import com.checkmarx.ast.results.structure.CxResultOutput;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -346,14 +347,23 @@ public class CxAuth {
         return commands;
     }
 
-    public Integer cxAuthValidate() throws IOException, InterruptedException {
+    public CxValidateOutput cxAuthValidate() throws IOException, InterruptedException {
         log.info("Initialize auth validate command");
         List<String> commands = initialCommandsCommon();
         commands.add("auth");
         commands.add("validate");
 
         ExecutionService executionService = new ExecutionService();
-        return executionService.executeCommandSync(commands);
+        Process process = executionService.executeCommand(commands);
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        process.waitFor();
+
+        CxValidateOutput cxValidateOutput = new CxValidateOutput();
+        cxValidateOutput.setExitCode(process.exitValue());
+        cxValidateOutput.setMessage(br.readLine());
+
+        return cxValidateOutput;
     }
 
     public CxCommandOutput cxAstScanList() throws IOException, InterruptedException {
