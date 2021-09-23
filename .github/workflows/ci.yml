@@ -1,19 +1,9 @@
+name: AST Java Wrapper CI
 
-name: Integration Tests
-
-on:
-  push:
-    branches:
-      - main
-      - master
-  pull_request:
-    types: [opened, reopened, synchronize] 
-    branches:
-      - master
-      - main   
+on: [pull_request]
 
 jobs:
-  run_tests:
+  integration-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
@@ -34,3 +24,18 @@ jobs:
           CX_TENANT: ${{ secrets.TENANT }}
           PATH_TO_EXECUTABLE: /tmp/cx-linux
         run: mvn -B test --file pom.xml
+  cx-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Checkmarx AST CLI Action
+        uses: checkmarxDev/ast-github-action@master
+        with:
+          project_name: ast-cli-java-wrapper
+          branch: master
+          base_uri: ${{ secrets.BASE_URI }}
+          cx_tenant: ${{ secrets.TENANT }}
+          cx_client_id: ${{ secrets.CLIENT_ID }}
+          cx_client_secret: ${{ secrets.CLIENT_SECRET }}
+          additional_params: --tags galactica-team
