@@ -1,7 +1,6 @@
 package com.checkmarx.ast;
 
 import com.checkmarx.ast.results.CxCommandOutput;
-import com.checkmarx.ast.results.CxResultFormatType;
 import com.checkmarx.ast.results.CxValidateOutput;
 import com.checkmarx.ast.results.structure.CxResultOutput;
 import com.checkmarx.ast.scans.CxAuth;
@@ -17,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +33,7 @@ public class CxAuthTest {
     private CxAuth auth;
 
     @Before
-    public void init() throws IOException, URISyntaxException {
+    public void init() throws Exception {
         log.info("Init test");
 
         Map<String, String> environmentVariables = System.getenv();
@@ -67,13 +65,13 @@ public class CxAuthTest {
     }
 
     @Test
-    public void cxScanShow() throws InterruptedException, IOException {
+    public void cxScanShow() throws Exception {
         CxCommandOutput scanList = auth.cxAstScanList(); //scan ID
         assertNotNull(scanList.getScanObjectList().get(0));
     }
 
     @Test
-    public void cxAstAuthValidate() throws IOException, InterruptedException {
+    public void cxAstAuthValidate() throws Exception {
         CxValidateOutput validate = auth.cxAuthValidate();
         assertEquals(VALID_RETURN_CODE, validate.getExitCode());
     }
@@ -85,7 +83,7 @@ public class CxAuthTest {
     }
 
     @Test
-    public void cxScanCreationWithBranchName() throws InterruptedException, IOException {
+    public void cxScanCreationWithBranchName() throws Exception {
         Map<CxParamType, String> params = createParams();
         params.put(CxParamType.BRANCH, "test");
 
@@ -99,7 +97,7 @@ public class CxAuthTest {
     }
 
     @Test
-    public void cxScanCreationWrongPreset() throws InterruptedException, IOException {
+    public void cxScanCreationWrongPreset() throws Exception {
         Map<CxParamType, String> params = createParams();
         params.put(CxParamType.SAST_PRESET_NAME, "Checkmarx Default Jay");
 
@@ -113,7 +111,7 @@ public class CxAuthTest {
 
 
     @Test
-    public void cxScanCreationSuccess() throws InterruptedException, IOException {
+    public void cxScanCreationSuccess() throws Exception {
         Map<CxParamType, String> params = createParams();
         params.put(CxParamType.SAST_PRESET_NAME, "Checkmarx Default");
         //params.put(CxParamType.ADDITIONAL_PARAMETERS,"--nowait");
@@ -128,7 +126,7 @@ public class CxAuthTest {
 
 
     @Test
-    public void cxGenerateHTMLResults() throws InterruptedException, IOException {
+    public void cxGenerateHTMLResults() throws Exception {
         CxCommandOutput scanList = auth.cxAstScanList();
         String id = scanList.getScanObjectList().get(0).getID();
         String filePath = System.getProperty("user.dir");
@@ -137,7 +135,7 @@ public class CxAuthTest {
     }
 
     @Test
-    public void cxGetResultsSummaryString() throws InterruptedException, IOException {
+    public void cxGetResultsSummaryString() throws Exception {
         CxCommandOutput scanList = auth.cxAstScanList();
         String id = scanList.getScanObjectList().get(0).getID();
         String op = auth.cxGetResultsSummary(id);
@@ -145,7 +143,7 @@ public class CxAuthTest {
     }
 
     @Test
-    public void cxGetResultsListString() throws InterruptedException, IOException {
+    public void cxGetResultsListString() throws Exception {
         CxCommandOutput scanList = auth.cxAstScanList();
         String id = scanList.getScanObjectList().get(0).getID();
         String op = auth.cxGetResultsList(id);
@@ -157,13 +155,13 @@ public class CxAuthTest {
         String scanID = null;
         try {
             scanID = auth.cxAstScanList().getScanObjectList().get(0).getID();
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
             fail("Failed getting a scan id");
         }
         try {
             CxResultOutput resultOutput = auth.cxGetResults(scanID);
             Assert.assertEquals(resultOutput.getTotalCount(), resultOutput.getResults().size());
-        } catch (IOException e) {
+        } catch (Exception e) {
             fail("Failed getting results object: " + e.getMessage());
         }
     }
@@ -189,7 +187,7 @@ public class CxAuthTest {
             CxAuth auth = new CxAuth(config, log);
             CxCommandOutput output = auth.cxAstScanList();
             Assert.assertEquals(1, output.getScanObjectList().size());
-        } catch (IOException | InterruptedException | URISyntaxException e) {
+        } catch (Exception e) {
             fail("failed getting scan list");
         }
     }

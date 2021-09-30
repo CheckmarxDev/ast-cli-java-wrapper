@@ -1,7 +1,8 @@
 package com.checkmarx.ast.scans;
 
-import com.checkmarx.ast.exceptions.CxException;
-import com.checkmarx.ast.executionservice.ExecutionService;
+import com.checkmarx.ast.CxException;
+import com.checkmarx.ast.Execution;
+import com.checkmarx.ast.Scan;
 import com.checkmarx.ast.results.CxCommandOutput;
 import com.checkmarx.ast.results.CxValidateOutput;
 import com.checkmarx.ast.results.structure.CxResultOutput;
@@ -21,163 +22,56 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 public class CxAuth {
     private Logger log = LoggerFactory.getLogger(CxAuth.class.getName());
-    private final String baseuri;
+    private final String baseUri;
     private final String baseAuthUri;
     private final String tenant;
-    private final String key;
-    private final String secret;
+    private final String clientId;
+    private final String clientSecret;
     private final String apikey;
     private final List<String> additionalParameters = new ArrayList<>();
     private final URI executable;
 
     public CxAuth(CxScanConfig scanConfig, Logger log) throws IOException, URISyntaxException, CxException {
-        if (scanConfig == null) {
-            throw new CxException("CxScanConfig object returned as null!");
+        Objects.requireNonNull(scanConfig, "configuration object not supplied");
+
+        if (StringUtils.isBlank(scanConfig.getBaseUri())) {
+            throw new CxException("checkmarx server URL was not set");
         }
 
-        this.baseuri = scanConfig.getBaseUri();
-        this.baseAuthUri = scanConfig.getBaseAuthUri();
-        this.tenant = scanConfig.getTenant();
-        this.key = scanConfig.getClientId();
-        this.secret = scanConfig.getClientSecret();
-        this.apikey = scanConfig.getApiKey();
-        addIndividualParams(this.additionalParameters,
-                            Optional.ofNullable(scanConfig.getAdditionalParameters()).orElse(""));
-
-        validateConfigValues();
-
-        if (scanConfig.getPathToExecutable() != null && !scanConfig.getPathToExecutable().isEmpty()) {
-            File file = new File(scanConfig.getPathToExecutable());
-            this.executable = file.toURI();
-        } else {
-            this.executable = packageExecutable();
+        if (StringUtils.isBlank(scanConfig.getApiKey()) && (StringUtils.isBlank(scanConfig.getClientId())
+                                                            && StringUtils.isBlank(scanConfig.getClientSecret()))) {
+            throw new CxException("credentials were not set");
         }
 
         if (log != null) {
             this.log = log;
         }
-    }
 
-    private void validateConfigValues() {
-        if (StringUtils.isEmpty(this.baseuri)) {
-            throw new CxException("Checkmarx server URL was not set");
-        }
+        this.baseUri = scanConfig.getBaseUri();
+        this.baseAuthUri = scanConfig.getBaseAuthUri();
+        this.tenant = scanConfig.getTenant();
+        this.clientId = scanConfig.getClientId();
+        this.clientSecret = scanConfig.getClientSecret();
+        this.apikey = scanConfig.getApiKey();
+        addIndividualParams(this.additionalParameters,
+                            Optional.ofNullable(scanConfig.getAdditionalParameters()).orElse(""));
 
-        if (StringUtils.isEmpty(this.apikey) && (StringUtils.isEmpty(this.key) && StringUtils.isEmpty(this.secret))) {
-            throw new CxException("Credentials were not set");
-        }
-    }
-
-    private URI packageExecutable() throws IOException, URISyntaxException {
-        String osName = System.getProperty("os.name");
-
-        URI uri = getJarURI();
-        URI executablePath;
-        if (osName.toLowerCase().contains("windows")) {
-            executablePath = getFile(uri, "cx.exe");
-        } else if (osName.toLowerCase().contains("mac")) {
-            executablePath = getFile(uri, "cx-mac");
+        if (StringUtils.isBlank(scanConfig.getPathToExecutable())) {
+            URL executableURL = getClass().getClassLoader().getResource(Execution.detectBinary());
+            Objects.requireNonNull(executableURL, "could not find CLI executable");
+            this.executable = executableURL.toURI();
         } else {
-            executablePath = getFile(uri, "cx-linux");
-        }
-        return executablePath;
-
-    }
-
-    private URI getJarURI() throws URISyntaxException {
-        final ProtectionDomain domain;
-        final CodeSource source;
-        final URL url;
-        final URI uri;
-
-        domain = CxAuth.class.getProtectionDomain();
-        source = domain.getCodeSource();
-        url = source.getLocation();
-        uri = url.toURI();
-
-        return (uri);
-    }
-
-    private URI getFile(URI jarLocation, final String fileName) throws IOException {
-        final File location;
-        final URI fileURI;
-        location = new File(jarLocation);
-
-        if (location.isDirectory()) {
-            fileURI = URI.create(jarLocation + fileName);
-        } else {
-            final ZipFile zipFile;
-
-            zipFile = new ZipFile(location);
-
-            try {
-                fileURI = extract(zipFile, fileName);
-                log.info("Location of the jar file: {}", fileURI);
-            } finally {
-                zipFile.close();
-            }
+            File file = new File(scanConfig.getPathToExecutable());
+            this.executable = file.toURI();
         }
 
-        return (fileURI);
-    }
-
-    private static URI extract(final ZipFile zipFile, final String fileName) throws IOException {
-        final File tempFile;
-        final ZipEntry entry;
-        final InputStream zipStream;
-        OutputStream fileStream;
-
-        tempFile = File.createTempFile(fileName, " ");
-        tempFile.deleteOnExit();
-        entry = zipFile.getEntry(fileName);
-
-        if (entry == null) {
-            throw new FileNotFoundException("cannot find file: " + fileName + " in archive: " + zipFile.getName());
-        }
-
-        zipStream = zipFile.getInputStream(entry);
-        fileStream = null;
-
-        try {
-            final byte[] buf;
-            int i;
-
-            fileStream = new FileOutputStream(tempFile);
-            buf = new byte[1024];
-
-            while ((i = zipStream.read(buf)) != -1) {
-                fileStream.write(buf, 0, i);
-            }
-        } finally {
-            close(zipStream);
-            close(fileStream);
-        }
-
-        return (tempFile.toURI());
-
-    }
-
-    private static void close(final Closeable stream) {
-        if (stream != null) {
-            try {
-                stream.close();
-            } catch (final IOException ex) {
-                ex.printStackTrace();
-            }
-        }
+        this.log.info("using executable: " + this.executable);
     }
 
     public CxCommandOutput cxScanShow(String id) throws IOException, InterruptedException {
@@ -197,23 +91,24 @@ public class CxAuth {
         return scanObject;
     }
 
-    public String cxGetResultsSummary(String scanID) throws IOException {
+    public String cxGetResultsSummary(String scanID) throws IOException, CxException {
         return runResultExecutionCommands(scanID, "summaryHTML", ".html");
     }
 
-    public String cxGetResultsList(String scanID) throws IOException {
+    public String cxGetResultsList(String scanID) throws IOException, CxException {
         return runResultExecutionCommands(scanID, "json", ".json");
     }
 
     public void cxGetResults(String resultType, String scanID, String fileName, String target)
-            throws IOException {
+            throws IOException, CxException {
 
         List<String> commands = buildResultCommand(resultType, scanID, fileName, target);
 
         runResultExecutionCommands(commands);
     }
 
-    private List<String> buildResultCommand(String resultType, String scanId, String outputName, String outputTarget) {
+    private List<String> buildResultCommand(String resultType, String scanId, String outputName, String outputTarget)
+            throws CxException {
         if (scanId.isEmpty()) {
             throw new CxException("Please provide the scan id ");
         }
@@ -239,7 +134,8 @@ public class CxAuth {
     }
 
 
-    private String runResultExecutionCommands(String scanId, String resultType, String extension) throws IOException {
+    private String runResultExecutionCommands(String scanId, String resultType, String extension)
+            throws IOException, CxException {
         Path tempDir = Files.createTempDirectory("cx");
         String fileName = Long.toString(System.nanoTime());
         List<String> commands = buildResultCommand(resultType, scanId, fileName, tempDir.toAbsolutePath().toString());
@@ -249,7 +145,7 @@ public class CxAuth {
         return new String(Files.readAllBytes(Paths.get(outputFile.getAbsolutePath())), StandardCharsets.UTF_8);
     }
 
-    public CxResultOutput cxGetResults(String scanId) throws IOException {
+    public CxResultOutput cxGetResults(String scanId) throws IOException, CxException {
         String results = cxGetResultsList(scanId);
         return new ObjectMapper()
                 .readerFor(CxResultOutput.class)
@@ -258,8 +154,7 @@ public class CxAuth {
 
     private String runResultExecutionCommands(List<String> commands) throws IOException {
         log.info("Process submitting to the executor");
-        ExecutionService exec = new ExecutionService();
-        Process process = exec.executeCommand(commands);
+        Process process = Execution.executeCommand(commands);
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         StringBuilder builder = new StringBuilder();
         String line;
@@ -276,10 +171,9 @@ public class CxAuth {
 
     private CxCommandOutput runExecutionCommands(List<String> commands) throws IOException, InterruptedException {
         log.info("Process submitting to the executor");
-        ExecutionService exec = new ExecutionService();
-        Process process = exec.executeCommand(commands);
+        Process process = Execution.executeCommand(commands);
         String line;
-        CxScan scanObject;
+        Scan scanObject;
         InputStream is = process.getInputStream();
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
@@ -288,7 +182,7 @@ public class CxAuth {
             log.info(line);
             if (!StringUtils.isBlank(line) && isValidJSON(line)) {
                 scanObject = transformToCxScanObject(line);
-                List<CxScan> scanList = new ArrayList<>();
+                List<Scan> scanList = new ArrayList<>();
                 scanList.add(scanObject);
                 cxCommandOutput.setScanObjectList(scanList);
             }
@@ -304,11 +198,11 @@ public class CxAuth {
         return cxCommandOutput;
     }
 
-    private CxScan transformToCxScanObject(String line) {
+    private Scan transformToCxScanObject(String line) {
         ObjectMapper objectMapper = new ObjectMapper();
-        CxScan scanObject;
+        Scan scanObject;
         try {
-            scanObject = objectMapper.readValue(line, new TypeReference<CxScan>() {
+            scanObject = objectMapper.readValue(line, new TypeReference<Scan>() {
             });
         } catch (JsonProcessingException e) {
             return null;
@@ -327,7 +221,7 @@ public class CxAuth {
         }
 
         commands.add("--base-uri");
-        commands.add(baseuri);
+        commands.add(baseUri);
 
         if (!StringUtils.isEmpty(this.baseAuthUri)) {
             commands.add("--base-auth-uri");
@@ -353,8 +247,7 @@ public class CxAuth {
         commands.add("auth");
         commands.add("validate");
 
-        ExecutionService executionService = new ExecutionService();
-        Process process = executionService.executeCommand(commands);
+        Process process = Execution.executeCommand(commands);
 
         BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
         process.waitFor();
@@ -371,10 +264,9 @@ public class CxAuth {
         List<String> commands = initialCommands();
         commands.add("scan");
         commands.add("list");
-        ExecutionService exec = new ExecutionService();
-        Process process = exec.executeCommand(commands);
+        Process process = Execution.executeCommand(commands);
         String line;
-        List<CxScan> list = new ArrayList<>();
+        List<Scan> list = new ArrayList<>();
         InputStream is = process.getInputStream();
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
@@ -398,7 +290,8 @@ public class CxAuth {
         return cxCommandOutput;
     }
 
-    public CxCommandOutput cxScanCreate(Map<CxParamType, String> params) throws IOException, InterruptedException {
+    public CxCommandOutput cxScanCreate(Map<CxParamType, String> params)
+            throws IOException, InterruptedException, CxException {
         log.info("Initialized scan creation");
         List<String> commands = initialCommands();
         commands.add("scan");
@@ -436,11 +329,11 @@ public class CxAuth {
     }
 
     private void addAuthCredentials(List<String> commands) {
-        if (key != null && secret != null) {
+        if (clientId != null && clientSecret != null) {
             commands.add("--client-id");
-            commands.add(key);
+            commands.add(clientId);
             commands.add("--client-secret");
-            commands.add(secret);
+            commands.add(clientSecret);
         } else if (apikey != null) {
             commands.add("--apikey");
             commands.add(apikey);
@@ -456,11 +349,11 @@ public class CxAuth {
         }
     }
 
-    private static List<CxScan> transformToCxScanList(String line) {
+    private static List<Scan> transformToCxScanList(String line) {
         ObjectMapper objectMapper = new ObjectMapper();
-        List<CxScan> scanList;
+        List<Scan> scanList;
         try {
-            scanList = objectMapper.readValue(line, new TypeReference<List<CxScan>>() {
+            scanList = objectMapper.readValue(line, new TypeReference<List<Scan>>() {
             });
         } catch (JsonProcessingException e) {
             return null;

@@ -1,7 +1,7 @@
 package com.checkmarx.ast.results;
 
 
-import com.checkmarx.ast.scans.CxScan;
+import com.checkmarx.ast.Scan;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,5 +11,5 @@ import java.util.List;
 @Setter
 public class CxCommandOutput {
     private int exitCode;
-    private List<CxScan> scanObjectList;
+    private List<Scan> scanObjectList;
 }
