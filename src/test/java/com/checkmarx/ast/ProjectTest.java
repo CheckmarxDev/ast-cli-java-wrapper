@@ -13,6 +13,7 @@ public class ProjectTest extends BaseTest {
     public void testProjectShow() throws Exception {
         CLIOutput<List<Project>> projectListOutput = wrapper.projectList();
         Assert.assertEquals(0, projectListOutput.getExitCode());
+        Assert.assertTrue(projectListOutput.getOutput().size() > 0);
         CLIOutput<Project> cliOutput = wrapper.projectShow(projectListOutput.getOutput().get(0).getID());
         Assert.assertEquals(0, cliOutput.getExitCode());
         Assert.assertEquals(projectListOutput.getOutput().get(0).getID(), cliOutput.getOutput().getID());

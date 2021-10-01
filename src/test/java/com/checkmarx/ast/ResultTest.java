@@ -16,6 +16,8 @@ public class ResultTest extends BaseTest {
     @Test
     public void testResultsHTML() throws Exception {
         CLIOutput<List<Scan>> scanList = wrapper.scanList();
+        Assert.assertEquals(0, scanList.getExitCode());
+        Assert.assertTrue(scanList.getOutput().size() > 0);
         String id = scanList.getOutput().get(0).getID();
         CLIOutput<String> cliOutput = wrapper.results(id, ReportFormat.summaryHTML);
         assertTrue(cliOutput.getOutput().length() > 0);
@@ -24,6 +26,8 @@ public class ResultTest extends BaseTest {
     @Test
     public void testResultsJSON() throws Exception {
         CLIOutput<List<Scan>> scanList = wrapper.scanList();
+        Assert.assertEquals(0, scanList.getExitCode());
+        Assert.assertTrue(scanList.getOutput().size() > 0);
         String id = scanList.getOutput().get(0).getID();
         CLIOutput<String> cliOutput = wrapper.results(id, ReportFormat.json);
         assertTrue(cliOutput.getOutput().length() > 0);
@@ -32,6 +36,8 @@ public class ResultTest extends BaseTest {
     @Test
     public void testResultsStructure() throws Exception {
         CLIOutput<List<Scan>> scanList = wrapper.scanList();
+        Assert.assertEquals(0, scanList.getExitCode());
+        Assert.assertTrue(scanList.getOutput().size() > 0);
         String id = scanList.getOutput().get(0).getID();
         CLIOutput<Results> cliOutput = wrapper.results(id);
         Assert.assertEquals(cliOutput.getOutput().getTotalCount(), cliOutput.getOutput().getResults().size());
