@@ -3,7 +3,6 @@ package com.checkmarx.ast;
 import com.checkmarx.ast.results.ReportFormat;
 import com.checkmarx.ast.results.Results;
 import com.checkmarx.ast.scan.Scan;
-import com.checkmarx.ast.wrapper.CxOutput;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,31 +15,28 @@ public class ResultTest extends BaseTest {
 
     @Test
     public void testResultsHTML() throws Exception {
-        CxOutput<List<Scan>> scanList = wrapper.scanList();
-        Assert.assertEquals(0, scanList.getExitCode());
-        Assert.assertTrue(scanList.getOutput().size() > 0);
-        String scanId = scanList.getOutput().get(0).getID();
-        CxOutput<String> cxOutput = wrapper.results(UUID.fromString(scanId), ReportFormat.summaryHTML);
-        assertTrue(cxOutput.getOutput().length() > 0);
+        List<Scan> scanList = wrapper.scanList();
+        Assert.assertTrue(scanList.size() > 0);
+        String scanId = scanList.get(0).getID();
+        String results = wrapper.results(UUID.fromString(scanId), ReportFormat.summaryHTML);
+        assertTrue(results.length() > 0);
     }
 
     @Test
     public void testResultsJSON() throws Exception {
-        CxOutput<List<Scan>> scanList = wrapper.scanList();
-        Assert.assertEquals(0, scanList.getExitCode());
-        Assert.assertTrue(scanList.getOutput().size() > 0);
-        String scanId = scanList.getOutput().get(0).getID();
-        CxOutput<String> cxOutput = wrapper.results(UUID.fromString(scanId), ReportFormat.json);
-        assertTrue(cxOutput.getOutput().length() > 0);
+        List<Scan> scanList = wrapper.scanList();
+        Assert.assertTrue(scanList.size() > 0);
+        String scanId = scanList.get(0).getID();
+        String results = wrapper.results(UUID.fromString(scanId), ReportFormat.json);
+        assertTrue(results.length() > 0);
     }
 
     @Test
     public void testResultsStructure() throws Exception {
-        CxOutput<List<Scan>> scanList = wrapper.scanList();
-        Assert.assertEquals(0, scanList.getExitCode());
-        Assert.assertTrue(scanList.getOutput().size() > 0);
-        String scanId = scanList.getOutput().get(0).getID();
-        CxOutput<Results> cxOutput = wrapper.results(UUID.fromString(scanId));
-        Assert.assertEquals(cxOutput.getOutput().getTotalCount(), cxOutput.getOutput().getResults().size());
+        List<Scan> scanList = wrapper.scanList();
+        Assert.assertTrue(scanList.size() > 0);
+        String scanId = scanList.get(0).getID();
+        Results results = wrapper.results(UUID.fromString(scanId));
+        Assert.assertEquals(results.getTotalCount(), results.getResults().size());
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 
-final class Execution {
+public final class Execution {
 
     private Execution() {
 
@@ -28,51 +28,59 @@ final class Execution {
     private static final String FILE_NAME_LINUX = "cx-linux";
     private static final String FILE_NAME_MAC = "cx-mac";
     private static final String FILE_NAME_WINDOWS = "cx.exe";
-    private static final String UNSUPPORTED_ARCH = "Unsupported architecture";
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    static <T> CxOutput<T> executeCommand(List<String> arguments,
-                                          Logger logger,
-                                          Function<String, T> lineParser)
-            throws IOException, InterruptedException {
+    private static URL executable = null;
+
+    static <T> T executeCommand(List<String> arguments,
+                                Logger logger,
+                                Function<String, T> lineParser)
+            throws IOException, InterruptedException, CxException {
         Process process = buildProcess(arguments);
         try (BufferedReader br = getReader(process)) {
             T executionResult = null;
             String line;
+            StringBuilder stringBuilder = new StringBuilder();
             while ((line = br.readLine()) != null) {
                 logger.info(line);
+                stringBuilder.append(line).append(line);
                 T parsedLine = lineParser.apply(line);
                 if (parsedLine != null) {
                     executionResult = parsedLine;
                 }
             }
             process.waitFor();
-            return new CxOutput<>(process.exitValue(), executionResult);
+            if (process.exitValue() != 0) {
+                throw new CxException(process.exitValue(), stringBuilder.toString());
+            }
+            return executionResult;
         }
     }
 
-    static CxOutput<String> executeCommand(List<String> arguments,
-                                           Logger logger,
-                                           String directory,
-                                           String file)
-            throws IOException, InterruptedException {
+    static String executeCommand(List<String> arguments,
+                                 Logger logger,
+                                 String directory,
+                                 String file)
+            throws IOException, InterruptedException, CxException {
         Process process = buildProcess(arguments);
-        process.waitFor();
-        if (process.exitValue() != 0) {
-            return new CxOutput<>(process.exitValue(), null);
-        }
 
         try (BufferedReader br = getReader(process)) {
             String line;
+            StringBuilder stringBuilder = new StringBuilder();
             while ((line = br.readLine()) != null) {
                 logger.info(line);
+                stringBuilder.append(line).append(LINE_SEPARATOR);
+            }
+            process.waitFor();
+            if (process.exitValue() != 0) {
+                throw new CxException(process.exitValue(), stringBuilder.toString());
             }
         }
 
         File outputFile = new File(directory, file);
-        String fileContent = new String(Files.readAllBytes(Paths.get(outputFile.getAbsolutePath())),
-                                        StandardCharsets.UTF_8);
 
-        return new CxOutput<>(process.exitValue(), fileContent);
+        return new String(Files.readAllBytes(Paths.get(outputFile.getAbsolutePath())),
+                          StandardCharsets.UTF_8);
     }
 
     private static BufferedReader getReader(Process process) {
@@ -93,27 +101,30 @@ final class Execution {
      * @return binary name
      * @throws IOException when architecture is unsupported
      */
-    static URI detectBinary() throws IOException, URISyntaxException {
-        final String arch = OS_NAME;
-        String fileName = null;
-        if (arch.contains(OS_LINUX)) {
-            fileName = FILE_NAME_LINUX;
-        } else if (arch.contains(OS_WINDOWS)) {
-            fileName = FILE_NAME_WINDOWS;
-        } else {
-            for (String macStr : OS_MAC) {
-                if (arch.contains(macStr)) {
-                    fileName = FILE_NAME_MAC;
-                    break;
+    public static URI detectBinary() throws IOException, URISyntaxException {
+        if (executable == null) {
+            final String arch = OS_NAME;
+            String fileName = null;
+            if (arch.contains(OS_LINUX)) {
+                fileName = FILE_NAME_LINUX;
+            } else if (arch.contains(OS_WINDOWS)) {
+                fileName = FILE_NAME_WINDOWS;
+            } else {
+                for (String macStr : OS_MAC) {
+                    if (arch.contains(macStr)) {
+                        fileName = FILE_NAME_MAC;
+                        break;
+                    }
                 }
             }
+            if (fileName == null) {
+                throw new IOException("Unsupported architecture");
+            }
+            executable = Execution.class.getClassLoader().getResource(fileName);
         }
-        if (fileName == null) {
-            throw new IOException(UNSUPPORTED_ARCH);
-        }
-        URL resource = Execution.class.getClassLoader().getResource(fileName);
+        URL resource = executable;
         if (resource == null) {
-            throw new NoSuchFileException("could not find CLI executable");
+            throw new NoSuchFileException("Could not find CLI executable");
         }
         return resource.toURI();
     }

@@ -29,15 +29,13 @@ public class CxWrapper {
     @NonNull
     private final URI executable;
 
-    public CxWrapper(CxConfig cxConfig) throws CxConfig.InvalidCLIConfigException, URISyntaxException, IOException {
+    public CxWrapper(@NonNull CxConfig cxConfig)
+            throws CxConfig.InvalidCLIConfigException, URISyntaxException, IOException {
         this(cxConfig, LoggerFactory.getLogger(CxWrapper.class));
     }
 
-    public CxWrapper(CxConfig cxConfig, Logger logger) throws CxConfig.InvalidCLIConfigException,
+    public CxWrapper(@NonNull CxConfig cxConfig, @NonNull Logger logger) throws CxConfig.InvalidCLIConfigException,
             URISyntaxException, IOException {
-        if (cxConfig == null) {
-            throw new CxConfig.InvalidCLIConfigException("configuration not supplied");
-        }
         cxConfig.validate();
         this.cxConfig = cxConfig;
         this.logger = logger;
@@ -47,7 +45,7 @@ public class CxWrapper {
         this.logger.info("using executable: " + executable);
     }
 
-    public CxOutput<String> authValidate() throws IOException, InterruptedException {
+    public String authValidate() throws IOException, InterruptedException, CxException {
         this.logger.info("initialized authentication validation command");
 
         List<String> arguments = commonArguments();
@@ -57,7 +55,7 @@ public class CxWrapper {
         return Execution.executeCommand(arguments, logger, (line) -> line);
     }
 
-    public CxOutput<Scan> scanShow(@NonNull UUID scanId) throws IOException, InterruptedException {
+    public Scan scanShow(@NonNull UUID scanId) throws IOException, InterruptedException, CxException {
         this.logger.info("initialized scan retrieval for id: {}", scanId);
 
         List<String> arguments = commonArguments();
@@ -70,11 +68,11 @@ public class CxWrapper {
         return Execution.executeCommand(arguments, logger, Scan::fromLine);
     }
 
-    public CxOutput<List<Scan>> scanList() throws IOException, InterruptedException {
+    public List<Scan> scanList() throws IOException, InterruptedException, CxException {
         return scanList("");
     }
 
-    public CxOutput<List<Scan>> scanList(String filter) throws IOException, InterruptedException {
+    public List<Scan> scanList(String filter) throws IOException, InterruptedException, CxException {
         this.logger.info("initialized retrieval for scan list {}", filter);
 
         List<String> arguments = commonArguments();
@@ -89,12 +87,12 @@ public class CxWrapper {
         return Execution.executeCommand(arguments, logger, Scan::listFromLine);
     }
 
-    public CxOutput<Scan> scanCreate(@NonNull Map<String, String> params) throws IOException, InterruptedException {
+    public Scan scanCreate(@NonNull Map<String, String> params) throws IOException, InterruptedException, CxException {
         return scanCreate(params, "");
     }
 
-    public CxOutput<Scan> scanCreate(@NonNull Map<String, String> params, String additionalParameters)
-            throws IOException, InterruptedException {
+    public Scan scanCreate(@NonNull Map<String, String> params, String additionalParameters)
+            throws IOException, InterruptedException, CxException {
         this.logger.info("initialized scan create command");
 
         List<String> arguments = commonArguments();
@@ -112,7 +110,7 @@ public class CxWrapper {
         return Execution.executeCommand(arguments, logger, Scan::fromLine);
     }
 
-    public CxOutput<Project> projectShow(@NonNull UUID projectId) throws IOException, InterruptedException {
+    public Project projectShow(@NonNull UUID projectId) throws IOException, InterruptedException, CxException {
         this.logger.info("initialized project retrieval for id: {}", projectId);
 
         List<String> arguments = commonArguments();
@@ -125,11 +123,11 @@ public class CxWrapper {
         return Execution.executeCommand(arguments, logger, Project::fromLine);
     }
 
-    public CxOutput<List<Project>> projectList() throws IOException, InterruptedException {
+    public List<Project> projectList() throws IOException, InterruptedException, CxException {
         return projectList("");
     }
 
-    public CxOutput<List<Project>> projectList(String filter) throws IOException, InterruptedException {
+    public List<Project> projectList(String filter) throws IOException, InterruptedException, CxException {
         this.logger.info("initialized retrieval for project list {}", filter);
 
         List<String> arguments = commonArguments();
@@ -144,19 +142,14 @@ public class CxWrapper {
         return Execution.executeCommand(arguments, logger, Project::listFromLine);
     }
 
-    public CxOutput<Results> results(@NonNull UUID scanId) throws IOException, InterruptedException {
-        CxOutput<String> output = results(scanId, ReportFormat.json);
-        Results results = null;
-        if (output.getExitCode() == 0) {
-            results = new ObjectMapper()
-                    .readerFor(Results.class)
-                    .readValue(output.getOutput());
-        }
-        return new CxOutput<>(output.getExitCode(), results);
+    public Results results(@NonNull UUID scanId) throws IOException, InterruptedException, CxException {
+        return new ObjectMapper()
+                .readerFor(Results.class)
+                .readValue(results(scanId, ReportFormat.json));
     }
 
-    public CxOutput<String> results(@NonNull UUID scanId, ReportFormat reportFormat)
-            throws IOException, InterruptedException {
+    public String results(@NonNull UUID scanId, ReportFormat reportFormat)
+            throws IOException, InterruptedException, CxException {
         this.logger.info("initialized results command {}", reportFormat);
 
         String tempDir = Files.createTempDirectory("cx").toAbsolutePath().toString();

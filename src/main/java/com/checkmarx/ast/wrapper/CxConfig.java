@@ -33,12 +33,12 @@ public class CxConfig {
 
     void validate() throws InvalidCLIConfigException {
         if (StringUtils.isBlank(getBaseUri())) {
-            throw new InvalidCLIConfigException("checkmarx server URL was not set");
+            throw new InvalidCLIConfigException("Checkmarx server URL is not set");
         }
 
         if (StringUtils.isBlank(getApiKey())
             && (StringUtils.isBlank(getClientId()) || StringUtils.isBlank(getClientSecret()))) {
-            throw new InvalidCLIConfigException("credentials were not set");
+            throw new InvalidCLIConfigException("Credentials were is set");
         }
     }
 

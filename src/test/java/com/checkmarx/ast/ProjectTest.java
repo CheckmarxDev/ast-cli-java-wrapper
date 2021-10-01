@@ -1,7 +1,6 @@
 package com.checkmarx.ast;
 
 import com.checkmarx.ast.project.Project;
-import com.checkmarx.ast.wrapper.CxOutput;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,18 +11,15 @@ public class ProjectTest extends BaseTest {
 
     @Test
     public void testProjectShow() throws Exception {
-        CxOutput<List<Project>> projectListOutput = wrapper.projectList();
-        Assert.assertEquals(0, projectListOutput.getExitCode());
-        Assert.assertTrue(projectListOutput.getOutput().size() > 0);
-        CxOutput<Project> cxOutput = wrapper.projectShow(UUID.fromString(projectListOutput.getOutput().get(0).getID()));
-        Assert.assertEquals(0, cxOutput.getExitCode());
-        Assert.assertEquals(projectListOutput.getOutput().get(0).getID(), cxOutput.getOutput().getID());
+        List<Project> projectList = wrapper.projectList();
+        Assert.assertTrue(projectList.size() > 0);
+        Project project = wrapper.projectShow(UUID.fromString(projectList.get(0).getID()));
+        Assert.assertEquals(projectList.get(0).getID(), project.getID());
     }
 
     @Test
     public void testProjectList() throws Exception {
-        CxOutput<List<Project>> cxOutput = wrapper.projectList("limit=10");
-        Assert.assertEquals(0, cxOutput.getExitCode());
-        Assert.assertTrue(cxOutput.getOutput().size() <= 10);
+        List<Project> projectList = wrapper.projectList("limit=10");
+        Assert.assertTrue(projectList.size() <= 10);
     }
 }
