@@ -1,65 +1,68 @@
 package com.checkmarx.ast;
 
 import com.checkmarx.ast.scan.Scan;
-import com.checkmarx.ast.wrapper.CLIConstants;
-import com.checkmarx.ast.wrapper.CLIOutput;
+import com.checkmarx.ast.wrapper.CxConstants;
+import com.checkmarx.ast.wrapper.CxOutput;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class ScanTest extends BaseTest {
 
 
     private Map<String, String> commonParams() {
         Map<String, String> params = new HashMap<>();
-        params.put(CLIConstants.PROJECT_NAME, "JavaWrapperTestCases");
-        params.put(CLIConstants.SOURCE, ".");
-        params.put(CLIConstants.FILE_FILTER, "*.java");
-        params.put(CLIConstants.SAST_PRESET_NAME, "Checkmarx Default");
+        params.put(CxConstants.PROJECT_NAME, "JavaWrapperTestCases");
+        params.put(CxConstants.SOURCE, ".");
+        params.put(CxConstants.FILE_FILTER, "*.java");
+        params.put(CxConstants.SAST_PRESET_NAME, "Checkmarx Default");
         return params;
     }
 
     @Test
     public void testScanShow() throws Exception {
-        CLIOutput<List<Scan>> scanList = wrapper.scanList();
+        CxOutput<List<Scan>> scanList = wrapper.scanList();
         Assert.assertEquals(0, scanList.getExitCode());
-        CLIOutput<Scan> cliOutput = wrapper.scanShow(scanList.getOutput().get(0).getID());
-        Assert.assertEquals(0, cliOutput.getExitCode());
-        Assert.assertEquals(scanList.getOutput().get(0).getID(), cliOutput.getOutput().getID());
+        CxOutput<Scan> cxOutput = wrapper.scanShow(UUID.fromString(scanList.getOutput().get(0).getID()));
+        Assert.assertEquals(0, cxOutput.getExitCode());
+        Assert.assertEquals(scanList.getOutput().get(0).getID(), cxOutput.getOutput().getID());
     }
 
     @Test
     public void testScanList() throws Exception {
-        CLIOutput<List<Scan>> cliOutput = wrapper.scanList("limit=10");
-        Assert.assertEquals(0, cliOutput.getExitCode());
-        Assert.assertTrue(cliOutput.getOutput().size() <= 10);
+        CxOutput<List<Scan>> cxOutput = wrapper.scanList("limit=10");
+        Assert.assertEquals(0, cxOutput.getExitCode());
+        Assert.assertTrue(cxOutput.getOutput().size() <= 10);
     }
 
     @Test
     public void testScanCreate() throws Exception {
         Map<String, String> params = commonParams();
-        CLIOutput<Scan> cliOutput = wrapper.scanCreate(params);
-        Assert.assertEquals(0, cliOutput.getExitCode());
-        Assert.assertEquals("Completed", wrapper.scanShow(cliOutput.getOutput().getID()).getOutput().getStatus());
+        CxOutput<Scan> cxOutput = wrapper.scanCreate(params);
+        Assert.assertEquals(0, cxOutput.getExitCode());
+        Assert.assertEquals("Completed",
+                            wrapper.scanShow(UUID.fromString(cxOutput.getOutput().getID())).getOutput().getStatus());
     }
 
     @Test
     public void testScanCreateWithBranchName() throws Exception {
         Map<String, String> params = commonParams();
-        params.put(CLIConstants.BRANCH, "test");
-        CLIOutput<Scan> cliOutput = wrapper.scanCreate(params);
-        Assert.assertEquals(0, cliOutput.getExitCode());
-        Assert.assertEquals("Completed", wrapper.scanShow(cliOutput.getOutput().getID()).getOutput().getStatus());
+        params.put(CxConstants.BRANCH, "test");
+        CxOutput<Scan> cxOutput = wrapper.scanCreate(params);
+        Assert.assertEquals(0, cxOutput.getExitCode());
+        Assert.assertEquals("Completed",
+                            wrapper.scanShow(UUID.fromString(cxOutput.getOutput().getID())).getOutput().getStatus());
     }
 
     @Test
     public void testScanCreateWrongPreset() throws Exception {
         Map<String, String> params = commonParams();
-        params.put(CLIConstants.SAST_PRESET_NAME, "InvalidPreset");
-        CLIOutput<Scan> cliOutput = wrapper.scanCreate(params);
-        Assert.assertEquals(1, cliOutput.getExitCode());
+        params.put(CxConstants.SAST_PRESET_NAME, "InvalidPreset");
+        CxOutput<Scan> cxOutput = wrapper.scanCreate(params);
+        Assert.assertEquals(1, cxOutput.getExitCode());
     }
 }

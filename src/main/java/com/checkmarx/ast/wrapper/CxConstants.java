@@ -1,6 +1,6 @@
 package com.checkmarx.ast.wrapper;
 
-public final class CLIConstants {
+public final class CxConstants {
 
     public static final String SOURCE = "-s";
     public static final String VERBOSE = "-v";

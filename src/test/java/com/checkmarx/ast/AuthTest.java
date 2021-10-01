@@ -1,8 +1,8 @@
 package com.checkmarx.ast;
 
-import com.checkmarx.ast.wrapper.CLIConfig;
-import com.checkmarx.ast.wrapper.CLIOutput;
-import com.checkmarx.ast.wrapper.CLIWrapper;
+import com.checkmarx.ast.wrapper.CxConfig;
+import com.checkmarx.ast.wrapper.CxOutput;
+import com.checkmarx.ast.wrapper.CxWrapper;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,16 +13,16 @@ public class AuthTest extends BaseTest {
 
     @Test
     public void testAuthValidate() throws IOException, InterruptedException {
-        CLIOutput<String> cliOutput = wrapper.authValidate();
-        Assert.assertEquals(0, cliOutput.getExitCode());
+        CxOutput<String> cxOutput = wrapper.authValidate();
+        Assert.assertEquals(0, cxOutput.getExitCode());
     }
 
     @Test
     public void testAuthFailure()
-            throws IOException, InterruptedException, CLIConfig.InvalidCLIConfigException, URISyntaxException {
-        CLIConfig cliConfig = getConfig();
-        cliConfig.setBaseAuthUri("wrongAuth");
-        CLIOutput<String> cliOutput = new CLIWrapper(cliConfig, getLogger()).authValidate();
-        Assert.assertEquals(1, cliOutput.getExitCode());
+            throws IOException, InterruptedException, CxConfig.InvalidCLIConfigException, URISyntaxException {
+        CxConfig cxConfig = getConfig();
+        cxConfig.setBaseAuthUri("wrongAuth");
+        CxOutput<String> cxOutput = new CxWrapper(cxConfig, getLogger()).authValidate();
+        Assert.assertEquals(1, cxOutput.getExitCode());
     }
 }

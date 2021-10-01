@@ -1,18 +1,18 @@
 package com.checkmarx.ast;
 
-import com.checkmarx.ast.wrapper.CLIConfig;
-import com.checkmarx.ast.wrapper.CLIWrapper;
+import com.checkmarx.ast.wrapper.CxConfig;
+import com.checkmarx.ast.wrapper.CxWrapper;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BaseTest {
 
-    protected CLIWrapper wrapper;
+    protected CxWrapper wrapper;
 
     @Before
     public void init() throws Exception {
-        wrapper = new CLIWrapper(getConfig(), getLogger());
+        wrapper = new CxWrapper(getConfig(), getLogger());
     }
 
     private static final String CX_BASE_URI = getEnvOrNull("CX_BASE_URI");
@@ -29,17 +29,17 @@ public abstract class BaseTest {
         return logger;
     }
 
-    protected static CLIConfig getConfig() {
-        return CLIConfig.builder()
-                        .baseUri(CX_BASE_URI)
-                        .baseAuthUri(CX_BASE_AUTH_URI)
-                        .tenant(CX_TENANT)
-                        .apiKey(CX_APIKEY)
-                        .clientId(CX_CLIENT_ID)
-                        .clientSecret(CX_CLIENT_SECRET)
-                        .additionalParameters(CX_ADDITIONAL_PARAMETERS)
-                        .pathToExecutable(PATH_TO_EXECUTABLE)
-                        .build();
+    protected static CxConfig getConfig() {
+        return CxConfig.builder()
+                       .baseUri(CX_BASE_URI)
+                       .baseAuthUri(CX_BASE_AUTH_URI)
+                       .tenant(CX_TENANT)
+                       .apiKey(CX_APIKEY)
+                       .clientId(CX_CLIENT_ID)
+                       .clientSecret(CX_CLIENT_SECRET)
+                       .additionalParameters(CX_ADDITIONAL_PARAMETERS)
+                       .pathToExecutable(PATH_TO_EXECUTABLE)
+                       .build();
     }
 
     private static String getEnvOrNull(String key) {

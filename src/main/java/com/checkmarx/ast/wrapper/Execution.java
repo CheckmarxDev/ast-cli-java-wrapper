@@ -33,7 +33,7 @@ final class Execution {
     private static final String FILE_NAME_WINDOWS = "cx.exe";
     private static final String UNSUPPORTED_ARCH = "Unsupported architecture";
 
-    static <T> CLIOutput<T> executeCommand(List<String> arguments, Function<String, T> lineParser)
+    static <T> CxOutput<T> executeCommand(List<String> arguments, Function<String, T> lineParser)
             throws IOException, InterruptedException {
         Process process = buildProcess(arguments);
         try (BufferedReader br = getReader(process)) {
@@ -47,23 +47,23 @@ final class Execution {
                 }
             }
             process.waitFor();
-            return new CLIOutput<>(process.exitValue(), executionResult);
+            return new CxOutput<>(process.exitValue(), executionResult);
         }
     }
 
-    static CLIOutput<String> executeCommand(List<String> arguments, String directory, String file)
+    static CxOutput<String> executeCommand(List<String> arguments, String directory, String file)
             throws IOException, InterruptedException {
         Process process = buildProcess(arguments);
         process.waitFor();
         if (process.exitValue() != 0) {
-            return new CLIOutput<>(process.exitValue(), null);
+            return new CxOutput<>(process.exitValue(), null);
         }
 
         File outputFile = new File(directory, file);
         String fileContent = new String(Files.readAllBytes(Paths.get(outputFile.getAbsolutePath())),
                                         StandardCharsets.UTF_8);
 
-        return new CLIOutput<>(process.exitValue(), fileContent);
+        return new CxOutput<>(process.exitValue(), fileContent);
     }
 
     private static BufferedReader getReader(Process process) {

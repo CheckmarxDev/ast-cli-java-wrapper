@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 @Data
 @Builder
-public class CLIConfig {
+public class CxConfig {
 
     private static final Pattern pattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 
@@ -46,25 +46,25 @@ public class CLIConfig {
         List<String> commands = new ArrayList<>();
 
         if (StringUtils.isNotBlank(getClientId()) && StringUtils.isNotBlank(getClientSecret())) {
-            commands.add(CLIConstants.CLIENT_ID);
+            commands.add(CxConstants.CLIENT_ID);
             commands.add(getClientId());
-            commands.add(CLIConstants.CLIENT_SECRET);
+            commands.add(CxConstants.CLIENT_SECRET);
             commands.add(getClientSecret());
         } else if (StringUtils.isNotBlank(getApiKey())) {
-            commands.add(CLIConstants.API_KEY);
+            commands.add(CxConstants.API_KEY);
             commands.add(getApiKey());
         }
 
         if (StringUtils.isNotBlank(getTenant())) {
-            commands.add(CLIConstants.TENANT);
+            commands.add(CxConstants.TENANT);
             commands.add(getTenant());
         }
 
-        commands.add(CLIConstants.BASE_URI);
+        commands.add(CxConstants.BASE_URI);
         commands.add(getBaseUri());
 
         if (StringUtils.isNotBlank(getBaseAuthUri())) {
-            commands.add(CLIConstants.BASE_AUTH_URI);
+            commands.add(CxConstants.BASE_AUTH_URI);
             commands.add(getBaseAuthUri());
         }
 
@@ -80,10 +80,10 @@ public class CLIConfig {
     }
 
     @SuppressWarnings("ALL")
-    public static class CLIConfigBuilder {
+    public static class CxConfigBuilder {
         private List<String> additionalParameters;
 
-        public CLIConfigBuilder additionalParameters(String additionalParameters) {
+        public CxConfigBuilder additionalParameters(String additionalParameters) {
             this.additionalParameters = parseAdditionalParameters(additionalParameters);
             return this;
         }
