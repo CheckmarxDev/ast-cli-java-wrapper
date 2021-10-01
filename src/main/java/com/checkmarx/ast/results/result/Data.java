@@ -1,4 +1,4 @@
-package com.checkmarx.ast.results.structure;
+package com.checkmarx.ast.results.result;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -8,15 +8,12 @@ import lombok.*;
 
 import java.util.List;
 
-@Data
-@Builder
+
 @Value
-@EqualsAndHashCode
-@ToString
 @JsonDeserialize()
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CxResultData {
+public class Data {
 
     String queryId;
     String queryName;
@@ -24,17 +21,17 @@ public class CxResultData {
     String resultHash;
     String languageName;
     String description;
-    List<CxResultDataNode> nodes;
-    List<CxResultPackageData> packageData;
+    List<Node> nodes;
+    List<PackageData> packageData;
 
-    public CxResultData(@JsonProperty("queryId") String queryId,
-                        @JsonProperty("queryName") String queryName,
-                        @JsonProperty("group") String group,
-                        @JsonProperty("resultHash") String resultHash,
-                        @JsonProperty("languageName") String languageName,
-                        @JsonProperty("description") String description,
-                        @JsonProperty("nodes") List<CxResultDataNode> nodes,
-                        @JsonProperty("packageData") List<CxResultPackageData> packageData) {
+    public Data(@JsonProperty("queryId") String queryId,
+                @JsonProperty("queryName") String queryName,
+                @JsonProperty("group") String group,
+                @JsonProperty("resultHash") String resultHash,
+                @JsonProperty("languageName") String languageName,
+                @JsonProperty("description") String description,
+                @JsonProperty("nodes") List<Node> nodes,
+                @JsonProperty("packageData") List<PackageData> packageData) {
         this.queryId = queryId;
         this.queryName = queryName;
         this.group = group;

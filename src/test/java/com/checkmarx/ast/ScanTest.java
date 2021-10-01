@@ -1,40 +1,65 @@
 package com.checkmarx.ast;
 
+import com.checkmarx.ast.scan.Scan;
+import com.checkmarx.ast.wrapper.CLIConstants;
+import com.checkmarx.ast.wrapper.CLIOutput;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ScanTest extends BaseTest {
 
-    @Test
-    public void testScanShow() throws IOException, InterruptedException {
-        String scanId = "cebb02f1-63b8-44f7-a2fe-3c67bd48afe4";
-        CLIOutput<Scan> scanCLIOutput = wrapper.scanShow(scanId);
-        Assert.assertEquals(0, scanCLIOutput.getExitCode());
-        Assert.assertEquals(scanId, scanCLIOutput.getOutput().getID());
-    }
 
-    @Test
-    public void testScanList() throws IOException, InterruptedException {
-        CLIOutput<List<Scan>> scanCLIOutput = wrapper.scanList("limit=10");
-        Assert.assertEquals(0, scanCLIOutput.getExitCode());
-        Assert.assertTrue(scanCLIOutput.getOutput().size() <= 10);
-    }
-
-    @Test
-    public void testScanCreate() throws IOException, InterruptedException {
+    private Map<String, String> commonParams() {
         Map<String, String> params = new HashMap<>();
-        params.put("--project-name", "JavaWrapperTestCases");
-        params.put("--scan-types", "sast");
-        params.put("-s", ".");
-        params.put("--file-filter", "*.java");
-        params.put("--sast-preset-name", "Checkmarx Default");
-        CLIOutput<Scan> scanCLIOutput = wrapper.scanCreate(params, "");
-        Assert.assertEquals(0, scanCLIOutput.getExitCode());
-        Assert.assertEquals("Completed", wrapper.scanShow(scanCLIOutput.getOutput().getID()).getOutput().getStatus());
+        params.put(CLIConstants.PROJECT_NAME, "JavaWrapperTestCases");
+        params.put(CLIConstants.SOURCE, ".");
+        params.put(CLIConstants.FILE_FILTER, "*.java");
+        params.put(CLIConstants.SAST_PRESET_NAME, "Checkmarx Default");
+        return params;
+    }
+
+    @Test
+    public void testScanShow() throws Exception {
+        CLIOutput<List<Scan>> scanList = wrapper.scanList();
+        Assert.assertEquals(0, scanList.getExitCode());
+        CLIOutput<Scan> cliOutput = wrapper.scanShow(scanList.getOutput().get(0).getID());
+        Assert.assertEquals(0, cliOutput.getExitCode());
+        Assert.assertEquals(scanList.getOutput().get(0).getID(), cliOutput.getOutput().getID());
+    }
+
+    @Test
+    public void testScanList() throws Exception {
+        CLIOutput<List<Scan>> cliOutput = wrapper.scanList("limit=10");
+        Assert.assertEquals(0, cliOutput.getExitCode());
+        Assert.assertTrue(cliOutput.getOutput().size() <= 10);
+    }
+
+    @Test
+    public void testScanCreate() throws Exception {
+        Map<String, String> params = commonParams();
+        CLIOutput<Scan> cliOutput = wrapper.scanCreate(params);
+        Assert.assertEquals(0, cliOutput.getExitCode());
+        Assert.assertEquals("Completed", wrapper.scanShow(cliOutput.getOutput().getID()).getOutput().getStatus());
+    }
+
+    @Test
+    public void testScanCreateWithBranchName() throws Exception {
+        Map<String, String> params = commonParams();
+        params.put(CLIConstants.BRANCH, "test");
+        CLIOutput<Scan> cliOutput = wrapper.scanCreate(params);
+        Assert.assertEquals(0, cliOutput.getExitCode());
+        Assert.assertEquals("Completed", wrapper.scanShow(cliOutput.getOutput().getID()).getOutput().getStatus());
+    }
+
+    @Test
+    public void testScanCreateWrongPreset() throws Exception {
+        Map<String, String> params = commonParams();
+        params.put(CLIConstants.SAST_PRESET_NAME, "InvalidPreset");
+        CLIOutput<Scan> cliOutput = wrapper.scanCreate(params);
+        Assert.assertEquals(1, cliOutput.getExitCode());
     }
 }

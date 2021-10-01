@@ -1,4 +1,4 @@
-package com.checkmarx.ast;
+package com.checkmarx.ast.wrapper;
 
 import lombok.Value;
 

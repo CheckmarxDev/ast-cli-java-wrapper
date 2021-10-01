@@ -1,21 +1,22 @@
-package com.checkmarx.ast;
+package com.checkmarx.ast.wrapper;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Function;
 
-public final class Execution {
+final class Execution {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Execution.class);
 
@@ -32,22 +33,17 @@ public final class Execution {
     private static final String FILE_NAME_WINDOWS = "cx.exe";
     private static final String UNSUPPORTED_ARCH = "Unsupported architecture";
 
-    public static Process executeCommand(List<String> commands) throws IOException {
-        ProcessBuilder lmBuilder = new ProcessBuilder(commands);
-        lmBuilder.redirectErrorStream(true);
-        return lmBuilder.start();
-    }
-
-    static <T> CLIOutput<T> executeCommand(List<String> commands, Function<String, T> lineParser)
+    static <T> CLIOutput<T> executeCommand(List<String> arguments, Function<String, T> lineParser)
             throws IOException, InterruptedException {
-        Process process = buildProcess(commands);
+        Process process = buildProcess(arguments);
         try (BufferedReader br = getReader(process)) {
             T executionResult = null;
             String line;
             while ((line = br.readLine()) != null) {
                 LOGGER.debug(line);
-                if (!StringUtils.isBlank(line) && isValidJSON(line)) {
-                    executionResult = lineParser.apply(line);
+                T parsedLine = lineParser.apply(line);
+                if (parsedLine != null) {
+                    executionResult = parsedLine;
                 }
             }
             process.waitFor();
@@ -55,15 +51,19 @@ public final class Execution {
         }
     }
 
-    static CLIOutput<String> executeTextCommand(List<String> commands)
+    static CLIOutput<String> executeCommand(List<String> arguments, String directory, String file)
             throws IOException, InterruptedException {
-        Process process = buildProcess(commands);
-        try (BufferedReader br = getReader(process)) {
-            process.waitFor();
-            String line = br.readLine();
-            LOGGER.debug(line);
-            return new CLIOutput<>(process.exitValue(), line);
+        Process process = buildProcess(arguments);
+        process.waitFor();
+        if (process.exitValue() != 0) {
+            return new CLIOutput<>(process.exitValue(), null);
         }
+
+        File outputFile = new File(directory, file);
+        String fileContent = new String(Files.readAllBytes(Paths.get(outputFile.getAbsolutePath())),
+                                        StandardCharsets.UTF_8);
+
+        return new CLIOutput<>(process.exitValue(), fileContent);
     }
 
     private static BufferedReader getReader(Process process) {
@@ -78,39 +78,32 @@ public final class Execution {
         return lmBuilder.start();
     }
 
-    private static boolean isValidJSON(final String json) {
-        boolean valid = false;
-        try {
-            final JsonParser parser = new ObjectMapper().createParser(json);
-            //noinspection StatementWithEmptyBody
-            while (parser.nextToken() != null) {
-            }
-            valid = true;
-        } catch (IOException ignored) {
-        }
-        return valid;
-    }
-
-
     /**
      * Detect binary name by the current architecture.
      *
      * @return binary name
      * @throws IOException when architecture is unsupported
      */
-    public static String detectBinary() throws IOException {
+    static URI detectBinary() throws IOException, URISyntaxException {
         final String arch = OS_NAME;
+        String fileName = null;
         if (arch.contains(OS_LINUX)) {
-            return FILE_NAME_LINUX;
+            fileName = FILE_NAME_LINUX;
         } else if (arch.contains(OS_WINDOWS)) {
-            return FILE_NAME_WINDOWS;
+            fileName = FILE_NAME_WINDOWS;
         } else {
             for (String macStr : OS_MAC) {
                 if (arch.contains(macStr)) {
-                    return FILE_NAME_MAC;
+                    fileName = FILE_NAME_MAC;
+                    break;
                 }
             }
         }
-        throw new IOException(UNSUPPORTED_ARCH);
+        if (fileName == null) {
+            throw new IOException(UNSUPPORTED_ARCH);
+        }
+        URL resource = Execution.class.getClassLoader().getResource(fileName);
+        Objects.requireNonNull(resource, "could not find CLI executable");
+        return resource.toURI();
     }
 }

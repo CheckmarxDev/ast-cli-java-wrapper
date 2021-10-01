@@ -1,5 +1,7 @@
 package com.checkmarx.ast;
 
+import com.checkmarx.ast.wrapper.CLIConfig;
+import com.checkmarx.ast.wrapper.CLIWrapper;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +24,6 @@ public abstract class BaseTest {
     private static final String CX_ADDITIONAL_PARAMETERS = getEnvOrNull("CX_ADDITIONAL_PARAMETERS");
     private static final String PATH_TO_EXECUTABLE = getEnvOrNull("PATH_TO_EXECUTABLE");
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
 
     protected Logger getLogger() {
         return logger;

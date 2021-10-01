@@ -1,4 +1,4 @@
-package com.checkmarx.ast;
+package com.checkmarx.ast.wrapper;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -27,7 +27,11 @@ public class CLIConfig {
     @Setter(AccessLevel.NONE)
     private List<String> additionalParameters;
 
-    public void validate() throws InvalidCLIConfigException {
+    public void setAdditionalParameters(String additionalParameters) {
+        this.additionalParameters = parseAdditionalParameters(additionalParameters);
+    }
+
+    void validate() throws InvalidCLIConfigException {
         if (StringUtils.isBlank(getBaseUri())) {
             throw new InvalidCLIConfigException("checkmarx server URL was not set");
         }
@@ -38,33 +42,29 @@ public class CLIConfig {
         }
     }
 
-    public void setAdditionalParameters(String additionalParameters) {
-        this.additionalParameters = parseAdditionalParameters(additionalParameters);
-    }
-
-    public List<String> toArguments() {
+    List<String> toArguments() {
         List<String> commands = new ArrayList<>();
 
         if (StringUtils.isNotBlank(getClientId()) && StringUtils.isNotBlank(getClientSecret())) {
-            commands.add("--client-id");
+            commands.add(CLIConstants.CLIENT_ID);
             commands.add(getClientId());
-            commands.add("--client-secret");
+            commands.add(CLIConstants.CLIENT_SECRET);
             commands.add(getClientSecret());
         } else if (StringUtils.isNotBlank(getApiKey())) {
-            commands.add("--apikey");
+            commands.add(CLIConstants.API_KEY);
             commands.add(getApiKey());
         }
 
         if (StringUtils.isNotBlank(getTenant())) {
-            commands.add("--tenant");
+            commands.add(CLIConstants.TENANT);
             commands.add(getTenant());
         }
 
-        commands.add("--base-uri");
+        commands.add(CLIConstants.BASE_URI);
         commands.add(getBaseUri());
 
         if (StringUtils.isNotBlank(getBaseAuthUri())) {
-            commands.add("--base-auth-uri");
+            commands.add(CLIConstants.BASE_AUTH_URI);
             commands.add(getBaseAuthUri());
         }
 
@@ -89,7 +89,7 @@ public class CLIConfig {
         }
     }
 
-    public static List<String> parseAdditionalParameters(String additionalParameters) {
+    static List<String> parseAdditionalParameters(String additionalParameters) {
         List<String> additionalParametersList = new ArrayList<>();
         if (StringUtils.isNotBlank(additionalParameters)) {
             Matcher m = pattern.matcher(additionalParameters);
