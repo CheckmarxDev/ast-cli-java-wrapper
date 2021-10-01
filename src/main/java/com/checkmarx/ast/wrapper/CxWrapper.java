@@ -33,7 +33,9 @@ public class CxWrapper {
 
     public CxWrapper(CxConfig cxConfig, Logger logger) throws CxConfig.InvalidCLIConfigException,
             URISyntaxException, IOException {
-        Objects.requireNonNull(cxConfig, "configuration object not supplied");
+        if (cxConfig == null) {
+            throw new CxConfig.InvalidCLIConfigException("configuration not supplied");
+        }
         cxConfig.validate();
         this.cxConfig = cxConfig;
         this.logger = logger;
@@ -50,7 +52,7 @@ public class CxWrapper {
         arguments.add(CxConstants.CMD_AUTH);
         arguments.add(CxConstants.SUB_CMD_VALIDATE);
 
-        return Execution.executeCommand(arguments, (line) -> line);
+        return Execution.executeCommand(arguments, logger, (line) -> line);
     }
 
     public CxOutput<Scan> scanShow(@NotNull UUID scanId) throws IOException, InterruptedException {
@@ -63,7 +65,7 @@ public class CxWrapper {
         arguments.add(CxConstants.SCAN_ID);
         arguments.add(scanId.toString());
 
-        return Execution.executeCommand(arguments, Scan::fromLine);
+        return Execution.executeCommand(arguments, logger, Scan::fromLine);
     }
 
     public CxOutput<List<Scan>> scanList() throws IOException, InterruptedException {
@@ -82,7 +84,7 @@ public class CxWrapper {
             arguments.add(filter);
         }
 
-        return Execution.executeCommand(arguments, Scan::listFromLine);
+        return Execution.executeCommand(arguments, logger, Scan::listFromLine);
     }
 
     public CxOutput<Scan> scanCreate(@NotNull Map<String, String> params) throws IOException, InterruptedException {
@@ -105,7 +107,7 @@ public class CxWrapper {
 
         arguments.addAll(CxConfig.parseAdditionalParameters(additionalParameters));
 
-        return Execution.executeCommand(arguments, Scan::fromLine);
+        return Execution.executeCommand(arguments, logger, Scan::fromLine);
     }
 
     public CxOutput<Project> projectShow(@NotNull UUID projectId) throws IOException, InterruptedException {
@@ -118,7 +120,7 @@ public class CxWrapper {
         arguments.add(CxConstants.PROJECT_ID);
         arguments.add(projectId.toString());
 
-        return Execution.executeCommand(arguments, Project::fromLine);
+        return Execution.executeCommand(arguments, logger, Project::fromLine);
     }
 
     public CxOutput<List<Project>> projectList() throws IOException, InterruptedException {
@@ -137,7 +139,7 @@ public class CxWrapper {
             arguments.add(filter);
         }
 
-        return Execution.executeCommand(arguments, Project::listFromLine);
+        return Execution.executeCommand(arguments, logger, Project::listFromLine);
     }
 
     public CxOutput<Results> results(@NotNull UUID scanId) throws IOException, InterruptedException {
@@ -170,7 +172,7 @@ public class CxWrapper {
         arguments.add(tempDir);
 
         return Execution.executeCommand(arguments,
-                                        tempDir,
+                                        logger, tempDir,
                                         fileName + reportFormat.getExtension());
     }
 

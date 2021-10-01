@@ -1,7 +1,6 @@
 package com.checkmarx.ast.wrapper;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URI;
@@ -9,16 +8,14 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.function.Function;
 
 final class Execution {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(Execution.class);
 
     private Execution() {
 
@@ -33,14 +30,16 @@ final class Execution {
     private static final String FILE_NAME_WINDOWS = "cx.exe";
     private static final String UNSUPPORTED_ARCH = "Unsupported architecture";
 
-    static <T> CxOutput<T> executeCommand(List<String> arguments, Function<String, T> lineParser)
+    static <T> CxOutput<T> executeCommand(List<String> arguments,
+                                          Logger logger,
+                                          Function<String, T> lineParser)
             throws IOException, InterruptedException {
         Process process = buildProcess(arguments);
         try (BufferedReader br = getReader(process)) {
             T executionResult = null;
             String line;
             while ((line = br.readLine()) != null) {
-                LOGGER.debug(line);
+                logger.info(line);
                 T parsedLine = lineParser.apply(line);
                 if (parsedLine != null) {
                     executionResult = parsedLine;
@@ -51,12 +50,22 @@ final class Execution {
         }
     }
 
-    static CxOutput<String> executeCommand(List<String> arguments, String directory, String file)
+    static CxOutput<String> executeCommand(List<String> arguments,
+                                           Logger logger,
+                                           String directory,
+                                           String file)
             throws IOException, InterruptedException {
         Process process = buildProcess(arguments);
         process.waitFor();
         if (process.exitValue() != 0) {
             return new CxOutput<>(process.exitValue(), null);
+        }
+
+        try (BufferedReader br = getReader(process)) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                logger.info(line);
+            }
         }
 
         File outputFile = new File(directory, file);
@@ -103,7 +112,9 @@ final class Execution {
             throw new IOException(UNSUPPORTED_ARCH);
         }
         URL resource = Execution.class.getClassLoader().getResource(fileName);
-        Objects.requireNonNull(resource, "could not find CLI executable");
+        if (resource == null) {
+            throw new NoSuchFileException("could not find CLI executable");
+        }
         return resource.toURI();
     }
 }
