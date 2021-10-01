@@ -5,7 +5,6 @@ import com.checkmarx.ast.results.ReportFormat;
 import com.checkmarx.ast.results.Results;
 import com.checkmarx.ast.scan.Scan;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.istack.internal.NotNull;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -16,7 +15,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class CxWrapper {
 
@@ -55,7 +57,7 @@ public class CxWrapper {
         return Execution.executeCommand(arguments, logger, (line) -> line);
     }
 
-    public CxOutput<Scan> scanShow(@NotNull UUID scanId) throws IOException, InterruptedException {
+    public CxOutput<Scan> scanShow(@NonNull UUID scanId) throws IOException, InterruptedException {
         this.logger.info("initialized scan retrieval for id: {}", scanId);
 
         List<String> arguments = commonArguments();
@@ -87,11 +89,11 @@ public class CxWrapper {
         return Execution.executeCommand(arguments, logger, Scan::listFromLine);
     }
 
-    public CxOutput<Scan> scanCreate(@NotNull Map<String, String> params) throws IOException, InterruptedException {
+    public CxOutput<Scan> scanCreate(@NonNull Map<String, String> params) throws IOException, InterruptedException {
         return scanCreate(params, "");
     }
 
-    public CxOutput<Scan> scanCreate(@NotNull Map<String, String> params, String additionalParameters)
+    public CxOutput<Scan> scanCreate(@NonNull Map<String, String> params, String additionalParameters)
             throws IOException, InterruptedException {
         this.logger.info("initialized scan create command");
 
@@ -110,7 +112,7 @@ public class CxWrapper {
         return Execution.executeCommand(arguments, logger, Scan::fromLine);
     }
 
-    public CxOutput<Project> projectShow(@NotNull UUID projectId) throws IOException, InterruptedException {
+    public CxOutput<Project> projectShow(@NonNull UUID projectId) throws IOException, InterruptedException {
         this.logger.info("initialized project retrieval for id: {}", projectId);
 
         List<String> arguments = commonArguments();
@@ -142,7 +144,7 @@ public class CxWrapper {
         return Execution.executeCommand(arguments, logger, Project::listFromLine);
     }
 
-    public CxOutput<Results> results(@NotNull UUID scanId) throws IOException, InterruptedException {
+    public CxOutput<Results> results(@NonNull UUID scanId) throws IOException, InterruptedException {
         CxOutput<String> output = results(scanId, ReportFormat.json);
         Results results = null;
         if (output.getExitCode() == 0) {
@@ -153,7 +155,7 @@ public class CxWrapper {
         return new CxOutput<>(output.getExitCode(), results);
     }
 
-    public CxOutput<String> results(@NotNull UUID scanId, ReportFormat reportFormat)
+    public CxOutput<String> results(@NonNull UUID scanId, ReportFormat reportFormat)
             throws IOException, InterruptedException {
         this.logger.info("initialized results command {}", reportFormat);
 
