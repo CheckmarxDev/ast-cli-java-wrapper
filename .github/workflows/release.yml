@@ -22,19 +22,20 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
-    - name: Set up JDK 11
+    - name: Set up Maven Central Repository
       uses: actions/setup-java@v2
       with:
-        java-version: 11
+        java-version: '11'
         distribution: 'adopt'
-        settings-path: ${{ github.workspace }}
+        server-id: ossrh
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
 
     - name: Update the POM version.
-      run: mvn -B versions:set -DnewVersion='${{ env.RELEASE_VERSION }}' --file pom.xml -s $GITHUB_WORKSPACE/settings.xml -DskipTests
-      env:
-        GITHUB_TOKEN: ${{ github.token}}
+      run: mvn -B versions:set -DnewVersion='${{ env.RELEASE_VERSION }}' --file pom.xml -DskipTests
 
-    - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml -DskipTests
+    - name: Publish package
+      run: mvn --batch-mode deploy
       env:
-        GITHUB_TOKEN: ${{ github.token}}
+        MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
