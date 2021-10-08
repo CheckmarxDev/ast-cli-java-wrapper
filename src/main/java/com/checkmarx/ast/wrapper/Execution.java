@@ -43,7 +43,7 @@ public final class Execution {
             StringBuilder stringBuilder = new StringBuilder();
             while ((line = br.readLine()) != null) {
                 logger.info(line);
-                stringBuilder.append(line).append(line);
+                stringBuilder.append(line).append(LINE_SEPARATOR);
                 T parsedLine = lineParser.apply(line);
                 if (parsedLine != null) {
                     executionResult = parsedLine;
