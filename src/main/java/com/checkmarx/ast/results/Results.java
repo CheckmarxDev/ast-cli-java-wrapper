@@ -1,29 +1,26 @@
-package com.checkmarx.ast.results.structure;
+package com.checkmarx.ast.results;
 
+import com.checkmarx.ast.results.result.Result;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.*;
+import lombok.Value;
 
 import java.util.List;
 
-@Data
-@Builder
 @Value
-@EqualsAndHashCode
-@ToString
 @JsonDeserialize()
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CxResultOutput {
+public class Results {
 
     int totalCount;
-    List<CxResult> results;
+    List<Result> results;
 
     @JsonCreator
-    public CxResultOutput(@JsonProperty("totalCount") int totalCount, @JsonProperty("results") List<CxResult> results) {
+    public Results(@JsonProperty("totalCount") int totalCount, @JsonProperty("results") List<Result> results) {
         this.totalCount = totalCount;
         this.results = results;
     }
