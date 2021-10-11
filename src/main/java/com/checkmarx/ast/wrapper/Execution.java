@@ -100,6 +100,7 @@ public final class Execution {
      *
      * @return binary name
      * @throws IOException when architecture is unsupported
+     * @throws URISyntaxException when the file has an invalid URI
      */
     public static URI detectBinary() throws IOException, URISyntaxException {
         if (executable == null) {
