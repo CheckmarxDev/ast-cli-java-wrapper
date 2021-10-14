@@ -1,7 +1,5 @@
 package com.checkmarx.ast.wrapper;
 
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 
 import java.io.*;
@@ -10,6 +8,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -85,19 +85,7 @@ public final class Execution {
                           StandardCharsets.UTF_8);
     }
 
-    private static BufferedReader getReader(Process process) {
-        InputStream is = process.getInputStream();
-        InputStreamReader isr = new InputStreamReader(is);
-        return new BufferedReader(isr);
-    }
-
-    private static Process buildProcess(List<String> commands) throws IOException {
-        ProcessBuilder lmBuilder = new ProcessBuilder(commands);
-        lmBuilder.redirectErrorStream(true);
-        return lmBuilder.start();
-    }
-
-    public static String getTempBinary() throws IOException {
+    static String getTempBinary() throws IOException {
         if (executable == null) {
             String fileName = detectBinaryName();
             if (fileName == null) {
@@ -110,7 +98,7 @@ public final class Execution {
             File tempExecutable = new File(TEMP_DIR, fileName);
             if (!tempExecutable.exists() || !compareChecksum(resource.openStream(),
                                                              new FileInputStream(tempExecutable))) {
-                FileUtils.copyURLToFile(resource, tempExecutable);
+                copyURLToFile(resource, tempExecutable);
             }
             if (!tempExecutable.canExecute() && !tempExecutable.setExecutable(true)) {
                 throw new IOException("Could not set CLI as executable");
@@ -118,6 +106,18 @@ public final class Execution {
             executable = tempExecutable.getAbsolutePath();
         }
         return executable;
+    }
+
+    private static BufferedReader getReader(Process process) {
+        InputStream is = process.getInputStream();
+        InputStreamReader isr = new InputStreamReader(is);
+        return new BufferedReader(isr);
+    }
+
+    private static Process buildProcess(List<String> commands) throws IOException {
+        ProcessBuilder lmBuilder = new ProcessBuilder(commands);
+        lmBuilder.redirectErrorStream(true);
+        return lmBuilder.start();
     }
 
     private static String detectBinaryName() {
@@ -138,7 +138,38 @@ public final class Execution {
         return fileName;
     }
 
-    private static boolean compareChecksum(InputStream a, InputStream b) throws IOException {
-        return Objects.equals(DigestUtils.md5Hex(a), DigestUtils.md5Hex(b));
+    private static void copyURLToFile(URL source, File destination) throws IOException {
+        final byte[] buf = new byte[8192];
+        try (InputStream reader = source.openStream();
+             OutputStream writer = new FileOutputStream(destination)) {
+            int i;
+            while ((i = reader.read(buf)) != -1) {
+                writer.write(buf, 0, i);
+            }
+        } catch (IOException e) {
+            throw new IOException("Could not copy CLI to the temporary directory", e);
+        }
+    }
+
+    private static boolean compareChecksum(InputStream a, InputStream b) {
+        String aMD5 = md5(a);
+        String bMD5 = md5(b);
+        return aMD5 != null && bMD5 != null && Objects.equals(aMD5, bMD5);
+    }
+
+    private static String md5(InputStream a) {
+        String md5 = null;
+        final byte[] buf = new byte[8192];
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            int i;
+            while ((i = a.read(buf)) != -1) {
+                md.update(buf, 0, i);
+            }
+            md5 = new String(md.digest());
+        } catch (NoSuchAlgorithmException | IOException e) {
+            // ignore
+        }
+        return md5;
     }
 }
