@@ -20,6 +20,7 @@ public final class CxConstants {
     static final String CMD_AUTH = "auth";
     static final String SUB_CMD_VALIDATE = "validate";
     static final String CMD_PROJECT = "project";
+    static final String SUB_CMD_BRANCHES = "branches";
     static final String CMD_SCAN = "scan";
     static final String SUB_CMD_SHOW = "show";
     static final String SUB_CMD_LIST = "list";

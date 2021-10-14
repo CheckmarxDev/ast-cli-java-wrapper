@@ -5,6 +5,8 @@ import com.checkmarx.ast.results.ReportFormat;
 import com.checkmarx.ast.results.Results;
 import com.checkmarx.ast.scan.Scan;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,6 +23,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public class CxWrapper {
+
+    private static final CollectionType BRANCHES_TYPE = TypeFactory.defaultInstance()
+                                                                   .constructCollectionType(List.class, String.class);
 
     @NonNull
     private final CxConfig cxConfig;
@@ -79,10 +84,7 @@ public class CxWrapper {
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_LIST);
         arguments.addAll(jsonArguments());
-        if (StringUtils.isNotBlank(filter)) {
-            arguments.add(CxConstants.FILTER);
-            arguments.add(filter);
-        }
+        arguments.addAll(filterArguments(filter));
 
         return Execution.executeCommand(withConfigArguments(arguments), logger, Scan::listFromLine);
     }
@@ -133,13 +135,26 @@ public class CxWrapper {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_PROJECT);
         arguments.add(CxConstants.SUB_CMD_LIST);
-        if (StringUtils.isNotBlank(filter)) {
-            arguments.add(CxConstants.FILTER);
-            arguments.add(filter);
-        }
+        arguments.addAll(filterArguments(filter));
         arguments.addAll(jsonArguments());
 
         return Execution.executeCommand(withConfigArguments(arguments), logger, Project::listFromLine);
+    }
+
+    public List<String> projectBranches(@NonNull UUID projectId, String filter)
+            throws CxException, IOException, InterruptedException {
+        this.logger.info("initialized retrieval for project branches {}", filter);
+
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_PROJECT);
+        arguments.add(CxConstants.SUB_CMD_BRANCHES);
+        arguments.add(CxConstants.PROJECT_ID);
+        arguments.add(projectId.toString());
+        arguments.addAll(filterArguments(filter));
+
+        return Execution.executeCommand(withConfigArguments(arguments),
+                                        logger,
+                                        (line) -> CxBaseObject.parse(line, BRANCHES_TYPE));
     }
 
     public Results results(@NonNull UUID scanId) throws IOException, InterruptedException, CxException {
@@ -186,6 +201,17 @@ public class CxWrapper {
 
         arguments.add(CxConstants.FORMAT);
         arguments.add(CxConstants.FORMAT_JSON);
+
+        return arguments;
+    }
+
+    private List<String> filterArguments(String filter) {
+        List<String> arguments = new ArrayList<>();
+
+        if (StringUtils.isNotBlank(filter)) {
+            arguments.add(CxConstants.FILTER);
+            arguments.add(filter);
+        }
 
         return arguments;
     }

@@ -26,17 +26,20 @@ public class Scan extends CxBaseObject {
     String Status;
     String Initiator;
     String Origin;
+    String Branch;
 
     @JsonCreator
     public Scan(@JsonProperty("ID") String ID, @JsonProperty("ProjectID") String ProjectID,
                 @JsonProperty("Status") String Status, @JsonProperty("CreatedAt") String CreatedAt,
                 @JsonProperty("UpdatedAt") String UpdatedAt, @JsonProperty("Tags") Map<String, String> Tags,
-                @JsonProperty("Initiator") String Initiator, @JsonProperty("Origin") String Origin) {
+                @JsonProperty("Initiator") String Initiator, @JsonProperty("Origin") String Origin,
+                @JsonProperty("Branch") String Branch) {
         super(ID, CreatedAt, UpdatedAt, Tags);
         this.ProjectID = ProjectID;
         this.Status = Status;
         this.Initiator = Initiator;
         this.Origin = Origin;
+        this.Branch = Branch;
     }
 
     public static <T> T fromLine(String line) {
