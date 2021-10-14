@@ -6,22 +6,11 @@ import com.checkmarx.ast.wrapper.CxException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class ScanTest extends BaseTest {
-
-
-    private Map<String, String> commonParams() {
-        Map<String, String> params = new HashMap<>();
-        params.put(CxConstants.PROJECT_NAME, "JavaWrapperTestCases");
-        params.put(CxConstants.SOURCE, ".");
-        params.put(CxConstants.FILE_FILTER, "*.java");
-        params.put(CxConstants.SAST_PRESET_NAME, "Checkmarx Default");
-        return params;
-    }
 
     @Test
     public void testScanShow() throws Exception {

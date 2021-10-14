@@ -1,10 +1,14 @@
 package com.checkmarx.ast;
 
 import com.checkmarx.ast.wrapper.CxConfig;
+import com.checkmarx.ast.wrapper.CxConstants;
 import com.checkmarx.ast.wrapper.CxWrapper;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class BaseTest {
 
@@ -44,5 +48,14 @@ public abstract class BaseTest {
 
     private static String getEnvOrNull(String key) {
         return System.getenv().getOrDefault(key, null);
+    }
+
+    protected Map<String, String> commonParams() {
+        Map<String, String> params = new HashMap<>();
+        params.put(CxConstants.PROJECT_NAME, "JavaWrapperTestCases");
+        params.put(CxConstants.SOURCE, ".");
+        params.put(CxConstants.FILE_FILTER, "*.java");
+        params.put(CxConstants.SAST_PRESET_NAME, "Checkmarx Default");
+        return params;
     }
 }
