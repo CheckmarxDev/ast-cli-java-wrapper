@@ -12,10 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,21 +29,21 @@ public class CxWrapper {
     @NonNull
     private final Logger logger;
     @NonNull
-    private final URI executable;
+    private final String executable;
 
     public CxWrapper(@NonNull CxConfig cxConfig)
-            throws CxConfig.InvalidCLIConfigException, URISyntaxException, IOException {
+            throws CxConfig.InvalidCLIConfigException, IOException {
         this(cxConfig, LoggerFactory.getLogger(CxWrapper.class));
     }
 
     public CxWrapper(@NonNull CxConfig cxConfig, @NonNull Logger logger) throws CxConfig.InvalidCLIConfigException,
-            URISyntaxException, IOException {
+            IOException {
         cxConfig.validate();
         this.cxConfig = cxConfig;
         this.logger = logger;
         this.executable = StringUtils.isBlank(this.cxConfig.getPathToExecutable())
-                          ? Execution.detectBinary()
-                          : new File(this.cxConfig.getPathToExecutable()).toURI();
+                          ? Execution.getTempBinary()
+                          : this.cxConfig.getPathToExecutable();
         this.logger.info("using executable: " + executable);
     }
 
@@ -189,7 +186,7 @@ public class CxWrapper {
     private List<String> withConfigArguments(List<String> commands) {
         List<String> arguments = new ArrayList<>();
 
-        arguments.add(this.executable.getPath());
+        arguments.add(this.executable);
         arguments.addAll(commands);
         arguments.addAll(this.cxConfig.toArguments());
 

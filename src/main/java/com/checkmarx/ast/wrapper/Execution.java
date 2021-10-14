@@ -1,10 +1,10 @@
 package com.checkmarx.ast.wrapper;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Function;
 
 public final class Execution {
@@ -29,8 +30,9 @@ public final class Execution {
     private static final String FILE_NAME_MAC = "cx-mac";
     private static final String FILE_NAME_WINDOWS = "cx.exe";
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
-    private static URL executable = null;
+    private static String executable = null;
 
     static <T> T executeCommand(List<String> arguments,
                                 Logger logger,
@@ -95,38 +97,48 @@ public final class Execution {
         return lmBuilder.start();
     }
 
-    /**
-     * Detect binary name by the current architecture.
-     *
-     * @return binary name
-     * @throws IOException when architecture is unsupported
-     * @throws URISyntaxException when the file has an invalid URI
-     */
-    public static URI detectBinary() throws IOException, URISyntaxException {
+    public static String getTempBinary() throws IOException {
         if (executable == null) {
-            final String arch = OS_NAME;
-            String fileName = null;
-            if (arch.contains(OS_LINUX)) {
-                fileName = FILE_NAME_LINUX;
-            } else if (arch.contains(OS_WINDOWS)) {
-                fileName = FILE_NAME_WINDOWS;
-            } else {
-                for (String macStr : OS_MAC) {
-                    if (arch.contains(macStr)) {
-                        fileName = FILE_NAME_MAC;
-                        break;
-                    }
-                }
-            }
+            String fileName = detectBinaryName();
             if (fileName == null) {
                 throw new IOException("Unsupported architecture");
             }
-            executable = Execution.class.getClassLoader().getResource(fileName);
+            URL resource = Execution.class.getClassLoader().getResource(fileName);
+            if (resource == null) {
+                throw new NoSuchFileException("Could not find CLI executable");
+            }
+            File tempExecutable = new File(TEMP_DIR, fileName);
+            if (!tempExecutable.exists() || !compareChecksum(resource.openStream(),
+                                                             new FileInputStream(tempExecutable))) {
+                FileUtils.copyURLToFile(resource, tempExecutable);
+            }
+            if (!tempExecutable.canExecute() && !tempExecutable.setExecutable(true)) {
+                throw new IOException("Could not set CLI as executable");
+            }
+            executable = tempExecutable.getAbsolutePath();
         }
-        URL resource = executable;
-        if (resource == null) {
-            throw new NoSuchFileException("Could not find CLI executable");
+        return executable;
+    }
+
+    private static String detectBinaryName() {
+        String arch = OS_NAME;
+        String fileName = null;
+        if (arch.contains(OS_LINUX)) {
+            fileName = FILE_NAME_LINUX;
+        } else if (arch.contains(OS_WINDOWS)) {
+            fileName = FILE_NAME_WINDOWS;
+        } else {
+            for (String macStr : OS_MAC) {
+                if (arch.contains(macStr)) {
+                    fileName = FILE_NAME_MAC;
+                    break;
+                }
+            }
         }
-        return resource.toURI();
+        return fileName;
+    }
+
+    private static boolean compareChecksum(InputStream a, InputStream b) throws IOException {
+        return Objects.equals(DigestUtils.md5Hex(a), DigestUtils.md5Hex(b));
     }
 }
