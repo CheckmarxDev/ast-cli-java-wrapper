@@ -48,24 +48,24 @@ public class CxWrapper {
     public String authValidate() throws IOException, InterruptedException, CxException {
         this.logger.info("initialized authentication validation command");
 
-        List<String> arguments = commonArguments();
+        List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_AUTH);
         arguments.add(CxConstants.SUB_CMD_VALIDATE);
 
-        return Execution.executeCommand(arguments, logger, (line) -> line);
+        return Execution.executeCommand(withConfigArguments(arguments), logger, (line) -> line);
     }
 
     public Scan scanShow(@NonNull UUID scanId) throws IOException, InterruptedException, CxException {
         this.logger.info("initialized scan retrieval for id: {}", scanId);
 
-        List<String> arguments = commonArguments();
-        arguments.addAll(jsonArguments());
+        List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_SHOW);
         arguments.add(CxConstants.SCAN_ID);
         arguments.add(scanId.toString());
+        arguments.addAll(jsonArguments());
 
-        return Execution.executeCommand(arguments, logger, Scan::fromLine);
+        return Execution.executeCommand(withConfigArguments(arguments), logger, Scan::fromLine);
     }
 
     public List<Scan> scanList() throws IOException, InterruptedException, CxException {
@@ -75,16 +75,16 @@ public class CxWrapper {
     public List<Scan> scanList(String filter) throws IOException, InterruptedException, CxException {
         this.logger.info("initialized retrieval for scan list {}", filter);
 
-        List<String> arguments = commonArguments();
-        arguments.addAll(jsonArguments());
+        List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_LIST);
+        arguments.addAll(jsonArguments());
         if (StringUtils.isNotBlank(filter)) {
             arguments.add(CxConstants.FILTER);
             arguments.add(filter);
         }
 
-        return Execution.executeCommand(arguments, logger, Scan::listFromLine);
+        return Execution.executeCommand(withConfigArguments(arguments), logger, Scan::listFromLine);
     }
 
     public Scan scanCreate(@NonNull Map<String, String> params) throws IOException, InterruptedException, CxException {
@@ -95,10 +95,10 @@ public class CxWrapper {
             throws IOException, InterruptedException, CxException {
         this.logger.info("initialized scan create command");
 
-        List<String> arguments = commonArguments();
-        arguments.addAll(jsonArguments());
+        List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_CREATE);
+        arguments.addAll(jsonArguments());
 
         for (Map.Entry<String, String> param : params.entrySet()) {
             arguments.add(param.getKey());
@@ -107,20 +107,20 @@ public class CxWrapper {
 
         arguments.addAll(CxConfig.parseAdditionalParameters(additionalParameters));
 
-        return Execution.executeCommand(arguments, logger, Scan::fromLine);
+        return Execution.executeCommand(withConfigArguments(arguments), logger, Scan::fromLine);
     }
 
     public Project projectShow(@NonNull UUID projectId) throws IOException, InterruptedException, CxException {
         this.logger.info("initialized project retrieval for id: {}", projectId);
 
-        List<String> arguments = commonArguments();
-        arguments.addAll(jsonArguments());
+        List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_PROJECT);
         arguments.add(CxConstants.SUB_CMD_SHOW);
         arguments.add(CxConstants.PROJECT_ID);
         arguments.add(projectId.toString());
+        arguments.addAll(jsonArguments());
 
-        return Execution.executeCommand(arguments, logger, Project::fromLine);
+        return Execution.executeCommand(withConfigArguments(arguments), logger, Project::fromLine);
     }
 
     public List<Project> projectList() throws IOException, InterruptedException, CxException {
@@ -130,16 +130,16 @@ public class CxWrapper {
     public List<Project> projectList(String filter) throws IOException, InterruptedException, CxException {
         this.logger.info("initialized retrieval for project list {}", filter);
 
-        List<String> arguments = commonArguments();
-        arguments.addAll(jsonArguments());
+        List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_PROJECT);
         arguments.add(CxConstants.SUB_CMD_LIST);
         if (StringUtils.isNotBlank(filter)) {
             arguments.add(CxConstants.FILTER);
             arguments.add(filter);
         }
+        arguments.addAll(jsonArguments());
 
-        return Execution.executeCommand(arguments, logger, Project::listFromLine);
+        return Execution.executeCommand(withConfigArguments(arguments), logger, Project::listFromLine);
     }
 
     public Results results(@NonNull UUID scanId) throws IOException, InterruptedException, CxException {
@@ -155,7 +155,7 @@ public class CxWrapper {
         String tempDir = Files.createTempDirectory("cx").toAbsolutePath().toString();
         String fileName = Long.toString(System.nanoTime());
 
-        List<String> arguments = commonArguments();
+        List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_RESULT);
         arguments.add(CxConstants.SCAN_ID);
         arguments.add(scanId.toString());
@@ -166,15 +166,16 @@ public class CxWrapper {
         arguments.add(CxConstants.OUTPUT_PATH);
         arguments.add(tempDir);
 
-        return Execution.executeCommand(arguments,
+        return Execution.executeCommand(withConfigArguments(arguments),
                                         logger, tempDir,
                                         fileName + reportFormat.getExtension());
     }
 
-    private List<String> commonArguments() {
+    private List<String> withConfigArguments(List<String> commands) {
         List<String> arguments = new ArrayList<>();
 
         arguments.add(this.executable.getPath());
+        arguments.addAll(commands);
         arguments.addAll(this.cxConfig.toArguments());
 
         return arguments;
