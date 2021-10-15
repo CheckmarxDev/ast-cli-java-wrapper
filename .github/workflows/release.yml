@@ -39,14 +39,6 @@ jobs:
       - name: Update the POM version.
         run: mvn -B versions:set -DnewVersion='${{ env.RELEASE_VERSION }}' --file pom.xml -DskipTests
 
-      - name: Commit pom change version
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add pom.xml
-          git commit -m '[auto-release] Update pom version'
-          git push
-
       - name: Publish package
         run: mvn --batch-mode deploy -DskipTests
         env:
