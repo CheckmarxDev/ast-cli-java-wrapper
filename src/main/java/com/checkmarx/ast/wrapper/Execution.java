@@ -3,16 +3,17 @@ package com.checkmarx.ast.wrapper;
 import org.slf4j.Logger;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Function;
 
 public final class Execution {
@@ -29,8 +30,9 @@ public final class Execution {
     private static final String FILE_NAME_MAC = "cx-mac";
     private static final String FILE_NAME_WINDOWS = "cx.exe";
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
-    private static URL executable = null;
+    private static String executable = null;
 
     static <T> T executeCommand(List<String> arguments,
                                 Logger logger,
@@ -83,6 +85,29 @@ public final class Execution {
                           StandardCharsets.UTF_8);
     }
 
+    static String getTempBinary() throws IOException {
+        if (executable == null) {
+            String fileName = detectBinaryName();
+            if (fileName == null) {
+                throw new IOException("Unsupported architecture");
+            }
+            URL resource = Execution.class.getClassLoader().getResource(fileName);
+            if (resource == null) {
+                throw new NoSuchFileException("Could not find CLI executable");
+            }
+            File tempExecutable = new File(TEMP_DIR, fileName);
+            if (!tempExecutable.exists() || !compareChecksum(resource.openStream(),
+                                                             new FileInputStream(tempExecutable))) {
+                copyURLToFile(resource, tempExecutable);
+            }
+            if (!tempExecutable.canExecute() && !tempExecutable.setExecutable(true)) {
+                throw new IOException("Could not set CLI as executable");
+            }
+            executable = tempExecutable.getAbsolutePath();
+        }
+        return executable;
+    }
+
     private static BufferedReader getReader(Process process) {
         InputStream is = process.getInputStream();
         InputStreamReader isr = new InputStreamReader(is);
@@ -95,38 +120,56 @@ public final class Execution {
         return lmBuilder.start();
     }
 
-    /**
-     * Detect binary name by the current architecture.
-     *
-     * @return binary name
-     * @throws IOException when architecture is unsupported
-     * @throws URISyntaxException when the file has an invalid URI
-     */
-    public static URI detectBinary() throws IOException, URISyntaxException {
-        if (executable == null) {
-            final String arch = OS_NAME;
-            String fileName = null;
-            if (arch.contains(OS_LINUX)) {
-                fileName = FILE_NAME_LINUX;
-            } else if (arch.contains(OS_WINDOWS)) {
-                fileName = FILE_NAME_WINDOWS;
-            } else {
-                for (String macStr : OS_MAC) {
-                    if (arch.contains(macStr)) {
-                        fileName = FILE_NAME_MAC;
-                        break;
-                    }
+    private static String detectBinaryName() {
+        String arch = OS_NAME;
+        String fileName = null;
+        if (arch.contains(OS_LINUX)) {
+            fileName = FILE_NAME_LINUX;
+        } else if (arch.contains(OS_WINDOWS)) {
+            fileName = FILE_NAME_WINDOWS;
+        } else {
+            for (String macStr : OS_MAC) {
+                if (arch.contains(macStr)) {
+                    fileName = FILE_NAME_MAC;
+                    break;
                 }
             }
-            if (fileName == null) {
-                throw new IOException("Unsupported architecture");
+        }
+        return fileName;
+    }
+
+    private static void copyURLToFile(URL source, File destination) throws IOException {
+        final byte[] buf = new byte[8192];
+        try (InputStream reader = source.openStream();
+             OutputStream writer = new FileOutputStream(destination)) {
+            int i;
+            while ((i = reader.read(buf)) != -1) {
+                writer.write(buf, 0, i);
             }
-            executable = Execution.class.getClassLoader().getResource(fileName);
+        } catch (IOException e) {
+            throw new IOException("Could not copy CLI to the temporary directory", e);
         }
-        URL resource = executable;
-        if (resource == null) {
-            throw new NoSuchFileException("Could not find CLI executable");
+    }
+
+    private static boolean compareChecksum(InputStream a, InputStream b) {
+        String aMD5 = md5(a);
+        String bMD5 = md5(b);
+        return aMD5 != null && bMD5 != null && Objects.equals(aMD5, bMD5);
+    }
+
+    private static String md5(InputStream a) {
+        String md5 = null;
+        final byte[] buf = new byte[8192];
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            int i;
+            while ((i = a.read(buf)) != -1) {
+                md.update(buf, 0, i);
+            }
+            md5 = new String(md.digest());
+        } catch (NoSuchAlgorithmException | IOException e) {
+            // ignore
         }
-        return resource.toURI();
+        return md5;
     }
 }
