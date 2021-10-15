@@ -5,7 +5,7 @@
 
     <groupId>com.checkmarx.ast</groupId>
     <artifactId>ast-cli-java-wrapper</artifactId>
-    <version>1.0.17</version>
+    <version>${ast.wrapper.version}</version>
     <packaging>jar</packaging>
 
     <name>Checkmarx AST Client</name>
@@ -13,6 +13,7 @@
     <url>https://www.checkmarx.com</url>
 
     <properties>
+        <ast.wrapper.version>dev</ast.wrapper.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
