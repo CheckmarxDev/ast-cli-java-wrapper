@@ -7,7 +7,7 @@ filename_darwin=ast-cli_${release}_darwin_x64.tar.gz
 
 #Windows
 echo "Updating windows binary"
-wget https://github.com/CheckmarxDev/ast-cli/releases/download/${release}/${filename_windows}
+wget https://github.com/checkmarx/ast-cli/releases/download/${release}/${filename_windows}
 unzip ${filename_windows} -d tmp
 mv ./tmp/cx.exe ./src/main/resources/cx.exe
 rm -r tmp
@@ -15,7 +15,7 @@ rm ${filename_windows}
 
 #linux
 echo "Updating linux binary"
-wget https://github.com/CheckmarxDev/ast-cli/releases/download/${release}/${filename_linux}
+wget https://github.com/checkmarx/ast-cli/releases/download/${release}/${filename_linux}
 mkdir ./tmp/
 tar -xvzf  ${filename_linux} -C ./tmp/
 mv ./tmp/cx ./src/main/resources/cx-linux
@@ -24,7 +24,7 @@ rm ${filename_linux}
 
 #darwin
 echo "Updating mac binary"
-wget https://github.com/CheckmarxDev/ast-cli/releases/download/${release}/${filename_darwin}
+wget https://github.com/checkmarx/ast-cli/releases/download/${release}/${filename_darwin}
 mkdir ./tmp/
 tar -xvzf  ${filename_darwin} -C ./tmp/
 mv ./tmp/cx ./src/main/resources/cx-mac
