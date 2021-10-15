@@ -5,7 +5,7 @@
 
     <groupId>com.checkmarx.ast</groupId>
     <artifactId>ast-cli-java-wrapper</artifactId>
-    <version>1.0.18</version>
+    <version>1.0.17</version>
     <packaging>jar</packaging>
 
     <name>Checkmarx AST Client</name>
