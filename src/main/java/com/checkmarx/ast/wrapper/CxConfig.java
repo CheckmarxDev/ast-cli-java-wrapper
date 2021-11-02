@@ -38,7 +38,7 @@ public class CxConfig {
 
         if (StringUtils.isBlank(getApiKey())
             && (StringUtils.isBlank(getClientId()) || StringUtils.isBlank(getClientSecret()))) {
-            throw new InvalidCLIConfigException("Credentials were is set");
+            throw new InvalidCLIConfigException("Credentials are not set");
         }
     }
 
