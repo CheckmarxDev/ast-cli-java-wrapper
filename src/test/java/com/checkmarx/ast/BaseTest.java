@@ -55,6 +55,7 @@ public abstract class BaseTest {
         params.put(CxConstants.PROJECT_NAME, "JavaWrapperTestCases");
         params.put(CxConstants.SOURCE, ".");
         params.put(CxConstants.FILE_FILTER, "*.java");
+        params.put(CxConstants.BRANCH, "main");
         params.put(CxConstants.SAST_PRESET_NAME, "Checkmarx Default");
         return params;
     }
