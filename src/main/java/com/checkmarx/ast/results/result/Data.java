@@ -21,6 +21,12 @@ public class Data {
     String resultHash;
     String languageName;
     String description;
+    String platform;
+    String issueType;
+    String expectedValue;
+    String value;
+    String fileName;
+    int line;
     List<Node> nodes;
     List<PackageData> packageData;
 
@@ -30,6 +36,12 @@ public class Data {
                 @JsonProperty("resultHash") String resultHash,
                 @JsonProperty("languageName") String languageName,
                 @JsonProperty("description") String description,
+                @JsonProperty("platform") String platform,
+                @JsonProperty("issueType") String issueType,
+                @JsonProperty("expectedValue") String expectedValue,
+                @JsonProperty("value") String value,
+                @JsonProperty("fileName") String fileName,
+                @JsonProperty("line") int line,
                 @JsonProperty("nodes") List<Node> nodes,
                 @JsonProperty("packageData") List<PackageData> packageData) {
         this.queryId = queryId;
@@ -38,6 +50,12 @@ public class Data {
         this.resultHash = resultHash;
         this.languageName = languageName;
         this.description = description;
+        this.platform = platform;
+        this.issueType = issueType;
+        this.expectedValue = expectedValue;
+        this.value = value;
+        this.fileName = fileName;
+        this.line = line;
         this.nodes = nodes;
         this.packageData = packageData;
     }
