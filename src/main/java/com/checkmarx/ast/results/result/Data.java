@@ -40,7 +40,7 @@ public class Data {
                 @JsonProperty("issueType") String issueType,
                 @JsonProperty("expectedValue") String expectedValue,
                 @JsonProperty("value") String value,
-                @JsonProperty("fileName") String fileName,
+                @JsonProperty("filename") String fileName,
                 @JsonProperty("line") int line,
                 @JsonProperty("nodes") List<Node> nodes,
                 @JsonProperty("packageData") List<PackageData> packageData) {
