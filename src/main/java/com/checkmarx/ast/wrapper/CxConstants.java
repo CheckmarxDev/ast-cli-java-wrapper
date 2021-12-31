@@ -3,13 +3,13 @@ package com.checkmarx.ast.wrapper;
 public final class CxConstants {
 
     public static final String SOURCE = "-s";
-    public static final String VERBOSE = "-v";
     public static final String PROJECT_NAME = "--project-name";
-    public static final String SCAN_TYPES = "--scan-types";
+    public static final String SCAN_TYPE = "--scan-type";
     public static final String SAST_PRESET_NAME = "--sast-preset-name";
     public static final String FILE_FILTER = "--file-filter";
-    public static final String AGENT = "--agent";
     public static final String BRANCH = "--branch";
+
+    public static final String SAST = "sast";
 
     static final String CLIENT_ID = "--client-id";
     static final String CLIENT_SECRET = "--client-secret";
@@ -25,12 +25,18 @@ public final class CxConstants {
     static final String SUB_CMD_SHOW = "show";
     static final String SUB_CMD_LIST = "list";
     static final String SUB_CMD_CREATE = "create";
+    static final String CMD_TRIAGE = "triage";
+    static final String SUB_CMD_UPDATE = "update";
     static final String CMD_RESULT = "result";
     static final String FORMAT = "--format";
     static final String FORMAT_JSON = "json";
     static final String FILTER = "--filter";
     static final String SCAN_ID = "--scan-id";
     static final String PROJECT_ID = "--project-id";
+    static final String SIMILARITY_ID = "--similarity-id";
+    static final String STATE = "--state";
+    static final String COMMENT = "--comment";
+    static final String SEVERITY = "--severity";
     static final String REPORT_FORMAT = "--report-format";
     static final String OUTPUT_NAME = "--output-name";
     static final String OUTPUT_PATH = "--output-path";
