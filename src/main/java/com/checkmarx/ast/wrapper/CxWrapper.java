@@ -1,5 +1,6 @@
 package com.checkmarx.ast.wrapper;
 
+import com.checkmarx.ast.predicate.Predicate;
 import com.checkmarx.ast.project.Project;
 import com.checkmarx.ast.results.ReportFormat;
 import com.checkmarx.ast.results.Results;
@@ -107,6 +108,46 @@ public class CxWrapper {
         arguments.addAll(CxConfig.parseAdditionalParameters(additionalParameters));
 
         return Execution.executeCommand(withConfigArguments(arguments), logger, Scan::fromLine);
+    }
+
+    public List<Predicate> triageShow(@NonNull UUID projectId, String similarityId, String scanType) throws IOException, InterruptedException, CxException {
+        this.logger.info("initialized triage for project with id: {}", projectId);
+
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_TRIAGE);
+        arguments.add(CxConstants.SUB_CMD_SHOW);
+        arguments.add(CxConstants.PROJECT_ID);
+        arguments.add(projectId.toString());
+        arguments.add(CxConstants.SIMILARITY_ID);
+        arguments.add(similarityId);
+        arguments.add(CxConstants.SCAN_TYPE);
+        arguments.add(scanType);
+
+        arguments.addAll(jsonArguments());
+
+        return Execution.executeCommand(withConfigArguments(arguments), logger, Predicate::listFromLine);
+    }
+
+    public void triageUpdate(@NonNull UUID projectId, String similarityId, String scanType, String state, String comment, String severity) throws IOException, InterruptedException, CxException {
+        this.logger.info("initialized triage update project with id: {}", projectId);
+
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_TRIAGE);
+        arguments.add(CxConstants.SUB_CMD_UPDATE);
+        arguments.add(CxConstants.PROJECT_ID);
+        arguments.add(projectId.toString());
+        arguments.add(CxConstants.SIMILARITY_ID);
+        arguments.add(similarityId);
+        arguments.add(CxConstants.SCAN_TYPE);
+        arguments.add(scanType);
+        arguments.add(CxConstants.STATE);
+        arguments.add(state);
+        arguments.add(CxConstants.COMMENT);
+        arguments.add(comment);
+        arguments.add(CxConstants.SEVERITY);
+        arguments.add(severity);
+
+        Execution.executeCommand(withConfigArguments(arguments), logger, (line) -> null);
     }
 
     public Project projectShow(@NonNull UUID projectId) throws IOException, InterruptedException, CxException {
