@@ -42,7 +42,7 @@ public class PredicateTest extends BaseTest {
         Result result = results.getResults().stream().filter(res -> res.getType().equalsIgnoreCase(CxConstants.SAST)).findFirst().get();
 
         try {
-            wrapper.triageUpdate(UUID.fromString(scan.getProjectID()), result.getSimilarityId(), result.getType(), "confirmed", "Edited via Java Wrapper", "hih");
+            wrapper.triageUpdate(UUID.fromString(scan.getProjectID()), result.getSimilarityId(), result.getType(), "confirmed", "Edited via Java Wrapper", "high");
         } catch (Exception e) {
             fail("Triage update failed. Should not throw exception");
         }

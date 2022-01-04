@@ -47,7 +47,6 @@ public class Predicate{
         this.UpdatedAt = UpdatedAt;
     }
 
-
     public static <T> T fromLine(String line) {
         return parse(line, TypeFactory.defaultInstance().constructType(Predicate.class));
     }
