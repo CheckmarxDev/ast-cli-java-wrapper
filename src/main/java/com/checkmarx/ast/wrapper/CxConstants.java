@@ -5,6 +5,7 @@ public final class CxConstants {
     public static final String SOURCE = "-s";
     public static final String PROJECT_NAME = "--project-name";
     public static final String SCAN_TYPE = "--scan-type";
+    public static final String SCAN_TYPES = "--scan-types";
     public static final String SAST_PRESET_NAME = "--sast-preset-name";
     public static final String FILE_FILTER = "--file-filter";
     public static final String BRANCH = "--branch";
