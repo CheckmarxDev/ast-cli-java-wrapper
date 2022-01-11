@@ -4,30 +4,30 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.Value;
 
-@Value
+
+@lombok.Data
 @JsonDeserialize()
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Result {
 
-    String type;
-    String id;
-    String similarityId;
-    String status;
-    String state;
-    String severity;
-    String created;
-    String firstFoundAt;
-    String foundAt;
-    String firstScan;
-    String firstScanId;
-    String publishedAt;
-    String recommendations;
-    Data data;
-    Comments comments;
-    VulnerabilityDetails vulnerabilityDetails;
+    private final String type;
+    private final String id;
+    private final String similarityId;
+    private final String status;
+    private String state;
+    private String severity;
+    private final String created;
+    private final String firstFoundAt;
+    private final String foundAt;
+    private final String firstScan;
+    private final String firstScanId;
+    private final String publishedAt;
+    private final String recommendations;
+    private final Data data;
+    private final Comments comments;
+    private final VulnerabilityDetails vulnerabilityDetails;
 
     public Result(@JsonProperty("type") String type,
                   @JsonProperty("id") String id,
