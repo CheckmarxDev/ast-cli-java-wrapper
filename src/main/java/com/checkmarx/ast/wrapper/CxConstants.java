@@ -9,9 +9,9 @@ public final class CxConstants {
     public static final String SAST_PRESET_NAME = "--sast-preset-name";
     public static final String FILE_FILTER = "--file-filter";
     public static final String BRANCH = "--branch";
-
+    public static final String AGENT = "--agent";
     public static final String SAST = "sast";
-
+    public static final String DEBUG = "--debug";
     static final String CLIENT_ID = "--client-id";
     static final String CLIENT_SECRET = "--client-secret";
     static final String API_KEY = "--apikey";

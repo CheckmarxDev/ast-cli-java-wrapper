@@ -1,6 +1,5 @@
 package com.checkmarx.ast.predicate;
 
-import com.checkmarx.ast.project.Project;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -21,7 +20,7 @@ import java.util.List;
 @JsonDeserialize()
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Predicate{
+public class Predicate {
 
     String ID;
     String SimilarityID;
@@ -29,6 +28,7 @@ public class Predicate{
     String State;
     String Severity;
     String Comment;
+    String CreatedBy;
     String CreatedAt;
     String UpdatedAt;
 
@@ -36,13 +36,15 @@ public class Predicate{
     public Predicate(@JsonProperty("ID") String id, @JsonProperty("SimilarityID") String similarityID,
                      @JsonProperty("ProjectID") String projectID, @JsonProperty("State") String state,
                      @JsonProperty("Severity") String severity, @JsonProperty("Comment") String comment,
-                     @JsonProperty("CreatedAt") String CreatedAt, @JsonProperty("UpdatedAt") String UpdatedAt) {
+                     @JsonProperty("CreatedBy") String createdBy, @JsonProperty("CreatedAt") String CreatedAt,
+                     @JsonProperty("UpdatedAt") String UpdatedAt) {
         this.ID = id;
         this.SimilarityID = similarityID;
         this.ProjectID = projectID;
         this.State = state;
         this.Severity = severity;
         this.Comment = comment;
+        this.CreatedBy = createdBy;
         this.CreatedAt = CreatedAt;
         this.UpdatedAt = UpdatedAt;
     }
