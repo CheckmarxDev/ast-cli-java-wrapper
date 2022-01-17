@@ -20,7 +20,6 @@ public class Data {
     String group;
     String resultHash;
     String languageName;
-    @Deprecated String description;
     String platform;
     String issueType;
     String expectedValue;
@@ -35,7 +34,6 @@ public class Data {
                 @JsonProperty("group") String group,
                 @JsonProperty("resultHash") String resultHash,
                 @JsonProperty("languageName") String languageName,
-                @JsonProperty("description") String description,
                 @JsonProperty("platform") String platform,
                 @JsonProperty("issueType") String issueType,
                 @JsonProperty("expectedValue") String expectedValue,
@@ -49,7 +47,6 @@ public class Data {
         this.group = group;
         this.resultHash = resultHash;
         this.languageName = languageName;
-        this.description = description;
         this.platform = platform;
         this.issueType = issueType;
         this.expectedValue = expectedValue;
