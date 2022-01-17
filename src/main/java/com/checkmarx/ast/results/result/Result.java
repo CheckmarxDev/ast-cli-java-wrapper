@@ -25,6 +25,7 @@ public class Result {
     private final String firstScanId;
     private final String publishedAt;
     private final String recommendations;
+    private final String description;
     private final Data data;
     private final Comments comments;
     private final VulnerabilityDetails vulnerabilityDetails;
@@ -42,6 +43,7 @@ public class Result {
                   @JsonProperty("firstScanId") String firstScanId,
                   @JsonProperty("publishedAt") String publishedAt,
                   @JsonProperty("recommendations") String recommendations,
+                  @JsonProperty("description") String description,
                   @JsonProperty("data") Data data,
                   @JsonProperty("comments") Comments comments,
                   @JsonProperty("vulnerabilityDetails") VulnerabilityDetails vulnerabilityDetails) {
@@ -58,6 +60,7 @@ public class Result {
         this.firstScanId = firstScanId;
         this.publishedAt = publishedAt;
         this.recommendations = recommendations;
+        this.description = description;
         this.data = data;
         this.comments = comments;
         this.vulnerabilityDetails = vulnerabilityDetails;

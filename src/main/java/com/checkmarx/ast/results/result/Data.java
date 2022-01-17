@@ -20,7 +20,7 @@ public class Data {
     String group;
     String resultHash;
     String languageName;
-    String description;
+    @Deprecated String description;
     String platform;
     String issueType;
     String expectedValue;
