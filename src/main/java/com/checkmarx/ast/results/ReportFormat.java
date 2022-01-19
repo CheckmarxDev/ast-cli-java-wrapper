@@ -5,6 +5,7 @@ import lombok.Getter;
 public enum ReportFormat {
     summaryHTML(".html"),
     json(".json"),
+    summaryJSON(".json"),
     sarif(".sarif"),
     ;
 
