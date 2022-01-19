@@ -4,6 +4,7 @@ import com.checkmarx.ast.predicate.Predicate;
 import com.checkmarx.ast.project.Project;
 import com.checkmarx.ast.results.ReportFormat;
 import com.checkmarx.ast.results.Results;
+import com.checkmarx.ast.results.ResultsSummary;
 import com.checkmarx.ast.scan.Scan;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
@@ -193,6 +194,12 @@ public class CxWrapper {
         return Execution.executeCommand(withConfigArguments(arguments),
                                         logger,
                                         (line) -> CxBaseObject.parse(line, BRANCHES_TYPE));
+    }
+
+    public ResultsSummary resultsSummary(@NonNull UUID scanId) throws IOException, InterruptedException, CxException {
+        return new ObjectMapper()
+                .readerFor(ResultsSummary.class)
+                .readValue(results(scanId, ReportFormat.summaryJSON));
     }
 
     public Results results(@NonNull UUID scanId) throws IOException, InterruptedException, CxException {
