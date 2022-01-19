@@ -23,7 +23,7 @@ public class ResultsSummary {
     private String riskMessage;
     private String status;
     private String scanId;
-    private String scanData;
+    private String scanDate;
     private String scanTime;
     private String createdAt;
     private String projectId;
@@ -38,14 +38,14 @@ public class ResultsSummary {
                 @JsonProperty("ScaIssues") int scaIssues,
                 @JsonProperty("KicsIssues") int kicsIssues,
                 @JsonProperty("RiskStyle") String riskStyle,
-                @JsonProperty("RiskMessage") String riskMessage,
+                @JsonProperty("RiskMsg") String riskMessage,
                 @JsonProperty("Status") String status,
-                @JsonProperty("ScanId") String scanId,
-                @JsonProperty("ScanData") String scanData,
-                @JsonProperty("scanTime") String scanTime,
-                @JsonProperty("createdAt") String createdAt,
-                @JsonProperty("projectId") String projectId,
-                @JsonProperty("baseURI") String baseURI) {
+                @JsonProperty("ScanID") String scanId,
+                @JsonProperty("ScanDate") String scanDate,
+                @JsonProperty("ScanTime") String scanTime,
+                @JsonProperty("CreatedAt") String createdAt,
+                @JsonProperty("ProjectID") String projectId,
+                @JsonProperty("BaseURI") String baseURI) {
         this.totalIssues = totalIssues;
         this.highIssues = highIssues;
         this.mediumIssues = mediumIssues;
@@ -57,7 +57,7 @@ public class ResultsSummary {
         this.riskMessage = riskMessage;
         this.status = status;
         this.scanId = scanId;
-        this.scanData = scanData;
+        this.scanDate = scanDate;
         this.scanTime = scanTime;
         this.createdAt = createdAt;
         this.projectId = projectId;
