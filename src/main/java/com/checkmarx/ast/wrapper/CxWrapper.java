@@ -143,8 +143,10 @@ public class CxWrapper {
         arguments.add(scanType);
         arguments.add(CxConstants.STATE);
         arguments.add(state);
-        arguments.add(CxConstants.COMMENT);
-        arguments.add(comment);
+        if(!StringUtils.isBlank(comment)) {
+            arguments.add(CxConstants.COMMENT);
+            arguments.add(comment);
+        }
         arguments.add(CxConstants.SEVERITY);
         arguments.add(severity);
 
