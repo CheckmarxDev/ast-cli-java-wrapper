@@ -3,7 +3,7 @@ package com.checkmarx.ast;
 import com.checkmarx.ast.wrapper.CxConfig;
 import com.checkmarx.ast.wrapper.CxConstants;
 import com.checkmarx.ast.wrapper.CxWrapper;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ public abstract class BaseTest {
 
     protected CxWrapper wrapper;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         wrapper = new CxWrapper(getConfig(), getLogger());
     }
@@ -58,7 +58,6 @@ public abstract class BaseTest {
         params.put(CxConstants.BRANCH, "main");
         params.put(CxConstants.SAST_PRESET_NAME, "Checkmarx Default");
         params.put(CxConstants.AGENT,"AST-CLI-Java-Wrapper");
-        params.put(CxConstants.DEBUG, "");
         return params;
     }
 }
