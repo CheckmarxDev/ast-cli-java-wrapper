@@ -46,11 +46,11 @@ public class CxWrapper {
         this.executable = StringUtils.isBlank(this.cxConfig.getPathToExecutable())
                           ? Execution.getTempBinary()
                           : this.cxConfig.getPathToExecutable();
-        this.logger.info("using executable: " + executable);
+        this.logger.info("Executable path: " + executable);
     }
 
     public String authValidate() throws IOException, InterruptedException, CxException {
-        this.logger.info("initialized authentication validation command");
+        this.logger.info("Executing 'auth validate' command using the CLI.");
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_AUTH);
@@ -60,7 +60,7 @@ public class CxWrapper {
     }
 
     public Scan scanShow(@NonNull UUID scanId) throws IOException, InterruptedException, CxException {
-        this.logger.info("initialized scan retrieval for id: {}", scanId);
+        this.logger.info("Retrieving the details for scan id: {}", scanId);
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
@@ -77,7 +77,7 @@ public class CxWrapper {
     }
 
     public List<Scan> scanList(String filter) throws IOException, InterruptedException, CxException {
-        this.logger.info("initialized retrieval for scan list {}", filter);
+        this.logger.info("Fetching the scan list using the filter: {}", filter);
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
@@ -94,7 +94,7 @@ public class CxWrapper {
 
     public Scan scanCreate(@NonNull Map<String, String> params, String additionalParameters)
             throws IOException, InterruptedException, CxException {
-        this.logger.info("initialized scan create command");
+        this.logger.info("Executing 'scan create' command using the CLI.");
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
@@ -113,7 +113,8 @@ public class CxWrapper {
     }
 
     public List<Predicate> triageShow(@NonNull UUID projectId, String similarityId, String scanType) throws IOException, InterruptedException, CxException {
-        this.logger.info("initialized triage for project with id: {}", projectId);
+        this.logger.info("Executing 'triage show' command using the CLI.");
+        this.logger.info("Fetching the list of predicates for projectId {} , similarityId {} and scan-type {}.,", projectId, similarityId, scanType);
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_TRIAGE);
@@ -131,7 +132,8 @@ public class CxWrapper {
     }
 
     public void triageUpdate(@NonNull UUID projectId, String similarityId, String scanType, String state, String comment, String severity) throws IOException, InterruptedException, CxException {
-        this.logger.info("initialized triage update project with id: {}", projectId);
+        this.logger.info("Executing 'triage update' command using the CLI.");
+        this.logger.info("Updating the similarityId {} with state {} and severity {}.", similarityId, state, severity);
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_TRIAGE);
@@ -155,7 +157,7 @@ public class CxWrapper {
     }
 
     public Project projectShow(@NonNull UUID projectId) throws IOException, InterruptedException, CxException {
-        this.logger.info("initialized project retrieval for id: {}", projectId);
+        this.logger.info("Retrieving the details for project id: {}", projectId);
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_PROJECT);
@@ -172,7 +174,7 @@ public class CxWrapper {
     }
 
     public List<Project> projectList(String filter) throws IOException, InterruptedException, CxException {
-        this.logger.info("initialized retrieval for project list {}", filter);
+        this.logger.info("Fetching the project list using the filter: {}", filter);
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_PROJECT);
@@ -185,7 +187,7 @@ public class CxWrapper {
 
     public List<String> projectBranches(@NonNull UUID projectId, String filter)
             throws CxException, IOException, InterruptedException {
-        this.logger.info("initialized retrieval for project branches {}", filter);
+        this.logger.info("Fetching the branches for project id {} using the filter: {}", projectId, filter);
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_PROJECT);
@@ -213,7 +215,7 @@ public class CxWrapper {
 
     public String results(@NonNull UUID scanId, ReportFormat reportFormat)
             throws IOException, InterruptedException, CxException {
-        this.logger.info("initialized results command {}", reportFormat);
+        this.logger.info("Retrieving the scan result for scan id {}", scanId);
 
         String tempDir = Files.createTempDirectory("cx").toAbsolutePath().toString();
         String fileName = Long.toString(System.nanoTime());
