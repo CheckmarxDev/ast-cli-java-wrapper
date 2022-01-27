@@ -99,7 +99,8 @@ public class CxWrapper {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_CREATE);
-        arguments.addAll(jsonArguments());
+        arguments.add(CxConstants.SCAN_INFO_FORMAT);
+        arguments.add(CxConstants.FORMAT_JSON);
 
         for (Map.Entry<String, String> param : params.entrySet()) {
             arguments.add(param.getKey());
