@@ -5,7 +5,8 @@ import com.checkmarx.ast.wrapper.CxException;
 import com.checkmarx.ast.wrapper.CxThinWrapper;
 import lombok.SneakyThrows;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class ThinWrapperTest extends BaseTest {
         CxThinWrapper wrapper = new CxThinWrapper(getLogger());
         String result = wrapper.run("scan list --format json --filter limit=10");
         List<Scan> scanList = Scan.listFromLine(result);
-        Assert.assertTrue(scanList.size() <= 10);
+        Assertions.assertTrue(scanList.size() <= 10);
     }
 
     @SneakyThrows
@@ -25,7 +26,7 @@ public class ThinWrapperTest extends BaseTest {
     public void testThinWrapperFail() {
         CxThinWrapper wrapper = new CxThinWrapper(getLogger());
         String arguments = "scan create -s . --project-name thin-wrapper-test --sast-preset invalid-preset";
-        CxException e = Assert.assertThrows(CxException.class, () -> wrapper.run(arguments));
-        Assert.assertTrue(e.getMessage().contains("--sast-preset"));
+        CxException e = Assertions.assertThrows(CxException.class, () -> wrapper.run(arguments));
+        Assertions.assertTrue(e.getMessage().contains("--sast-preset"));
     }
 }
