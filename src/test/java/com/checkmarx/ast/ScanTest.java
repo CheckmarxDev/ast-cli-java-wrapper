@@ -35,15 +35,6 @@ public class ScanTest extends BaseTest {
     }
 
     @Test
-    public void testScanCreateWithBranchName() throws Exception {
-        Map<String, String> params = commonParams();
-        params.put(CxConstants.BRANCH, "test");
-        Scan scan = wrapper.scanCreate(params);
-        Assert.assertEquals("Completed",
-                            wrapper.scanShow(UUID.fromString(scan.getID())).getStatus());
-    }
-
-    @Test
     public void testScanCreateWrongPreset() {
         Map<String, String> params = commonParams();
         params.put(CxConstants.SAST_PRESET_NAME, "InvalidPreset");
