@@ -52,11 +52,12 @@ public abstract class BaseTest {
 
     protected Map<String, String> commonParams() {
         Map<String, String> params = new HashMap<>();
-        params.put(CxConstants.PROJECT_NAME, "JavaWrapperTestCases");
+        params.put(CxConstants.PROJECT_NAME, "AST-CLI-Java-Wrapper-Tests");
         params.put(CxConstants.SOURCE, ".");
-        params.put(CxConstants.FILE_FILTER, "*.java");
+        params.put(CxConstants.FILE_FILTER, "!test");
         params.put(CxConstants.BRANCH, "main");
         params.put(CxConstants.SAST_PRESET_NAME, "Checkmarx Default");
+        params.put(CxConstants.AGENT,"AST-CLI-Java-Wrapper");
         return params;
     }
 }
