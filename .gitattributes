@@ -1,3 +1,0 @@
-*.exe filter=lfs diff=lfs merge=lfs -text
-cx-mac filter=lfs diff=lfs merge=lfs -text
-cx-linux filter=lfs diff=lfs merge=lfs -text
