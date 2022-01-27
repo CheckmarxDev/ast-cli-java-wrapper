@@ -13,6 +13,7 @@
     <url>https://www.checkmarx.com</url>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ast.wrapper.version>dev</ast.wrapper.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
