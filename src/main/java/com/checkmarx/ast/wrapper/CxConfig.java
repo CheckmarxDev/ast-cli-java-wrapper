@@ -81,7 +81,6 @@ public class  CxConfig {
 
     @SuppressWarnings("ALL")
     public static class CxConfigBuilder {
-        private List<String> additionalParameters;
 
         public CxConfigBuilder additionalParameters(String additionalParameters) {
             this.additionalParameters = parseAdditionalParameters(additionalParameters);

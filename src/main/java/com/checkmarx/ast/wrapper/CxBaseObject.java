@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,20 +19,20 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class CxBaseObject {
-    String ID;
-    String CreatedAt;
-    String UpdatedAt;
-    Map<String, String> Tags;
+    String id;
+    String createdAt;
+    String updatedAt;
+    Map<String, String> tags;
 
     @JsonCreator
-    public CxBaseObject(@JsonProperty("ID") String ID,
-                        @JsonProperty("CreatedAt") String createdAt,
-                        @JsonProperty("UpdatedAt") String updatedAt,
-                        @JsonProperty("Tags") Map<String, String> tags) {
-        this.ID = ID;
-        this.CreatedAt = createdAt;
-        this.UpdatedAt = updatedAt;
-        this.Tags = tags;
+    protected CxBaseObject(@JsonProperty("ID") String id,
+                           @JsonProperty("CreatedAt") String createdAt,
+                           @JsonProperty("UpdatedAt") String updatedAt,
+                           @JsonProperty("Tags") Map<String, String> tags) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.tags = tags;
     }
 
     protected static <T> T parse(String line, JavaType type) {
@@ -41,23 +40,20 @@ public abstract class CxBaseObject {
         if (!StringUtils.isBlank(line) && isValidJSON(line)) {
             try {
                 result = new ObjectMapper().readValue(line, type);
-            } catch (JsonProcessingException ignored) {
-
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
             }
         }
         return result;
     }
 
     private static boolean isValidJSON(final String json) {
-        boolean valid = false;
         try {
-            final JsonParser parser = new ObjectMapper().createParser(json);
-            //noinspection StatementWithEmptyBody
-            while (parser.nextToken() != null) {
-            }
-            valid = true;
-        } catch (IOException ignored) {
+            final ObjectMapper mapper = new ObjectMapper();
+            mapper.readTree(json);
+            return true;
+        } catch (IOException e) {
+            return false;
         }
-        return valid;
     }
 }

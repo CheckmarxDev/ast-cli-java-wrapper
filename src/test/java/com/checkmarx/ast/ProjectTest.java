@@ -10,28 +10,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class ProjectTest extends BaseTest {
+class ProjectTest extends BaseTest {
 
     @Test
-    public void testProjectShow() throws Exception {
+    void testProjectShow() throws Exception {
         List<Project> projectList = wrapper.projectList();
         Assertions.assertTrue(projectList.size() > 0);
-        Project project = wrapper.projectShow(UUID.fromString(projectList.get(0).getID()));
-        Assertions.assertEquals(projectList.get(0).getID(), project.getID());
+        Project project = wrapper.projectShow(UUID.fromString(projectList.get(0).getId()));
+        Assertions.assertEquals(projectList.get(0).getId(), project.getId());
     }
 
     @Test
-    public void testProjectList() throws Exception {
+    void testProjectList() throws Exception {
         List<Project> projectList = wrapper.projectList("limit=10");
         Assertions.assertTrue(projectList.size() <= 10);
     }
 
     @Test
-    public void testProjectBranches() throws Exception {
+    void testProjectBranches() throws Exception {
         Map<String, String> params = commonParams();
         params.put(CxConstants.BRANCH, "test");
         Scan scan = wrapper.scanCreate(params);
-        List<String> branches = wrapper.projectBranches(UUID.fromString(scan.getProjectID()), "");
+        List<String> branches = wrapper.projectBranches(UUID.fromString(scan.getProjectId()), "");
         Assertions.assertTrue(branches.size() >= 1);
         Assertions.assertTrue(branches.contains("test"));
     }

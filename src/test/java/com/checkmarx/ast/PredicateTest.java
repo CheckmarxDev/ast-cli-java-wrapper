@@ -11,37 +11,35 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.fail;
-
-public class PredicateTest extends BaseTest {
+class PredicateTest extends BaseTest {
 
     @Test
-    public void testTriageShow() throws Exception {
+    void testTriageShow() throws Exception {
         List<Scan> scanList = wrapper.scanList(String.format("statuses=Completed"));
         Scan scan = scanList.get(0);
         Assertions.assertTrue(scanList.size() > 0);
-        String scanId = scanList.get(0).getID();
+        String scanId = scanList.get(0).getId();
 
         Results results = wrapper.results(UUID.fromString(scanId));
         Result result = results.getResults().stream().filter(res -> res.getType().equalsIgnoreCase(CxConstants.SAST)).findFirst().get();
 
-        List<Predicate> predicates = wrapper.triageShow(UUID.fromString(scan.getProjectID()), result.getSimilarityId(), result.getType());
+        List<Predicate> predicates = wrapper.triageShow(UUID.fromString(scan.getProjectId()), result.getSimilarityId(), result.getType());
 
         Assertions.assertNotNull(predicates);
     }
 
     @Test
-    public void testTriageUpdate() throws Exception {
+    void testTriageUpdate() throws Exception {
         List<Scan> scanList = wrapper.scanList(String.format("statuses=Completed"));
         Scan scan = scanList.get(0);
         Assertions.assertTrue(scanList.size() > 0);
-        String scanId = scanList.get(0).getID();
+        String scanId = scanList.get(0).getId();
 
         Results results = wrapper.results(UUID.fromString(scanId));
         Result result = results.getResults().stream().filter(res -> res.getType().equalsIgnoreCase(CxConstants.SAST)).findFirst().get();
 
         try {
-            wrapper.triageUpdate(UUID.fromString(scan.getProjectID()), result.getSimilarityId(), result.getType(), "to_verify", "Edited via Java Wrapper", "high");
+            wrapper.triageUpdate(UUID.fromString(scan.getProjectId()), result.getSimilarityId(), result.getType(), "to_verify", "Edited via Java Wrapper", "high");
         } catch (Exception e) {
             Assertions.fail("Triage update failed. Should not throw exception");
         }

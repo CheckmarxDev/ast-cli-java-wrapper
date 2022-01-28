@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -22,31 +20,31 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Predicate {
 
-    String ID;
-    String SimilarityID;
-    String ProjectID;
-    String State;
-    String Severity;
-    String Comment;
-    String CreatedBy;
-    String CreatedAt;
-    String UpdatedAt;
+    String id;
+    String similarityId;
+    String projectId;
+    String state;
+    String severity;
+    String comment;
+    String createdBy;
+    String createdAt;
+    String updatedAt;
 
     @JsonCreator
-    public Predicate(@JsonProperty("ID") String id, @JsonProperty("SimilarityID") String similarityID,
-                     @JsonProperty("ProjectID") String projectID, @JsonProperty("State") String state,
+    public Predicate(@JsonProperty("ID") String id, @JsonProperty("SimilarityID") String similarityId,
+                     @JsonProperty("ProjectID") String projectId, @JsonProperty("State") String state,
                      @JsonProperty("Severity") String severity, @JsonProperty("Comment") String comment,
-                     @JsonProperty("CreatedBy") String createdBy, @JsonProperty("CreatedAt") String CreatedAt,
-                     @JsonProperty("UpdatedAt") String UpdatedAt) {
-        this.ID = id;
-        this.SimilarityID = similarityID;
-        this.ProjectID = projectID;
-        this.State = state;
-        this.Severity = severity;
-        this.Comment = comment;
-        this.CreatedBy = createdBy;
-        this.CreatedAt = CreatedAt;
-        this.UpdatedAt = UpdatedAt;
+                     @JsonProperty("CreatedBy") String createdBy, @JsonProperty("CreatedAt") String createdAt,
+                     @JsonProperty("UpdatedAt") String updatedAt) {
+        this.id = id;
+        this.similarityId = similarityId;
+        this.projectId = projectId;
+        this.state = state;
+        this.severity = severity;
+        this.comment = comment;
+        this.createdBy = createdBy;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public static <T> T fromLine(String line) {
@@ -59,27 +57,25 @@ public class Predicate {
 
     protected static <T> T parse(String line, JavaType type) {
         T result = null;
-        if (!StringUtils.isBlank(line) && isValidJSON(line)) {
-            try {
+        try {
+            if (!StringUtils.isBlank(line) && isValidJSON(line)) {
                 result = new ObjectMapper().readValue(line, type);
-            } catch (JsonProcessingException ignored) {
 
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return result;
     }
 
     private static boolean isValidJSON(final String json) {
-        boolean valid = false;
         try {
-            final JsonParser parser = new ObjectMapper().createParser(json);
-            //noinspection StatementWithEmptyBody
-            while (parser.nextToken() != null) {
-            }
-            valid = true;
-        } catch (IOException ignored) {
+            final ObjectMapper mapper = new ObjectMapper();
+            mapper.readTree(json);
+            return true;
+        } catch (IOException e) {
+            return false;
         }
-        return valid;
     }
 
 }

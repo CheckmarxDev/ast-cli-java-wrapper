@@ -4,7 +4,6 @@ import com.checkmarx.ast.scan.Scan;
 import com.checkmarx.ast.wrapper.CxException;
 import com.checkmarx.ast.wrapper.CxThinWrapper;
 import lombok.SneakyThrows;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
