@@ -24,7 +24,7 @@ import java.util.UUID;
 public class CxWrapper {
 
     private static final CollectionType BRANCHES_TYPE = TypeFactory.defaultInstance()
-                                                                   .constructCollectionType(List.class, String.class);
+            .constructCollectionType(List.class, String.class);
 
     @NonNull
     private final CxConfig cxConfig;
@@ -44,9 +44,9 @@ public class CxWrapper {
         this.cxConfig = cxConfig;
         this.logger = logger;
         this.executable = StringUtils.isBlank(this.cxConfig.getPathToExecutable())
-                          ? Execution.getTempBinary()
-                          : this.cxConfig.getPathToExecutable();
-        this.logger.info("Executable path: " + executable);
+                ? Execution.getTempBinary()
+                : this.cxConfig.getPathToExecutable();
+        this.logger.info("Executable path: {} ", executable);
     }
 
     public String authValidate() throws IOException, InterruptedException, CxException {
@@ -56,7 +56,7 @@ public class CxWrapper {
         arguments.add(CxConstants.CMD_AUTH);
         arguments.add(CxConstants.SUB_CMD_VALIDATE);
 
-        return Execution.executeCommand(withConfigArguments(arguments), logger, (line) -> line);
+        return Execution.executeCommand(withConfigArguments(arguments), logger, line -> line);
     }
 
     public Scan scanShow(@NonNull UUID scanId) throws IOException, InterruptedException, CxException {
@@ -114,7 +114,7 @@ public class CxWrapper {
 
     public List<Predicate> triageShow(@NonNull UUID projectId, String similarityId, String scanType) throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'triage show' command using the CLI.");
-        this.logger.info("Fetching the list of predicates for projectId {} , similarityId {} and scan-type {}.,", projectId, similarityId, scanType);
+        this.logger.info("Fetching the list of predicates for projectId {} , similarityId {} and scan-type {}.", projectId, similarityId, scanType);
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_TRIAGE);
@@ -146,14 +146,14 @@ public class CxWrapper {
         arguments.add(scanType);
         arguments.add(CxConstants.STATE);
         arguments.add(state);
-        if(!StringUtils.isBlank(comment)) {
+        if (!StringUtils.isBlank(comment)) {
             arguments.add(CxConstants.COMMENT);
             arguments.add(comment);
         }
         arguments.add(CxConstants.SEVERITY);
         arguments.add(severity);
 
-        Execution.executeCommand(withConfigArguments(arguments), logger, (line) -> null);
+        Execution.executeCommand(withConfigArguments(arguments), logger, line -> null);
     }
 
     public Project projectShow(@NonNull UUID projectId) throws IOException, InterruptedException, CxException {
@@ -197,8 +197,8 @@ public class CxWrapper {
         arguments.addAll(filterArguments(filter));
 
         return Execution.executeCommand(withConfigArguments(arguments),
-                                        logger,
-                                        (line) -> CxBaseObject.parse(line, BRANCHES_TYPE));
+                logger,
+                line -> CxBaseObject.parse(line, BRANCHES_TYPE));
     }
 
     public ResultsSummary resultsSummary(@NonNull UUID scanId) throws IOException, InterruptedException, CxException {
@@ -232,8 +232,8 @@ public class CxWrapper {
         arguments.add(tempDir);
 
         return Execution.executeCommand(withConfigArguments(arguments),
-                                        logger, tempDir,
-                                        fileName + reportFormat.getExtension());
+                logger, tempDir,
+                fileName + reportFormat.getExtension());
     }
 
     private List<String> withConfigArguments(List<String> commands) {

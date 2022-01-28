@@ -20,19 +20,19 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Project extends CxBaseObject {
 
-    String Name;
-    List<String> Groups;
+    String name;
+    List<String> groups;
 
     @JsonCreator
-    public Project(@JsonProperty("ID") String ID,
-                   @JsonProperty("Name") String Name,
-                   @JsonProperty("CreatedAt") String CreatedAt,
-                   @JsonProperty("UpdatedAt") String UpdatedAt,
-                   @JsonProperty("Tags") Map<String, String> Tags,
-                   @JsonProperty("Groups") List<String> Groups) {
-        super(ID, CreatedAt, UpdatedAt, Tags);
-        this.Name = Name;
-        this.Groups = Groups;
+    public Project(@JsonProperty("ID") String id,
+                   @JsonProperty("Name") String name,
+                   @JsonProperty("CreatedAt") String createdAt,
+                   @JsonProperty("UpdatedAt") String updatedAt,
+                   @JsonProperty("Tags") Map<String, String> tags,
+                   @JsonProperty("Groups") List<String> groups) {
+        super(id, createdAt, updatedAt, tags);
+        this.name = name;
+        this.groups = groups;
     }
 
     public static <T> T fromLine(String line) {

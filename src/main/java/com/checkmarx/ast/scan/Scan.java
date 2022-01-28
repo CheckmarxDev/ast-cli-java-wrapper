@@ -22,24 +22,24 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Scan extends CxBaseObject {
 
-    String ProjectID;
-    String Status;
-    String Initiator;
-    String Origin;
-    String Branch;
+    String projectId;
+    String status;
+    String initiator;
+    String origin;
+    String branch;
 
     @JsonCreator
-    public Scan(@JsonProperty("ID") String ID, @JsonProperty("ProjectID") String ProjectID,
-                @JsonProperty("Status") String Status, @JsonProperty("CreatedAt") String CreatedAt,
-                @JsonProperty("UpdatedAt") String UpdatedAt, @JsonProperty("Tags") Map<String, String> Tags,
-                @JsonProperty("Initiator") String Initiator, @JsonProperty("Origin") String Origin,
-                @JsonProperty("Branch") String Branch) {
-        super(ID, CreatedAt, UpdatedAt, Tags);
-        this.ProjectID = ProjectID;
-        this.Status = Status;
-        this.Initiator = Initiator;
-        this.Origin = Origin;
-        this.Branch = Branch;
+    public Scan(@JsonProperty("ID") String id, @JsonProperty("ProjectID") String projectId,
+                @JsonProperty("Status") String status, @JsonProperty("CreatedAt") String createdAt,
+                @JsonProperty("UpdatedAt") String updatedAt, @JsonProperty("Tags") Map<String, String> tags,
+                @JsonProperty("Initiator") String initiator, @JsonProperty("Origin") String origin,
+                @JsonProperty("Branch") String branch) {
+        super(id, createdAt, updatedAt, tags);
+        this.projectId = projectId;
+        this.status = status;
+        this.initiator = initiator;
+        this.origin = origin;
+        this.branch = branch;
     }
 
     public static <T> T fromLine(String line) {

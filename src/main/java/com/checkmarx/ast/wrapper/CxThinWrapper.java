@@ -23,7 +23,7 @@ public class CxThinWrapper {
     public CxThinWrapper(@NonNull Logger logger) throws IOException {
         this.logger = logger;
         this.executable = Execution.getTempBinary();
-        this.logger.info("Executable path: " + executable);
+        this.logger.info("Executable path: {} ", executable);
     }
 
     public String run(@NonNull String arguments) throws CxException, IOException, InterruptedException {
@@ -31,6 +31,6 @@ public class CxThinWrapper {
         List<String> argv = new ArrayList<>();
         argv.add(executable);
         argv.addAll(Arrays.asList(arguments.split(" ")));
-        return Execution.executeCommand(argv, logger, (line) -> line);
+        return Execution.executeCommand(argv, logger, line -> line);
     }
 }
