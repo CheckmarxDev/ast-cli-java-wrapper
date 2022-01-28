@@ -3,7 +3,7 @@ package com.checkmarx.ast;
 import com.checkmarx.ast.wrapper.CxConfig;
 import com.checkmarx.ast.wrapper.CxConstants;
 import com.checkmarx.ast.wrapper.CxWrapper;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +13,9 @@ import java.util.Map;
 public abstract class BaseTest {
 
     protected CxWrapper wrapper;
+    private String projectId;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         wrapper = new CxWrapper(getConfig(), getLogger());
     }
@@ -35,15 +36,15 @@ public abstract class BaseTest {
 
     protected static CxConfig getConfig() {
         return CxConfig.builder()
-                       .baseUri(CX_BASE_URI)
-                       .baseAuthUri(CX_BASE_AUTH_URI)
-                       .tenant(CX_TENANT)
-                       .apiKey(CX_APIKEY)
-                       .clientId(CX_CLIENT_ID)
-                       .clientSecret(CX_CLIENT_SECRET)
-                       .additionalParameters(CX_ADDITIONAL_PARAMETERS)
-                       .pathToExecutable(PATH_TO_EXECUTABLE)
-                       .build();
+                .baseUri(CX_BASE_URI)
+                .baseAuthUri(CX_BASE_AUTH_URI)
+                .tenant(CX_TENANT)
+                .apiKey(CX_APIKEY)
+                .clientId(CX_CLIENT_ID)
+                .clientSecret(CX_CLIENT_SECRET)
+                .additionalParameters(CX_ADDITIONAL_PARAMETERS)
+                .pathToExecutable(PATH_TO_EXECUTABLE)
+                .build();
     }
 
     private static String getEnvOrNull(String key) {
@@ -52,11 +53,12 @@ public abstract class BaseTest {
 
     protected Map<String, String> commonParams() {
         Map<String, String> params = new HashMap<>();
-        params.put(CxConstants.PROJECT_NAME, "JavaWrapperTestCases");
+        params.put(CxConstants.PROJECT_NAME, "AST-CLI-Java-Wrapper-Tests");
         params.put(CxConstants.SOURCE, ".");
-        params.put(CxConstants.FILE_FILTER, "*.java");
+        params.put(CxConstants.FILE_FILTER, "!test");
         params.put(CxConstants.BRANCH, "main");
         params.put(CxConstants.SAST_PRESET_NAME, "Checkmarx Default");
+        params.put(CxConstants.AGENT, "AST-CLI-Java-Wrapper");
         return params;
     }
 }
