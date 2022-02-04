@@ -28,7 +28,7 @@ public final class CxConstants {
     static final String SUB_CMD_CREATE = "create";
     static final String CMD_TRIAGE = "triage";
     static final String SUB_CMD_UPDATE = "update";
-    static final String CMD_RESULT = "result";
+    static final String CMD_RESULT = "results";
     static final String FORMAT = "--format";
     static final String SCAN_INFO_FORMAT = "--scan-info-format";
     static final String FORMAT_JSON = "json";
