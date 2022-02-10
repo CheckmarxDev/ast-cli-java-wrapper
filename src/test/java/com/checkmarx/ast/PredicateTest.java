@@ -15,12 +15,9 @@ class PredicateTest extends BaseTest {
 
     @Test
     void testTriageShow() throws Exception {
-        List<Scan> scanList = wrapper.scanList(String.format("statuses=Completed"));
-        Scan scan = scanList.get(0);
-        Assertions.assertTrue(scanList.size() > 0);
-        String scanId = scanList.get(0).getId();
+        Scan scan = wrapper.scanShow(UUID.fromString(CX_SCAN_ID));
 
-        Results results = wrapper.results(UUID.fromString(scanId));
+        Results results = wrapper.results(UUID.fromString(CX_SCAN_ID));
         Result result = results.getResults().stream().filter(res -> res.getType().equalsIgnoreCase(CxConstants.SAST)).findFirst().get();
 
         List<Predicate> predicates = wrapper.triageShow(UUID.fromString(scan.getProjectId()), result.getSimilarityId(), result.getType());
@@ -30,12 +27,9 @@ class PredicateTest extends BaseTest {
 
     @Test
     void testTriageUpdate() throws Exception {
-        List<Scan> scanList = wrapper.scanList(String.format("statuses=Completed"));
-        Scan scan = scanList.get(0);
-        Assertions.assertTrue(scanList.size() > 0);
-        String scanId = scanList.get(0).getId();
+        Scan scan = wrapper.scanShow(UUID.fromString(CX_SCAN_ID));
 
-        Results results = wrapper.results(UUID.fromString(scanId));
+        Results results = wrapper.results(UUID.fromString(CX_SCAN_ID));
         Result result = results.getResults().stream().filter(res -> res.getType().equalsIgnoreCase(CxConstants.SAST)).findFirst().get();
 
         try {
