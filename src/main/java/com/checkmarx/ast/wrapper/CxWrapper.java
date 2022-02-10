@@ -222,6 +222,7 @@ public class CxWrapper {
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_RESULT);
+        arguments.add(CxConstants.SUB_CMD_SHOW);
         arguments.add(CxConstants.SCAN_ID);
         arguments.add(scanId.toString());
         arguments.add(CxConstants.REPORT_FORMAT);

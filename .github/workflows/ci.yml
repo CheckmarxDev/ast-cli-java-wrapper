@@ -29,6 +29,7 @@ jobs:
           CX_CLIENT_SECRET: ${{ secrets.CX_CLIENT_SECRET}}
           CX_BASE_URI: ${{ secrets.CX_BASE_URI }}
           CX_TENANT: ${{ secrets.CX_TENANT }}
+          CX_SCAN_ID: ${{ secrets.CX_SCAN_ID }}
         run: mvn -B test --file pom.xml
   cx-scan:
     runs-on: ubuntu-latest
