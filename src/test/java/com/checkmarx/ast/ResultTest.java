@@ -4,7 +4,12 @@ import com.checkmarx.ast.codebashing.CodeBashing;
 import com.checkmarx.ast.results.ReportFormat;
 import com.checkmarx.ast.results.Results;
 import com.checkmarx.ast.results.ResultsSummary;
+import com.checkmarx.ast.results.result.Data;
+import com.checkmarx.ast.results.result.Node;
+import com.checkmarx.ast.results.result.Result;
 import com.checkmarx.ast.scan.Scan;
+import com.checkmarx.ast.wrapper.CxConstants;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -58,5 +63,29 @@ class ResultTest extends BaseTest {
         Assertions.assertTrue(codeBashingList.size() > 0);
         String path = codeBashingList.get(0).getPath();
         Assertions.assertTrue(path.length() > 0);
+
+    @Test
+    void testResultsBflJSON() throws Exception {
+
+        UUID scanId = UUID.fromString(CX_SCAN_ID);
+        Results results = wrapper.results(scanId);
+        Result result = results.getResults().stream().filter(res -> res.getType().equalsIgnoreCase(CxConstants.SAST)).findFirst().get();
+        Data data = result.getData();
+        String queryId = data.getQueryId();
+        List<Node> resultsBfl = wrapper.getResultsBfl(scanId, queryId);
+        Assertions.assertTrue(resultsBfl.size() > 0);
+        Assertions.assertTrue(StringUtils.isNotEmpty(resultsBfl.get(0).getFileName()));
+        Assertions.assertTrue(StringUtils.isNotEmpty(resultsBfl.get(0).getMethod()));
+
+    }
+
+    @Test
+    void testResultsBflWithInvalidQueryId() throws Exception {
+
+        UUID scanId = UUID.fromString(CX_SCAN_ID);
+        String queryId = "0000";
+        List<Node> resultsBfl = wrapper.getResultsBfl(scanId, queryId);
+        Assertions.assertTrue(resultsBfl.isEmpty());
+
     }
 }

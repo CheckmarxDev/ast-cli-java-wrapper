@@ -12,16 +12,7 @@ import java.util.Map;
 
 public abstract class BaseTest {
 
-    protected CxWrapper wrapper;
-    private String projectId;
-
-    @BeforeEach
-    public void init() throws Exception {
-        wrapper = new CxWrapper(getConfig(), getLogger());
-    }
-
     public static final String CX_SCAN_ID = getEnvOrNull("CX_SCAN_ID");
-
     private static final String CX_BASE_URI = getEnvOrNull("CX_BASE_URI");
     private static final String CX_BASE_AUTH_URI = getEnvOrNull("CX_BASE_AUTH_URI");
     private static final String CX_TENANT = getEnvOrNull("CX_TENANT");
@@ -31,10 +22,8 @@ public abstract class BaseTest {
     private static final String CX_ADDITIONAL_PARAMETERS = getEnvOrNull("CX_ADDITIONAL_PARAMETERS");
     private static final String PATH_TO_EXECUTABLE = getEnvOrNull("PATH_TO_EXECUTABLE");
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    protected Logger getLogger() {
-        return logger;
-    }
+    protected CxWrapper wrapper;
+    private String projectId;
 
     protected static CxConfig getConfig() {
         return CxConfig.builder()
@@ -53,9 +42,18 @@ public abstract class BaseTest {
         return System.getenv().getOrDefault(key, null);
     }
 
+    @BeforeEach
+    public void init() throws Exception {
+        wrapper = new CxWrapper(getConfig(), getLogger());
+    }
+
+    protected Logger getLogger() {
+        return logger;
+    }
+
     protected Map<String, String> commonParams() {
         Map<String, String> params = new HashMap<>();
-        params.put(CxConstants.PROJECT_NAME, "CLI-Java-Wrapper-Tests");
+        params.put(CxConstants.PROJECT_NAME, "cli-java-wrapper-tests");
         params.put(CxConstants.SOURCE, ".");
         params.put(CxConstants.FILE_FILTER, "!test");
         params.put(CxConstants.BRANCH, "main");
