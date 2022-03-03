@@ -1,5 +1,6 @@
 package com.checkmarx.ast.wrapper;
 
+import com.checkmarx.ast.codebashing.CodeBashing;
 import com.checkmarx.ast.predicate.Predicate;
 import com.checkmarx.ast.project.Project;
 import com.checkmarx.ast.results.ReportFormat;
@@ -199,6 +200,23 @@ public class CxWrapper {
         return Execution.executeCommand(withConfigArguments(arguments),
                 logger,
                 line -> CxBaseObject.parse(line, BRANCHES_TYPE));
+    }
+
+    public List<CodeBashing> codeBashingList(@NonNull String cweId,@NonNull String language,@NonNull String queryName) throws IOException, InterruptedException, CxException {
+        this.logger.info("Fetching the codebashing link");
+
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_RESULT);
+        arguments.add(CxConstants.SUB_CMD_CODE_BASHING);
+        arguments.add(CxConstants.LANGUAGE);
+        arguments.add(language);
+        arguments.add(CxConstants.VULNERABILITY_TYPE);
+        arguments.add(queryName);
+        arguments.add(CxConstants.CWE_ID);
+        arguments.add(cweId);
+        arguments.addAll(jsonArguments());
+
+        return Execution.executeCommand(withConfigArguments(arguments), logger, CodeBashing::listFromLine);
     }
 
     public ResultsSummary resultsSummary(@NonNull UUID scanId) throws IOException, InterruptedException, CxException {
