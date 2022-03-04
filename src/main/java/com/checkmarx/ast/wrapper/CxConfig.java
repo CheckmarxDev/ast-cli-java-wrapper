@@ -45,14 +45,14 @@ public class  CxConfig {
     List<String> toArguments() {
         List<String> commands = new ArrayList<>();
 
-        if (StringUtils.isNotBlank(getClientId()) && StringUtils.isNotBlank(getClientSecret())) {
+        if (StringUtils.isNotBlank(getApiKey())) {
+            commands.add(CxConstants.API_KEY);
+            commands.add(getApiKey());
+        } else if (StringUtils.isNotBlank(getClientId()) && StringUtils.isNotBlank(getClientSecret())) {
             commands.add(CxConstants.CLIENT_ID);
             commands.add(getClientId());
             commands.add(CxConstants.CLIENT_SECRET);
             commands.add(getClientSecret());
-        } else if (StringUtils.isNotBlank(getApiKey())) {
-            commands.add(CxConstants.API_KEY);
-            commands.add(getApiKey());
         }
 
         if (StringUtils.isNotBlank(getTenant())) {
