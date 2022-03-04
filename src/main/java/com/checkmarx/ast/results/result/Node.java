@@ -91,4 +91,26 @@ public class Node {
             return false;
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Node node = (Node) obj;
+        return line == node.line &&
+                column == node.column &&
+                length == node.length &&
+                name.equals(node.name) &&
+                method.equals(node.method) &&
+                domType.equals(node.domType) &&
+                fileName.equals(node.fileName) &&
+                fullName.equals(node.fullName) &&
+                methodLine.equals(node.methodLine);
+
+    }
+
 }

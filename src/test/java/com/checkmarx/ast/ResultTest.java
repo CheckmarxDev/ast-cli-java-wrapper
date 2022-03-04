@@ -9,10 +9,10 @@ import com.checkmarx.ast.results.result.Node;
 import com.checkmarx.ast.results.result.Result;
 import com.checkmarx.ast.scan.Scan;
 import com.checkmarx.ast.wrapper.CxConstants;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,10 +72,8 @@ class ResultTest extends BaseTest {
         Result result = results.getResults().stream().filter(res -> res.getType().equalsIgnoreCase(CxConstants.SAST)).findFirst().get();
         Data data = result.getData();
         String queryId = data.getQueryId();
-        List<Node> resultsBfl = wrapper.getResultsBfl(scanId, queryId);
-        Assertions.assertTrue(resultsBfl.size() > 0);
-        Assertions.assertTrue(StringUtils.isNotEmpty(resultsBfl.get(0).getFileName()));
-        Assertions.assertTrue(StringUtils.isNotEmpty(resultsBfl.get(0).getMethod()));
+        int bflNodeIndex = wrapper.getResultsBfl(scanId, queryId, data.getNodes());
+        Assertions.assertTrue(bflNodeIndex == -1 || bflNodeIndex >= 0);
 
     }
 
@@ -84,8 +82,7 @@ class ResultTest extends BaseTest {
 
         UUID scanId = UUID.fromString(CX_SCAN_ID);
         String queryId = "0000";
-        List<Node> resultsBfl = wrapper.getResultsBfl(scanId, queryId);
-        Assertions.assertTrue(resultsBfl.isEmpty());
-
+        int bflNodeIndex = wrapper.getResultsBfl(scanId, queryId, new ArrayList<Node>());
+        Assertions.assertEquals(-1, bflNodeIndex);
     }
 }

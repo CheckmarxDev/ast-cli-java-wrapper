@@ -256,7 +256,7 @@ public class CxWrapper {
                 fileName + reportFormat.getExtension());
     }
 
-    public List<Node> getResultsBfl(@NonNull UUID scanId, @NonNull String queryId)
+    public int getResultsBfl(@NonNull UUID scanId, @NonNull String queryId, List<Node> resultNodes)
             throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'results bfl' command using the CLI.");
         this.logger.info("Fetching the best fix location for ScanId {} and QueryId {}", scanId, queryId);
@@ -270,7 +270,22 @@ public class CxWrapper {
         arguments.add(queryId);
         arguments.addAll(jsonArguments());
 
-        return Execution.executeCommand(withConfigArguments(arguments), logger, Node::listFromLine);
+        List<Node> bflNodes = Execution.executeCommand(withConfigArguments(arguments), logger, Node::listFromLine);
+        return getIndexOfBfLNode(bflNodes, resultNodes);
+
+    }
+
+    private int getIndexOfBfLNode(List<Node> bflNodes, List<Node> resultNodes) {
+        
+        int bflNodeIndex = -1;
+        for (Node bflNode : bflNodes) {
+            for (Node resultNode : resultNodes) {
+                if (bflNode.equals(resultNode)) {
+                    bflNodeIndex = resultNodes.indexOf(resultNode);
+                }
+            }
+        }
+        return bflNodeIndex;
     }
 
     private List<String> withConfigArguments(List<String> commands) {
