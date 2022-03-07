@@ -4,10 +4,15 @@ import com.checkmarx.ast.codebashing.CodeBashing;
 import com.checkmarx.ast.results.ReportFormat;
 import com.checkmarx.ast.results.Results;
 import com.checkmarx.ast.results.ResultsSummary;
+import com.checkmarx.ast.results.result.Data;
+import com.checkmarx.ast.results.result.Node;
+import com.checkmarx.ast.results.result.Result;
 import com.checkmarx.ast.scan.Scan;
+import com.checkmarx.ast.wrapper.CxConstants;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +20,7 @@ class ResultTest extends BaseTest {
     private static String CWE_ID = "79";
     private static String LANGUAGE = "PHP";
     private static String QUERY_NAME = "Reflected XSS All Clients";
+
     @Test
     void testResultsHTML() throws Exception {
         List<Scan> scanList = wrapper.scanList();
@@ -54,9 +60,31 @@ class ResultTest extends BaseTest {
 
     @Test()
     void testResultsCodeBashing() throws Exception {
-        List<CodeBashing> codeBashingList = wrapper.codeBashingList(CWE_ID,LANGUAGE,QUERY_NAME);
+        List<CodeBashing> codeBashingList = wrapper.codeBashingList(CWE_ID, LANGUAGE, QUERY_NAME);
         Assertions.assertTrue(codeBashingList.size() > 0);
         String path = codeBashingList.get(0).getPath();
         Assertions.assertTrue(path.length() > 0);
+    }
+
+    @Test
+    void testResultsBflJSON() throws Exception {
+
+        UUID scanId = UUID.fromString(CX_SCAN_ID);
+        Results results = wrapper.results(scanId);
+        Result result = results.getResults().stream().filter(res -> res.getType().equalsIgnoreCase(CxConstants.SAST)).findFirst().get();
+        Data data = result.getData();
+        String queryId = data.getQueryId();
+        int bflNodeIndex = wrapper.getResultsBfl(scanId, queryId, data.getNodes());
+        Assertions.assertTrue(bflNodeIndex == -1 || bflNodeIndex >= 0);
+
+    }
+
+    @Test
+    void testResultsBflWithInvalidQueryId() throws Exception {
+
+        UUID scanId = UUID.fromString(CX_SCAN_ID);
+        String queryId = "0000";
+        int bflNodeIndex = wrapper.getResultsBfl(scanId, queryId, new ArrayList<Node>());
+        Assertions.assertEquals(-1, bflNodeIndex);
     }
 }

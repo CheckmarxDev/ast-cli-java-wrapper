@@ -1,6 +1,6 @@
 name: AST Java Wrapper CI
 
-on: [pull_request]
+on: [ pull_request ]
 
 jobs:
   integration-tests:
@@ -40,8 +40,7 @@ jobs:
       - name: Checkmarx AST CLI Action
         uses: checkmarxDev/ast-github-action@main
         with:
-          project_name: ast-cli-java-wrapper
-          branch: master
+          project_name: ${{ github.repository }}
           base_uri: ${{ secrets.CX_BASE_URI }}
           cx_tenant: ${{ secrets.CX_TENANT }}
           cx_client_id: ${{ secrets.CX_CLIENT_ID }}

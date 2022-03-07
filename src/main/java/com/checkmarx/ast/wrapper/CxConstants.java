@@ -24,6 +24,7 @@ public final class CxConstants {
     static final String SUB_CMD_BRANCHES = "branches";
     static final String CMD_SCAN = "scan";
     static final String SUB_CMD_SHOW = "show";
+    static final String RESULTS_BFL_SUB_CMD = "bfl";
     static final String SUB_CMD_LIST = "list";
     static final String SUB_CMD_CREATE = "create";
     static final String CMD_TRIAGE = "triage";
@@ -36,6 +37,7 @@ public final class CxConstants {
     static final String SCAN_ID = "--scan-id";
     static final String PROJECT_ID = "--project-id";
     static final String SIMILARITY_ID = "--similarity-id";
+    static final String QUERY_ID = "--query-id";
     static final String STATE = "--state";
     static final String COMMENT = "--comment";
     static final String SEVERITY = "--severity";

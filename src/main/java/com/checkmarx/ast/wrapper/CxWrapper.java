@@ -6,6 +6,7 @@ import com.checkmarx.ast.project.Project;
 import com.checkmarx.ast.results.ReportFormat;
 import com.checkmarx.ast.results.Results;
 import com.checkmarx.ast.results.ResultsSummary;
+import com.checkmarx.ast.results.result.Node;
 import com.checkmarx.ast.scan.Scan;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
@@ -253,6 +254,38 @@ public class CxWrapper {
         return Execution.executeCommand(withConfigArguments(arguments),
                 logger, tempDir,
                 fileName + reportFormat.getExtension());
+    }
+
+    public int getResultsBfl(@NonNull UUID scanId, @NonNull String queryId, List<Node> resultNodes)
+            throws IOException, InterruptedException, CxException {
+        this.logger.info("Executing 'results bfl' command using the CLI.");
+        this.logger.info("Fetching the best fix location for ScanId {} and QueryId {}", scanId, queryId);
+
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_RESULT);
+        arguments.add(CxConstants.RESULTS_BFL_SUB_CMD);
+        arguments.add(CxConstants.SCAN_ID);
+        arguments.add(scanId.toString());
+        arguments.add(CxConstants.QUERY_ID);
+        arguments.add(queryId);
+        arguments.addAll(jsonArguments());
+
+        List<Node> bflNodes = Execution.executeCommand(withConfigArguments(arguments), logger, Node::listFromLine);
+        return getIndexOfBfLNode(bflNodes, resultNodes);
+
+    }
+
+    private int getIndexOfBfLNode(List<Node> bflNodes, List<Node> resultNodes) {
+        
+        int bflNodeIndex = -1;
+        for (Node bflNode : bflNodes) {
+            for (Node resultNode : resultNodes) {
+                if (bflNode.equals(resultNode)) {
+                    bflNodeIndex = resultNodes.indexOf(resultNode);
+                }
+            }
+        }
+        return bflNodeIndex;
     }
 
     private List<String> withConfigArguments(List<String> commands) {
