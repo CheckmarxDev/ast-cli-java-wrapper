@@ -203,7 +203,7 @@ public class CxWrapper {
                 line -> CxBaseObject.parse(line, BRANCHES_TYPE));
     }
 
-    public List<CodeBashing> codeBashingList(@NonNull String cweId,@NonNull String language,@NonNull String queryName) throws IOException, InterruptedException, CxException {
+    public List<CodeBashing> codeBashingList(@NonNull String cweId, @NonNull String language, @NonNull String queryName) throws IOException, InterruptedException, CxException {
         this.logger.info("Fetching the codebashing link");
 
         List<String> arguments = new ArrayList<>();
@@ -276,16 +276,16 @@ public class CxWrapper {
     }
 
     private int getIndexOfBfLNode(List<Node> bflNodes, List<Node> resultNodes) {
-        
-        int bflNodeIndex = -1;
+
+        int bflNodeNotFound = -1;
         for (Node bflNode : bflNodes) {
             for (Node resultNode : resultNodes) {
                 if (bflNode.equals(resultNode)) {
-                    bflNodeIndex = resultNodes.indexOf(resultNode);
+                    return resultNodes.indexOf(resultNode);
                 }
             }
         }
-        return bflNodeIndex;
+        return bflNodeNotFound;
     }
 
     private List<String> withConfigArguments(List<String> commands) {
