@@ -32,17 +32,3 @@ jobs:
           CX_SCAN_ID: ${{ secrets.CX_SCAN_ID }}
           CX_APIKEY: ${{ secrets.CX_APIKEY }}
         run: mvn -B test --file pom.xml
-  cx-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Checkmarx AST CLI Action
-        uses: checkmarxDev/ast-github-action@main
-        with:
-          project_name: ${{ github.repository }}
-          base_uri: ${{ secrets.CX_BASE_URI }}
-          cx_tenant: ${{ secrets.CX_TENANT }}
-          cx_client_id: ${{ secrets.CX_CLIENT_ID }}
-          cx_client_secret: ${{ secrets.CX_CLIENT_SECRET }}
-          additional_params: --tags "Galactica"
