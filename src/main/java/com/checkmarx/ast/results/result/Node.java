@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @Value
 @JsonDeserialize()
@@ -69,7 +70,7 @@ public class Node {
         return parse(line, TypeFactory.defaultInstance().constructCollectionType(List.class, Node.class));
     }
 
-    protected static <T> T parse(String line, JavaType type) {
+    private static <T> T parse(String line, JavaType type) {
         T result = null;
         try {
             if (!StringUtils.isBlank(line) && isValidJSON(line)) {
@@ -102,15 +103,14 @@ public class Node {
         }
         Node node = (Node) obj;
         return line == node.line &&
-                column == node.column &&
-                length == node.length &&
-                name.equals(node.name) &&
-                method.equals(node.method) &&
-                domType.equals(node.domType) &&
-                fileName.equals(node.fileName) &&
-                fullName.equals(node.fullName) &&
-                methodLine.equals(node.methodLine);
-
+               column == node.column &&
+               length == node.length &&
+               Objects.equals(name, node.name) &&
+               Objects.equals(method, node.method) &&
+               Objects.equals(domType, node.domType) &&
+               Objects.equals(fileName, node.fileName) &&
+               Objects.equals(fullName, node.fullName) &&
+               Objects.equals(methodLine, node.methodLine);
     }
 
 }
