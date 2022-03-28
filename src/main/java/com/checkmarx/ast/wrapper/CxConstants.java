@@ -47,5 +47,5 @@ public final class CxConstants {
     static final String SUB_CMD_CODE_BASHING = "codebashing";
     static final String CWE_ID = "--cwe-id";
     static final String LANGUAGE = "--language";
-    static final String VULNERABILITY_TYPE = "--vulnerabity-type";
+    static final String VULNERABILITY_TYPE = "--vulnerability-type";
 }
