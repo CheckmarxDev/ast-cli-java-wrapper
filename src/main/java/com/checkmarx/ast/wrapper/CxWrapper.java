@@ -98,6 +98,20 @@ public class CxWrapper {
             throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'scan create' command using the CLI.");
 
+        List<String> arguments = buildArgumentsArray(params, additionalParameters);
+
+        return Execution.executeCommand(withConfigArguments(arguments), logger, Scan::fromLine);
+    }
+
+    public List<String> scanBuild(@NonNull Map<String, String> params, String additionalParameters) {
+        this.logger.info("Creating the command for scan create");
+
+        List<String> arguments = withConfigArguments(buildArgumentsArray(params, additionalParameters));
+
+        return arguments;
+    }
+
+    private List<String> buildArgumentsArray(@NonNull Map<String, String> params, String additionalParameters) {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_CREATE);
@@ -110,8 +124,7 @@ public class CxWrapper {
         }
 
         arguments.addAll(CxConfig.parseAdditionalParameters(additionalParameters));
-
-        return Execution.executeCommand(withConfigArguments(arguments), logger, Scan::fromLine);
+        return arguments;
     }
 
     public List<Predicate> triageShow(@NonNull UUID projectId, String similarityId, String scanType) throws IOException, InterruptedException, CxException {
