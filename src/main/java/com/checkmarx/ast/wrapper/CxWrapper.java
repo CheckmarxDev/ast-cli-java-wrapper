@@ -98,20 +98,21 @@ public class CxWrapper {
             throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'scan create' command using the CLI.");
 
-        List<String> arguments = buildArgumentsArray(params, additionalParameters);
+        List<String> arguments = buildScanCreateArgumentsArray(params, additionalParameters);
 
         return Execution.executeCommand(withConfigArguments(arguments), logger, Scan::fromLine);
     }
 
+    //Used in Jenkins plugin
     public List<String> scanBuild(@NonNull Map<String, String> params, String additionalParameters) {
         this.logger.info("Creating the command for scan create");
 
-        List<String> arguments = withConfigArguments(buildArgumentsArray(params, additionalParameters));
+        List<String> arguments = withConfigArguments(buildScanCreateArgumentsArray(params, additionalParameters));
 
         return arguments;
     }
 
-    private List<String> buildArgumentsArray(@NonNull Map<String, String> params, String additionalParameters) {
+    private List<String> buildScanCreateArgumentsArray(@NonNull Map<String, String> params, String additionalParameters) {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_CREATE);
@@ -252,13 +253,8 @@ public class CxWrapper {
         String tempDir = Files.createTempDirectory("cx").toAbsolutePath().toString();
         String fileName = Long.toString(System.nanoTime());
 
-        List<String> arguments = new ArrayList<>();
-        arguments.add(CxConstants.CMD_RESULT);
-        arguments.add(CxConstants.SUB_CMD_SHOW);
-        arguments.add(CxConstants.SCAN_ID);
-        arguments.add(scanId.toString());
-        arguments.add(CxConstants.REPORT_FORMAT);
-        arguments.add(reportFormat.toString());
+        List<String> arguments = buildResultsArgumentsArray(scanId, reportFormat);
+
         arguments.add(CxConstants.OUTPUT_NAME);
         arguments.add(fileName);
         arguments.add(CxConstants.OUTPUT_PATH);
@@ -267,6 +263,29 @@ public class CxWrapper {
         return Execution.executeCommand(withConfigArguments(arguments),
                 logger, tempDir,
                 fileName + reportFormat.getExtension());
+    }
+
+    //Used in Jenkins plugin
+    public List<String> resultsBuild(@NonNull UUID scanId, ReportFormat reportFormat)
+            throws IOException {
+        this.logger.info("Creating command for results for scan id {}", scanId);
+
+        List<String> arguments = buildResultsArgumentsArray(scanId, reportFormat);
+        List<String> argumentsWithConfig = withConfigArguments(arguments);
+
+        return argumentsWithConfig;
+    }
+
+    private List<String> buildResultsArgumentsArray(UUID scanId, ReportFormat reportFormat) throws IOException {
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_RESULT);
+        arguments.add(CxConstants.SUB_CMD_SHOW);
+        arguments.add(CxConstants.SCAN_ID);
+        arguments.add(scanId.toString());
+        arguments.add(CxConstants.REPORT_FORMAT);
+        arguments.add(reportFormat.toString());
+
+        return arguments;
     }
 
     public int getResultsBfl(@NonNull UUID scanId, @NonNull String queryId, List<Node> resultNodes)
