@@ -8,7 +8,8 @@ filename_darwin=ast-cli_${release}_darwin_amd64.tar.gz
 #Windows
 echo "Updating windows binary"
 wget https://github.com/checkmarx/ast-cli/releases/download/${release}/${filename_windows}
-tar -xvzf ${filename_windows} -d tmp
+mkdir ./tmp/
+tar -xvzf ${filename_windows} -C ./tmp/
 mv ./tmp/cx.exe ./src/main/resources/cx.exe
 rm -r tmp
 rm ${filename_windows}
