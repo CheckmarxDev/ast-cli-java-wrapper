@@ -104,8 +104,6 @@ public class CxWrapper {
     }
 
     public List<String> buildScanCreateArguments(@NonNull Map<String, String> params, String additionalParameters) {
-        this.logger.info("Creating the command for scan create");
-
         return withConfigArguments(buildScanCreateArgumentsArray(params, additionalParameters));
     }
 
@@ -263,8 +261,6 @@ public class CxWrapper {
     }
 
     public List<String> buildResultsArguments(@NonNull UUID scanId, ReportFormat reportFormat) {
-        this.logger.info("Creating command for results for scan id {}", scanId);
-
         return withConfigArguments(buildResultsArgumentsArray(scanId, reportFormat));
     }
 
