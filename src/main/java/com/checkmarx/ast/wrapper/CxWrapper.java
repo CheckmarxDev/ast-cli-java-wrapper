@@ -98,6 +98,16 @@ public class CxWrapper {
             throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'scan create' command using the CLI.");
 
+        List<String> arguments = buildScanCreateArguments(params, additionalParameters);
+
+        return Execution.executeCommand(arguments, logger, Scan::fromLine);
+    }
+
+    public List<String> buildScanCreateArguments(@NonNull Map<String, String> params, String additionalParameters) {
+        return withConfigArguments(buildScanCreateArgumentsArray(params, additionalParameters));
+    }
+
+    private List<String> buildScanCreateArgumentsArray(@NonNull Map<String, String> params, String additionalParameters) {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_CREATE);
@@ -110,8 +120,7 @@ public class CxWrapper {
         }
 
         arguments.addAll(CxConfig.parseAdditionalParameters(additionalParameters));
-
-        return Execution.executeCommand(withConfigArguments(arguments), logger, Scan::fromLine);
+        return arguments;
     }
 
     public List<Predicate> triageShow(@NonNull UUID projectId, String similarityId, String scanType) throws IOException, InterruptedException, CxException {
@@ -239,6 +248,23 @@ public class CxWrapper {
         String tempDir = Files.createTempDirectory("cx").toAbsolutePath().toString();
         String fileName = Long.toString(System.nanoTime());
 
+        List<String> arguments = buildResultsArguments(scanId, reportFormat);
+
+        arguments.add(CxConstants.OUTPUT_NAME);
+        arguments.add(fileName);
+        arguments.add(CxConstants.OUTPUT_PATH);
+        arguments.add(tempDir);
+
+        return Execution.executeCommand(arguments,
+                logger, tempDir,
+                fileName + reportFormat.getExtension());
+    }
+
+    public List<String> buildResultsArguments(@NonNull UUID scanId, ReportFormat reportFormat) {
+        return withConfigArguments(buildResultsArgumentsArray(scanId, reportFormat));
+    }
+
+    private List<String> buildResultsArgumentsArray(UUID scanId, ReportFormat reportFormat) {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_RESULT);
         arguments.add(CxConstants.SUB_CMD_SHOW);
@@ -246,14 +272,8 @@ public class CxWrapper {
         arguments.add(scanId.toString());
         arguments.add(CxConstants.REPORT_FORMAT);
         arguments.add(reportFormat.toString());
-        arguments.add(CxConstants.OUTPUT_NAME);
-        arguments.add(fileName);
-        arguments.add(CxConstants.OUTPUT_PATH);
-        arguments.add(tempDir);
 
-        return Execution.executeCommand(withConfigArguments(arguments),
-                logger, tempDir,
-                fileName + reportFormat.getExtension());
+        return arguments;
     }
 
     public int getResultsBfl(@NonNull UUID scanId, @NonNull String queryId, List<Node> resultNodes)
