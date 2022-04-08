@@ -123,6 +123,16 @@ public class CxWrapper {
         return arguments;
     }
 
+    public List<String> buildScanCancelArguments(@NonNull UUID scanId) {
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_SCAN);
+        arguments.add(CxConstants.SUB_CMD_CANCEL);
+        arguments.add(CxConstants.SCAN_ID);
+        arguments.add(scanId.toString());
+
+        return withConfigArguments(arguments);
+    }
+
     public List<Predicate> triageShow(@NonNull UUID projectId, String similarityId, String scanType) throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'triage show' command using the CLI.");
         this.logger.info("Fetching the list of predicates for projectId {} , similarityId {} and scan-type {}.", projectId, similarityId, scanType);

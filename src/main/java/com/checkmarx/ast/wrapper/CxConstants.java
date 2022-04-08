@@ -27,6 +27,7 @@ public final class CxConstants {
     static final String RESULTS_BFL_SUB_CMD = "bfl";
     static final String SUB_CMD_LIST = "list";
     static final String SUB_CMD_CREATE = "create";
+    static final String SUB_CMD_CANCEL = "cancel";
     static final String CMD_TRIAGE = "triage";
     static final String SUB_CMD_UPDATE = "update";
     static final String CMD_RESULT = "results";
