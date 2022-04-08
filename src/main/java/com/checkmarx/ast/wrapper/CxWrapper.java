@@ -106,9 +106,7 @@ public class CxWrapper {
     public List<String> buildScanCreateArguments(@NonNull Map<String, String> params, String additionalParameters) {
         this.logger.info("Creating the command for scan create");
 
-        List<String> arguments = withConfigArguments(buildScanCreateArgumentsArray(params, additionalParameters));
-
-        return arguments;
+        return withConfigArguments(buildScanCreateArgumentsArray(params, additionalParameters));
     }
 
     private List<String> buildScanCreateArgumentsArray(@NonNull Map<String, String> params, String additionalParameters) {
@@ -264,16 +262,13 @@ public class CxWrapper {
                 fileName + reportFormat.getExtension());
     }
 
-    public List<String> buildResultsArguments(@NonNull UUID scanId, ReportFormat reportFormat)
-            throws IOException {
+    public List<String> buildResultsArguments(@NonNull UUID scanId, ReportFormat reportFormat) {
         this.logger.info("Creating command for results for scan id {}", scanId);
 
-        List<String> argumentsWithConfig = withConfigArguments(buildResultsArgumentsArray(scanId, reportFormat));
-
-        return argumentsWithConfig;
+        return withConfigArguments(buildResultsArgumentsArray(scanId, reportFormat));
     }
 
-    private List<String> buildResultsArgumentsArray(UUID scanId, ReportFormat reportFormat) throws IOException {
+    private List<String> buildResultsArgumentsArray(UUID scanId, ReportFormat reportFormat) {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_RESULT);
         arguments.add(CxConstants.SUB_CMD_SHOW);
