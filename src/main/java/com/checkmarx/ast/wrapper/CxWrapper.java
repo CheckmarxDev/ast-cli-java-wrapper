@@ -98,13 +98,12 @@ public class CxWrapper {
             throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'scan create' command using the CLI.");
 
-        List<String> arguments = buildScanCreateArgumentsArray(params, additionalParameters);
+        List<String> arguments = buildScanCreateArguments(params, additionalParameters);
 
-        return Execution.executeCommand(withConfigArguments(arguments), logger, Scan::fromLine);
+        return Execution.executeCommand(arguments, logger, Scan::fromLine);
     }
 
-    //Used in Jenkins plugin
-    public List<String> scanBuild(@NonNull Map<String, String> params, String additionalParameters) {
+    public List<String> buildScanCreateArguments(@NonNull Map<String, String> params, String additionalParameters) {
         this.logger.info("Creating the command for scan create");
 
         List<String> arguments = withConfigArguments(buildScanCreateArgumentsArray(params, additionalParameters));
@@ -253,25 +252,23 @@ public class CxWrapper {
         String tempDir = Files.createTempDirectory("cx").toAbsolutePath().toString();
         String fileName = Long.toString(System.nanoTime());
 
-        List<String> arguments = buildResultsArgumentsArray(scanId, reportFormat);
+        List<String> arguments = buildResultsArguments(scanId, reportFormat);
 
         arguments.add(CxConstants.OUTPUT_NAME);
         arguments.add(fileName);
         arguments.add(CxConstants.OUTPUT_PATH);
         arguments.add(tempDir);
 
-        return Execution.executeCommand(withConfigArguments(arguments),
+        return Execution.executeCommand(arguments,
                 logger, tempDir,
                 fileName + reportFormat.getExtension());
     }
 
-    //Used in Jenkins plugin
-    public List<String> resultsBuild(@NonNull UUID scanId, ReportFormat reportFormat)
+    public List<String> buildResultsArguments(@NonNull UUID scanId, ReportFormat reportFormat)
             throws IOException {
         this.logger.info("Creating command for results for scan id {}", scanId);
 
-        List<String> arguments = buildResultsArgumentsArray(scanId, reportFormat);
-        List<String> argumentsWithConfig = withConfigArguments(arguments);
+        List<String> argumentsWithConfig = withConfigArguments(buildResultsArgumentsArray(scanId, reportFormat));
 
         return argumentsWithConfig;
     }
