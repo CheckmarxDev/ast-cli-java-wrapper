@@ -1,6 +1,7 @@
 package com.checkmarx.ast.wrapper;
 
 import com.checkmarx.ast.codebashing.CodeBashing;
+import com.checkmarx.ast.kicsRealtimeResults.kicsRealtimeResults;
 import com.checkmarx.ast.predicate.Predicate;
 import com.checkmarx.ast.project.Project;
 import com.checkmarx.ast.results.ReportFormat;
@@ -305,6 +306,23 @@ public class CxWrapper {
 
     }
 
+    public kicsRealtimeResults kicsRealtimeScan(@NonNull String fileSources, String additionalParams)
+            throws IOException, InterruptedException, CxException {
+        this.logger.info("Executing 'scan kics-realtime' command using the CLI.");
+        this.logger.info("Fetching the results for fileSources {} and additionalParams {}", fileSources, additionalParams);
+
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_SCAN);
+        arguments.add(CxConstants.SUB_CMD_KICS_REALTIME);
+        arguments.add(CxConstants.FILE_SOURCES);
+        arguments.add(fileSources);
+        arguments.add(CxConstants.ADDITONAL_PARAMS);
+        arguments.add(additionalParams);
+
+        kicsRealtimeResults kicsResults = Execution.executeCommand(withConfigArguments(arguments), logger, kicsRealtimeResults::fromLine);
+        return kicsResults;
+
+    }
     private int getIndexOfBfLNode(List<Node> bflNodes, List<Node> resultNodes) {
 
         int bflNodeNotFound = -1;
