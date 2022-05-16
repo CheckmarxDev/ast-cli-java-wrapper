@@ -31,6 +31,7 @@ public final class Execution {
     private static final String FILE_NAME_WINDOWS = "cx.exe";
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
+    private static final String MD5_ALGORITHM = "MD5";
 
     private static String executable = null;
 
@@ -161,7 +162,7 @@ public final class Execution {
         String md5 = null;
         final byte[] buf = new byte[8192];
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+            MessageDigest md = MessageDigest.getInstance(MD5_ALGORITHM);
             int i;
             while ((i = a.read(buf)) != -1) {
                 md.update(buf, 0, i);
