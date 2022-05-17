@@ -18,10 +18,12 @@ public class Results {
 
     int totalCount;
     List<Result> results;
+    String scanId;
 
     @JsonCreator
-    public Results(@JsonProperty("totalCount") int totalCount, @JsonProperty("results") List<Result> results) {
+    public Results(@JsonProperty("totalCount") int totalCount, @JsonProperty("results") List<Result> results, @JsonProperty("scanId") String scanId) {
         this.totalCount = totalCount;
         this.results = results;
+        this.scanId = scanId;
     }
 }
