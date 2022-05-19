@@ -33,7 +33,7 @@ public class ResultsSummary {
     private Map<String, String> tags;
     private String projectName;
     private String branchName;
-    private String asyncMessage;
+    private String scanInfoMessage;
 
 
     public ResultsSummary(@JsonProperty("TotalIssues") int totalIssues,
@@ -55,7 +55,7 @@ public class ResultsSummary {
                 @JsonProperty("Tags") Map<String, String> tags,
                 @JsonProperty("ProjectName") String projectName,
                 @JsonProperty("BranchName") String branchName,
-                @JsonProperty("AsyncMessage") String asyncMessage) {
+                @JsonProperty("ScanInfoMessage") String scanInfoMessage) {
         this.totalIssues = totalIssues;
         this.highIssues = highIssues;
         this.mediumIssues = mediumIssues;
@@ -75,6 +75,6 @@ public class ResultsSummary {
         this.tags = tags;
         this.projectName = projectName;
         this.branchName = branchName;
-        this.asyncMessage = asyncMessage;
+        this.scanInfoMessage = scanInfoMessage;
     }
 }
