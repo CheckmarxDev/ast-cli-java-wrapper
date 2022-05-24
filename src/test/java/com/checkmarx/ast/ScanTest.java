@@ -34,7 +34,7 @@ class ScanTest extends BaseTest {
 
     @Test
     void testKicsRealtimeScan() throws Exception {
-        kicsRealtimeResults scan = wrapper.kicsRealtimeScan("target/test-classes/Dockerfile","v");
+        kicsRealtimeResults scan = wrapper.kicsRealtimeScan("target/test-classes/Dockerfile","","v");
         Assertions.assertTrue(scan.getResults().size() >= 1);
     }
 

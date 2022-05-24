@@ -51,5 +51,6 @@ public final class CxConstants {
     static final String VULNERABILITY_TYPE = "--vulnerability-type";
     static final String FILE_SOURCES = "--file-sources";
     static final String ADDITONAL_PARAMS = "--additional-params";
+    static final String ENGINE = "--engine";
     static final String SUB_CMD_KICS_REALTIME = "kics-realtime";
 }

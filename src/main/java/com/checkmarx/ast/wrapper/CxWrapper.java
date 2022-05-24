@@ -306,7 +306,7 @@ public class CxWrapper {
 
     }
 
-    public kicsRealtimeResults kicsRealtimeScan(@NonNull String fileSources, String additionalParams)
+    public kicsRealtimeResults kicsRealtimeScan(@NonNull String fileSources,String engine ,String additionalParams)
             throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'scan kics-realtime' command using the CLI.");
         this.logger.info("Fetching the results for fileSources {} and additionalParams {}", fileSources, additionalParams);
@@ -318,7 +318,10 @@ public class CxWrapper {
         arguments.add(fileSources);
         arguments.add(CxConstants.ADDITONAL_PARAMS);
         arguments.add(additionalParams);
-
+        if(engine.length()>0){
+            arguments.add(CxConstants.ENGINE);
+            arguments.add(engine);
+        }
         kicsRealtimeResults kicsResults = Execution.executeCommand(withConfigArguments(arguments), logger, kicsRealtimeResults::fromLine);
         return kicsResults;
 
