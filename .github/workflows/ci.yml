@@ -33,5 +33,13 @@ jobs:
           CX_APIKEY: ${{ secrets.CX_APIKEY }}
         run: mvn -B test --file pom.xml
 
-      - name: Generate Cobertura report
-        run: mvn cobertura:cobertura
+      - name: Log coverage percentages to workflow output
+        run: |
+          echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
+          echo "branches = ${{ steps.jacoco.outputs.branches }}"
+
+      - name: Upload JaCoCo coverage report as a workflow artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
