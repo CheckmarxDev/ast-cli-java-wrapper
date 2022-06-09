@@ -32,3 +32,6 @@ jobs:
           CX_SCAN_ID: ${{ secrets.CX_SCAN_ID }}
           CX_APIKEY: ${{ secrets.CX_APIKEY }}
         run: mvn -B test --file pom.xml
+
+      - name: Generate Cobertura report
+        run: mvn cobertura:cobertura
