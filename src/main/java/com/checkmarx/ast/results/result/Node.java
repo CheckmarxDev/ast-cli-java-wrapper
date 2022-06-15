@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -103,14 +102,18 @@ public class Node {
         }
         Node node = (Node) obj;
         return line == node.line &&
-               column == node.column &&
-               length == node.length &&
-               Objects.equals(name, node.name) &&
-               Objects.equals(method, node.method) &&
-               Objects.equals(domType, node.domType) &&
-               Objects.equals(fileName, node.fileName) &&
-               Objects.equals(fullName, node.fullName) &&
-               Objects.equals(methodLine, node.methodLine);
+                column == node.column &&
+                length == node.length &&
+                Objects.equals(name, node.name) &&
+                Objects.equals(method, node.method) &&
+                Objects.equals(domType, node.domType) &&
+                Objects.equals(fileName, node.fileName) &&
+                Objects.equals(fullName, node.fullName) &&
+                Objects.equals(methodLine, node.methodLine);
     }
 
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
