@@ -151,7 +151,7 @@
                         </goals>
                         <configuration>
                             <includes>
-                                <include>com\..*.class</include>
+                                <include>**/com.checkmarx.ast/**/*</include>
                             </includes>
                         </configuration>
                     </execution>
