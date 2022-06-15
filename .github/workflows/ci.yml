@@ -32,3 +32,8 @@ jobs:
           CX_SCAN_ID: ${{ secrets.CX_SCAN_ID }}
           CX_APIKEY: ${{ secrets.CX_APIKEY }}
         run: mvn -B test --file pom.xml
+
+      - name: Run SpotBugs Analysis
+        uses: jwgmeligmeyling/spotbugs-github-action@master
+        with:
+          path: '**/spotbugsXml.xml'
