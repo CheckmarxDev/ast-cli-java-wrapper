@@ -149,11 +149,6 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
-                        <configuration>
-                            <includes>
-                                <include>**/com.checkmarx.ast/**/*</include>
-                            </includes>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>generate-code-coverage-report</id>
