@@ -33,6 +33,9 @@ jobs:
           CX_APIKEY: ${{ secrets.CX_APIKEY }}
         run: mvn -B test --file pom.xml
 
+      - name: Build with Maven
+        run: mvn -B verify
+
       - name: Run SpotBugs Analysis
         uses: jwgmeligmeyling/spotbugs-github-action@master
         with:
