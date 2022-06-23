@@ -49,4 +49,8 @@ public final class CxConstants {
     static final String CWE_ID = "--cwe-id";
     static final String LANGUAGE = "--language";
     static final String VULNERABILITY_TYPE = "--vulnerability-type";
+    static final String FILE_SOURCES = "--file";
+    static final String ADDITONAL_PARAMS = "--additional-params";
+    static final String ENGINE = "--engine";
+    static final String SUB_CMD_KICS_REALTIME = "kics-realtime";
 }
