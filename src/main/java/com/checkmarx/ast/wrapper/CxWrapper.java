@@ -16,7 +16,6 @@ import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class CxWrapper {
     @NonNull
     private final String executable;
 
-    public CxWrapper(@NonNull CxConfig cxConfig)
+    public CxWrapper(CxConfig cxConfig)
             throws CxConfig.InvalidCLIConfigException, IOException {
         this(cxConfig, LoggerFactory.getLogger(CxWrapper.class));
     }

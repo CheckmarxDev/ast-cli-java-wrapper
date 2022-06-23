@@ -1,7 +1,6 @@
 package com.checkmarx.ast.wrapper;
 
 import org.slf4j.Logger;
-
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -31,6 +30,7 @@ public final class Execution {
     private static final String FILE_NAME_WINDOWS = "cx.exe";
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
+    private static final String MD5_ALGORITHM = "MD5";
 
     private static String executable = null;
 
@@ -82,7 +82,7 @@ public final class Execution {
         File outputFile = new File(directory, file);
 
         return new String(Files.readAllBytes(Paths.get(outputFile.getAbsolutePath())),
-                          StandardCharsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     static String getTempBinary() throws IOException {
@@ -97,7 +97,7 @@ public final class Execution {
             }
             File tempExecutable = new File(TEMP_DIR, fileName);
             if (!tempExecutable.exists() || !compareChecksum(resource.openStream(),
-                                                             new FileInputStream(tempExecutable))) {
+                    new FileInputStream(tempExecutable))) {
                 copyURLToFile(resource, tempExecutable);
             }
             if (!tempExecutable.canExecute() && !tempExecutable.setExecutable(true)) {
@@ -110,7 +110,7 @@ public final class Execution {
 
     private static BufferedReader getReader(Process process) {
         InputStream is = process.getInputStream();
-        InputStreamReader isr = new InputStreamReader(is);
+        InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
         return new BufferedReader(isr);
     }
 
@@ -161,12 +161,12 @@ public final class Execution {
         String md5 = null;
         final byte[] buf = new byte[8192];
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+            MessageDigest md = MessageDigest.getInstance(MD5_ALGORITHM);
             int i;
             while ((i = a.read(buf)) != -1) {
                 md.update(buf, 0, i);
             }
-            md5 = new String(md.digest());
+            md5 = new String(md.digest(), StandardCharsets.UTF_8);
         } catch (NoSuchAlgorithmException | IOException e) {
             // ignore
         }
