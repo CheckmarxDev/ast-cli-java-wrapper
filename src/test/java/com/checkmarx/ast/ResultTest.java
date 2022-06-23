@@ -35,7 +35,7 @@ class ResultTest extends BaseTest {
         List<Scan> scanList = wrapper.scanList();
         Assertions.assertTrue(scanList.size() > 0);
         String scanId = scanList.get(0).getId();
-        String results = wrapper.results(UUID.fromString("8b15d70e-9e65-4498-9b41-d125268f929d"), ReportFormat.json);
+        String results = wrapper.results(UUID.fromString(scanId), ReportFormat.json);
         Assertions.assertTrue(results.length() > 0);
     }
 
