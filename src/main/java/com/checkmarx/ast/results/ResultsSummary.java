@@ -1,12 +1,11 @@
 package com.checkmarx.ast.results;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Value;
+import java.util.Map;
 
 @Value
 @JsonDeserialize()
@@ -21,6 +20,7 @@ public class ResultsSummary {
     private int sastIssues;
     private int scaIssues;
     private int kicsIssues;
+    private APISecurity apiSecResult;
     private String riskStyle;
     private String riskMessage;
     private String status;
@@ -37,25 +37,26 @@ public class ResultsSummary {
 
 
     public ResultsSummary(@JsonProperty("TotalIssues") int totalIssues,
-                @JsonProperty("HighIssues") int highIssues,
-                @JsonProperty("MediumIssues") int mediumIssues,
-                @JsonProperty("LowIssues") int lowIssues,
-                @JsonProperty("SastIssues") int sastIssues,
-                @JsonProperty("ScaIssues") int scaIssues,
-                @JsonProperty("KicsIssues") int kicsIssues,
-                @JsonProperty("RiskStyle") String riskStyle,
-                @JsonProperty("RiskMsg") String riskMessage,
-                @JsonProperty("Status") String status,
-                @JsonProperty("ScanID") String scanId,
-                @JsonProperty("ScanDate") String scanDate,
-                @JsonProperty("ScanTime") String scanTime,
-                @JsonProperty("CreatedAt") String createdAt,
-                @JsonProperty("ProjectID") String projectId,
-                @JsonProperty("BaseURI") String baseURI,
-                @JsonProperty("Tags") Map<String, String> tags,
-                @JsonProperty("ProjectName") String projectName,
-                @JsonProperty("BranchName") String branchName,
-                @JsonProperty("ScanInfoMessage") String scanInfoMessage) {
+                          @JsonProperty("HighIssues") int highIssues,
+                          @JsonProperty("MediumIssues") int mediumIssues,
+                          @JsonProperty("LowIssues") int lowIssues,
+                          @JsonProperty("SastIssues") int sastIssues,
+                          @JsonProperty("ScaIssues") int scaIssues,
+                          @JsonProperty("KicsIssues") int kicsIssues,
+                          @JsonProperty("APISecurity") APISecurity apiSecResult,
+                          @JsonProperty("RiskStyle") String riskStyle,
+                          @JsonProperty("RiskMsg") String riskMessage,
+                          @JsonProperty("Status") String status,
+                          @JsonProperty("ScanID") String scanId,
+                          @JsonProperty("ScanDate") String scanDate,
+                          @JsonProperty("ScanTime") String scanTime,
+                          @JsonProperty("CreatedAt") String createdAt,
+                          @JsonProperty("ProjectID") String projectId,
+                          @JsonProperty("BaseURI") String baseURI,
+                          @JsonProperty("Tags") Map<String, String> tags,
+                          @JsonProperty("ProjectName") String projectName,
+                          @JsonProperty("BranchName") String branchName,
+                          @JsonProperty("ScanInfoMessage") String scanInfoMessage) {
         this.totalIssues = totalIssues;
         this.highIssues = highIssues;
         this.mediumIssues = mediumIssues;
@@ -63,6 +64,7 @@ public class ResultsSummary {
         this.sastIssues = sastIssues;
         this.scaIssues = scaIssues;
         this.kicsIssues = kicsIssues;
+        this.apiSecResult = apiSecResult;
         this.riskStyle = riskStyle;
         this.riskMessage = riskMessage;
         this.status = status;
