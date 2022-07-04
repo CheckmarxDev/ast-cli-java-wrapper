@@ -42,7 +42,6 @@ public class CxWrapper {
 
     public CxWrapper(@NonNull CxConfig cxConfig, @NonNull Logger logger) throws CxConfig.InvalidCLIConfigException,
             IOException {
-        cxConfig.validate();
         this.cxConfig = cxConfig;
         this.logger = logger;
         this.executable = StringUtils.isBlank(this.cxConfig.getPathToExecutable())
@@ -305,7 +304,7 @@ public class CxWrapper {
 
     }
 
-    public kicsRealtimeResults kicsRealtimeScan(@NonNull String fileSources,String engine ,String additionalParams)
+    public kicsRealtimeResults kicsRealtimeScan(@NonNull String fileSources, String engine, String additionalParams)
             throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'scan kics-realtime' command using the CLI.");
         this.logger.info("Fetching the results for fileSources {} and additionalParams {}", fileSources, additionalParams);
@@ -317,7 +316,7 @@ public class CxWrapper {
         arguments.add(fileSources);
         arguments.add(CxConstants.ADDITONAL_PARAMS);
         arguments.add(additionalParams);
-        if(engine.length()>0){
+        if (engine.length() > 0) {
             arguments.add(CxConstants.ENGINE);
             arguments.add(engine);
         }
@@ -325,6 +324,7 @@ public class CxWrapper {
         return kicsResults;
 
     }
+
     private int getIndexOfBfLNode(List<Node> bflNodes, List<Node> resultNodes) {
 
         int bflNodeNotFound = -1;

@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -13,7 +12,7 @@ import java.util.regex.Pattern;
 
 @Data
 @Builder
-public class  CxConfig {
+public class CxConfig {
 
     private static final Pattern pattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 
@@ -29,17 +28,6 @@ public class  CxConfig {
 
     public void setAdditionalParameters(String additionalParameters) {
         this.additionalParameters = parseAdditionalParameters(additionalParameters);
-    }
-
-    void validate() throws InvalidCLIConfigException {
-        if (StringUtils.isBlank(getBaseUri())) {
-            throw new InvalidCLIConfigException("Checkmarx server URL is not set");
-        }
-
-        if (StringUtils.isBlank(getApiKey())
-            && (StringUtils.isBlank(getClientId()) || StringUtils.isBlank(getClientSecret()))) {
-            throw new InvalidCLIConfigException("Credentials are not set");
-        }
     }
 
     List<String> toArguments() {
