@@ -30,7 +30,7 @@ public class Data {
     int line;
     List<Node> nodes;
     List<PackageData> packageData;
-    ScaPackageCollection scanPackageCollection;
+    ScaPackageData scaPackageData;
 
     public Data(@JsonProperty("queryId") String queryId,
                 @JsonProperty("queryName") String queryName,
@@ -47,7 +47,7 @@ public class Data {
                 @JsonProperty("line") int line,
                 @JsonProperty("nodes") List<Node> nodes,
                 @JsonProperty("packageData") List<PackageData> packageData,
-                @JsonProperty("scanPackageCollection") ScaPackageCollection scanPackageCollection) {
+                @JsonProperty("scaPackageData") ScaPackageData scaPackageData) {
         this.queryId = queryId;
         this.queryName = queryName;
         this.group = group;
@@ -63,6 +63,6 @@ public class Data {
         this.line = line;
         this.nodes = nodes;
         this.packageData = packageData;
-        this.scanPackageCollection = scanPackageCollection;
+        this.scaPackageData = scaPackageData;
     }
 }

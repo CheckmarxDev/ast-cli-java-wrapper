@@ -12,22 +12,22 @@ import java.util.List;
 @JsonDeserialize()
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ScaPackageCollection {
+public class ScaPackageData {
 
     String Id;
-    List<String> locations;
-    List<DependencyPath> dependencyPathArray;
+    String fixLink;
+    List<List<DependencyPath>> dependencyPaths;
     boolean outdated;
 
 
-    public ScaPackageCollection(@JsonProperty("Id") String id,
-                                @JsonProperty("locations") List<String> locations,
-                                @JsonProperty("dependencyPathArray") List<DependencyPath> dependencyPathArray,
-                                @JsonProperty("outdated") boolean outdated) {
+    public ScaPackageData(@JsonProperty("Id") String id,
+                          @JsonProperty("fixLink") String fixLink,
+                          @JsonProperty("dependencyPaths") List<List<DependencyPath>> dependencyPaths,
+                          @JsonProperty("outdated") boolean outdated) {
 
         Id = id;
-        this.locations = locations;
-        this.dependencyPathArray = dependencyPathArray;
+        this.fixLink = fixLink;
+        this.dependencyPaths = dependencyPaths;
         this.outdated = outdated;
     }
 }
