@@ -53,4 +53,9 @@ public final class CxConstants {
     static final String ADDITONAL_PARAMS = "--additional-params";
     static final String ENGINE = "--engine";
     static final String SUB_CMD_KICS_REALTIME = "kics-realtime";
+
+    static final String CMD_UTILS = "utils";
+
+    static final String CMD_LEARN_MORE = "learn-more";
+
 }

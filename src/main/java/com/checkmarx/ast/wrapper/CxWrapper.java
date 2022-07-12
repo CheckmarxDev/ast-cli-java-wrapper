@@ -2,6 +2,7 @@ package com.checkmarx.ast.wrapper;
 
 import com.checkmarx.ast.codebashing.CodeBashing;
 import com.checkmarx.ast.kicsRealtimeResults.kicsRealtimeResults;
+import com.checkmarx.ast.learnmore.LearnMoreDescriptions;
 import com.checkmarx.ast.predicate.Predicate;
 import com.checkmarx.ast.project.Project;
 import com.checkmarx.ast.results.ReportFormat;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -323,6 +325,16 @@ public class CxWrapper {
         kicsRealtimeResults kicsResults = Execution.executeCommand(withConfigArguments(arguments), logger, kicsRealtimeResults::fromLine);
         return kicsResults;
 
+    }
+
+    public List<LearnMoreDescriptions> learnMore(@NonNull String queryId) throws CxException, IOException, InterruptedException {
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_UTILS);
+        arguments.add(CxConstants.CMD_LEARN_MORE);
+        arguments.add(CxConstants.QUERY_ID);
+        arguments.add(queryId);
+        arguments.addAll(jsonArguments());
+        return Execution.executeCommand(withConfigArguments(arguments), logger, LearnMoreDescriptions::listFromLine);
     }
 
     private int getIndexOfBfLNode(List<Node> bflNodes, List<Node> resultNodes) {
