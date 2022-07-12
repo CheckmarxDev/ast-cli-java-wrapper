@@ -11,7 +11,9 @@ class LearnMoreTest extends BaseTest {
 
     @Test
     void testLearnMoreDescriptionsSuccessfulList() throws Exception {
-        List<LearnMoreDescriptions> learnMoreDetails = wrapper.learnMore("10308959669028119927");
+        // get the query id from env
+        String queryId = System.getenv("CX_TEST_QUERY_ID");
+        List<LearnMoreDescriptions> learnMoreDetails = wrapper.learnMore(queryId != null ? queryId :"10308959669028119927");
         Assertions.assertTrue(learnMoreDetails.size() > 0);
     }
 
