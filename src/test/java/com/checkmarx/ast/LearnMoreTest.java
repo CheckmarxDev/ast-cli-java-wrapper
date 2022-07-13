@@ -1,6 +1,5 @@
 package com.checkmarx.ast;
 
-import com.checkmarx.ast.kicsRealtimeResults.kicsRealtimeResults;
 import com.checkmarx.ast.learnmore.LearnMoreDescriptions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
