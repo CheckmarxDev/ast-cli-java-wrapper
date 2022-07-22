@@ -1,9 +1,10 @@
 package com.checkmarx.ast.wrapper;
 
 import com.checkmarx.ast.codebashing.CodeBashing;
-import com.checkmarx.ast.kicsRealtimeResults.kicsRealtimeResults;
+import com.checkmarx.ast.kicsRealtimeResults.KicsRealtimeResults;
 import com.checkmarx.ast.predicate.Predicate;
 import com.checkmarx.ast.project.Project;
+import com.checkmarx.ast.remediation.KicsRemediation;
 import com.checkmarx.ast.results.ReportFormat;
 import com.checkmarx.ast.results.Results;
 import com.checkmarx.ast.results.ResultsSummary;
@@ -304,7 +305,7 @@ public class CxWrapper {
 
     }
 
-    public kicsRealtimeResults kicsRealtimeScan(@NonNull String fileSources, String engine, String additionalParams)
+    public KicsRealtimeResults kicsRealtimeScan(@NonNull String fileSources, String engine, String additionalParams)
             throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'scan kics-realtime' command using the CLI.");
         this.logger.info("Fetching the results for fileSources {} and additionalParams {}", fileSources, additionalParams);
@@ -320,9 +321,34 @@ public class CxWrapper {
             arguments.add(CxConstants.ENGINE);
             arguments.add(engine);
         }
-        kicsRealtimeResults kicsResults = Execution.executeCommand(withConfigArguments(arguments), logger, kicsRealtimeResults::fromLine);
+        KicsRealtimeResults kicsResults = Execution.executeCommand(withConfigArguments(arguments), logger, KicsRealtimeResults::fromLine);
         return kicsResults;
+    }
 
+    public KicsRemediation kicsRemediate(@NonNull String resultsFile, String kicsFile, String engine,String similarityIds)
+            throws IOException, InterruptedException, CxException {
+        this.logger.info("Executing 'remediation kics' command using the CLI.");
+        this.logger.info("Applying remediation for resultsFile {} and resultsFile {}", resultsFile, kicsFile);
+
+        List<String> arguments = new ArrayList<>();
+        arguments.add(this.executable);
+        arguments.add("utils");
+        arguments.add("remediation");
+        arguments.add("kics");
+        arguments.add("--results-file");
+        arguments.add(resultsFile);
+        arguments.add("--kics-files");
+        arguments.add(kicsFile);
+        if (engine.length() > 0) {
+            arguments.add(CxConstants.ENGINE);
+            arguments.add(engine);
+        }
+        if (similarityIds.length() > 0) {
+            arguments.add("--similarity-ids");
+            arguments.add(similarityIds);
+        }
+        KicsRemediation remediation = Execution.executeCommand(arguments, logger, KicsRemediation::fromLine);
+        return remediation;
     }
 
     private int getIndexOfBfLNode(List<Node> bflNodes, List<Node> resultNodes) {

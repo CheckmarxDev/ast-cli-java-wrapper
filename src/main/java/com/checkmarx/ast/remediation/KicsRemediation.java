@@ -1,7 +1,4 @@
-package com.checkmarx.ast.kicsRealtimeResults;
-
-import com.checkmarx.ast.kicsRealtimeResults.ast.kicsRealtimeResult.KicsResult;
-import com.checkmarx.ast.kicsRealtimeResults.ast.kicsRealtimeResult.KicsSummary;
+package com.checkmarx.ast.remediation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -15,28 +12,23 @@ import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.List;
 
 @Value
 @JsonDeserialize()
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class kicsRealtimeResults {
-
-    int totalCount;
-    String version;
-    List<KicsResult> results;
-    KicsSummary kicsSummary;
+public class KicsRemediation {
+    String availableRemediation;
+    String appliedRemediation;
 
     @JsonCreator
-    public kicsRealtimeResults(@JsonProperty("total_counter") int totalCount, @JsonProperty("queries") List<KicsResult> results,@JsonProperty("kics_version") String version, @JsonProperty("severity_counters") KicsSummary kicsSummary) {
-        this.totalCount = totalCount;
-        this.version = version;
-        this.results = results;
-        this.kicsSummary = kicsSummary;
+    public KicsRemediation(@JsonProperty("available_remediation_count") String availableRemediation, @JsonProperty("applied_remediation_count") String appliedRemediation) {
+        this.availableRemediation = availableRemediation;
+        this.appliedRemediation = appliedRemediation;
     }
+
     public static <T> T fromLine(String line) {
-        return parse(line, TypeFactory.defaultInstance().constructType(kicsRealtimeResults.class));
+        return parse(line, TypeFactory.defaultInstance().constructType(KicsRemediation.class));
     }
 
     private static <T> T parse(String line, JavaType type) {
@@ -51,6 +43,7 @@ public class kicsRealtimeResults {
         }
         return result;
     }
+
     private static boolean isValidJSON(final String json) {
         try {
             final ObjectMapper mapper = new ObjectMapper();
