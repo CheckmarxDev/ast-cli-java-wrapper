@@ -1,6 +1,6 @@
 package com.checkmarx.ast;
 
-import com.checkmarx.ast.kicsRealtimeResults.kicsRealtimeResults;
+import com.checkmarx.ast.kicsRealtimeResults.KicsRealtimeResults;
 import com.checkmarx.ast.scan.Scan;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class ScanTest extends BaseTest {
 
     @Test
     void testKicsRealtimeScan() throws Exception {
-        kicsRealtimeResults scan = wrapper.kicsRealtimeScan("target/test-classes/Dockerfile","","v");
+        KicsRealtimeResults scan = wrapper.kicsRealtimeScan("target/test-classes/Dockerfile","","v");
         Assertions.assertTrue(scan.getResults().size() >= 1);
     }
 
