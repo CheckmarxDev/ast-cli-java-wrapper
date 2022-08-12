@@ -53,4 +53,10 @@ public final class CxConstants {
     static final String ADDITONAL_PARAMS = "--additional-params";
     static final String ENGINE = "--engine";
     static final String SUB_CMD_KICS_REALTIME = "kics-realtime";
+    static final String SCA_REMEDIATION_PACKAGE_FILE = "--package-file";
+    static final String SCA_REMEDIATION_PACKAGE = "--package";
+    static final String SCA_REMEDIATION_PACKAGE_VERSION = "--package-version";
+    static final String CMD_UTILS = "utils";
+    static final String CMD_REMEDIATION = "remediation";
+    static final String SUB_CMD_REMEDIATION_SCA = "sca";
 }
