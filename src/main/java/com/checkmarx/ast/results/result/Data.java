@@ -25,9 +25,12 @@ public class Data {
     String expectedValue;
     String value;
     String fileName;
+    String packageIdentifier;
+    String recommendedVersion;
     int line;
     List<Node> nodes;
     List<PackageData> packageData;
+    ScaPackageData scaPackageData;
 
     public Data(@JsonProperty("queryId") String queryId,
                 @JsonProperty("queryName") String queryName,
@@ -39,9 +42,12 @@ public class Data {
                 @JsonProperty("expectedValue") String expectedValue,
                 @JsonProperty("value") String value,
                 @JsonProperty("filename") String fileName,
+                @JsonProperty("packageIdentifier") String packageIdentifier,
+                @JsonProperty("recommendedVersion") String recommendedVersion,
                 @JsonProperty("line") int line,
                 @JsonProperty("nodes") List<Node> nodes,
-                @JsonProperty("packageData") List<PackageData> packageData) {
+                @JsonProperty("packageData") List<PackageData> packageData,
+                @JsonProperty("scaPackageData") ScaPackageData scaPackageData) {
         this.queryId = queryId;
         this.queryName = queryName;
         this.group = group;
@@ -52,8 +58,11 @@ public class Data {
         this.expectedValue = expectedValue;
         this.value = value;
         this.fileName = fileName;
+        this.packageIdentifier = packageIdentifier;
+        this.recommendedVersion = recommendedVersion;
         this.line = line;
         this.nodes = nodes;
         this.packageData = packageData;
+        this.scaPackageData = scaPackageData;
     }
 }

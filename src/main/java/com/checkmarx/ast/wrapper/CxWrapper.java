@@ -17,6 +17,7 @@ import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -284,6 +285,21 @@ public class CxWrapper {
         arguments.add(reportFormat.toString());
 
         return arguments;
+    }
+
+    public String scaRemediation(String packageFiles, String packages, String packageVersion) throws CxException, IOException, InterruptedException {
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_UTILS);
+        arguments.add(CxConstants.CMD_REMEDIATION);
+        arguments.add(CxConstants.SUB_CMD_REMEDIATION_SCA);
+        arguments.add(CxConstants.SCA_REMEDIATION_PACKAGE_FILES);
+        arguments.add(packageFiles);
+        arguments.add(CxConstants.SCA_REMEDIATION_PACKAGE);
+        arguments.add(packages);
+        arguments.add(CxConstants.SCA_REMEDIATION_PACKAGE_VERSION);
+        arguments.add(packageVersion);
+
+        return Execution.executeCommand(withConfigArguments(arguments), logger, line -> null);
     }
 
     public int getResultsBfl(@NonNull UUID scanId, @NonNull String queryId, List<Node> resultNodes)
