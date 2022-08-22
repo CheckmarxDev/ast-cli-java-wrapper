@@ -20,6 +20,7 @@ public class DependencyPath {
     List<String> locations;
     boolean isResolved;
     boolean isDevelopment;
+    boolean supportsQuickFix;
 
 
     public DependencyPath(@JsonProperty("Id") String id,
@@ -27,7 +28,8 @@ public class DependencyPath {
                           @JsonProperty("version") String version,
                           @JsonProperty("locations") List<String> locations,
                           @JsonProperty("isResolved") boolean isResolved,
-                          @JsonProperty("isDevelopment") boolean isDevelopment) {
+                          @JsonProperty("isDevelopment") boolean isDevelopment,
+                          @JsonProperty("supportsQuickFix") boolean supportsQuickFix) {
 
         Id = id;
         this.name = name;
@@ -35,5 +37,6 @@ public class DependencyPath {
         this.locations = locations;
         this.isResolved = isResolved;
         this.isDevelopment = isDevelopment;
+        this.supportsQuickFix = supportsQuickFix;
     }
 }

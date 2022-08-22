@@ -13,14 +13,17 @@ import com.checkmarx.ast.scan.Scan;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import jdk.nashorn.internal.runtime.regexp.joni.ast.StringNode;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class CxWrapper {
 
@@ -284,20 +287,19 @@ public class CxWrapper {
         return arguments;
     }
 
-    public String scaRemediation(String packageFile, String packages, String packageVersion) throws CxException, IOException, InterruptedException {
+    public String scaRemediation(String packageFiles, String packages, String packageVersion) throws CxException, IOException, InterruptedException {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_UTILS);
         arguments.add(CxConstants.CMD_REMEDIATION);
         arguments.add(CxConstants.SUB_CMD_REMEDIATION_SCA);
-        arguments.add(CxConstants.SCA_REMEDIATION_PACKAGE_FILE);
-        arguments.add(packageFile);
+        arguments.add(CxConstants.SCA_REMEDIATION_PACKAGE_FILES);
+        arguments.add(packageFiles);
         arguments.add(CxConstants.SCA_REMEDIATION_PACKAGE);
         arguments.add(packages);
         arguments.add(CxConstants.SCA_REMEDIATION_PACKAGE_VERSION);
         arguments.add(packageVersion);
 
         return Execution.executeCommand(withConfigArguments(arguments), logger, line -> null);
-
     }
 
     public int getResultsBfl(@NonNull UUID scanId, @NonNull String queryId, List<Node> resultNodes)
