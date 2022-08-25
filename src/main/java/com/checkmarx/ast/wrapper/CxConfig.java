@@ -81,7 +81,7 @@ public class CxConfig {
         if (StringUtils.isNotBlank(additionalParameters)) {
             Matcher m = pattern.matcher(additionalParameters);
             while (m.find()) {
-                additionalParametersList.add(m.group(1));
+                additionalParametersList.add(m.group(1).replaceAll("\"", ""));
             }
         }
         return additionalParametersList;
