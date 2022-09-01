@@ -59,4 +59,9 @@ public final class CxConstants {
     static final String CMD_UTILS = "utils";
     static final String CMD_REMEDIATION = "remediation";
     static final String SUB_CMD_REMEDIATION_SCA = "sca";
+    static final String SUB_CMD_REMEDIATION_KICS = "kics";
+    static final String KICS_REMEDIATION_RESULTS_FILE = "--results-file";
+    static final String KICS_REMEDIATION_KICS_FILE = "--kics-files";
+    static final String KICS_REMEDIATION_SIMILARITY = "--similarity-ids";
+    static final String SUB_CMD_LEARN_MORE = "learn-more";
 }
