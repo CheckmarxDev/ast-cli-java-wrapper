@@ -2,6 +2,7 @@ package com.checkmarx.ast.wrapper;
 
 import com.checkmarx.ast.codebashing.CodeBashing;
 import com.checkmarx.ast.kicsRealtimeResults.KicsRealtimeResults;
+import com.checkmarx.ast.learnMore.LearnMore;
 import com.checkmarx.ast.predicate.Predicate;
 import com.checkmarx.ast.project.Project;
 import com.checkmarx.ast.remediation.KicsRemediation;
@@ -348,23 +349,37 @@ public class CxWrapper {
 
         List<String> arguments = new ArrayList<>();
         arguments.add(this.executable);
-        arguments.add("utils");
-        arguments.add("remediation");
-        arguments.add("kics");
-        arguments.add("--results-file");
+        arguments.add(CxConstants.CMD_UTILS);
+        arguments.add(CxConstants.CMD_REMEDIATION);
+        arguments.add(CxConstants.SUB_CMD_REMEDIATION_KICS);
+        arguments.add(CxConstants.KICS_REMEDIATION_RESULTS_FILE);
         arguments.add(resultsFile);
-        arguments.add("--kics-files");
+        arguments.add(CxConstants.KICS_REMEDIATION_KICS_FILE);
         arguments.add(kicsFile);
         if (engine.length() > 0) {
             arguments.add(CxConstants.ENGINE);
             arguments.add(engine);
         }
         if (similarityIds.length() > 0) {
-            arguments.add("--similarity-ids");
+            arguments.add(CxConstants.KICS_REMEDIATION_SIMILARITY);
             arguments.add(similarityIds);
         }
         KicsRemediation remediation = Execution.executeCommand(arguments, logger, KicsRemediation::fromLine);
         return remediation;
+    }
+
+    public List<LearnMore> learnMore(String queryId) throws CxException, IOException, InterruptedException {
+        List<String> arguments = new ArrayList<>();
+        arguments.add(this.executable);
+        arguments.add(CxConstants.CMD_UTILS);
+        arguments.add(CxConstants.SUB_CMD_LEARN_MORE);
+        arguments.add(CxConstants.QUERY_ID);
+        arguments.add(queryId);
+        arguments.add(CxConstants.FORMAT);
+        arguments.add(CxConstants.FORMAT_JSON);
+
+        List<LearnMore> learnMore = Execution.executeCommand(arguments, logger, LearnMore::listFromLine);
+        return learnMore;
     }
 
     private int getIndexOfBfLNode(List<Node> bflNodes, List<Node> resultNodes) {
