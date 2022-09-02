@@ -370,7 +370,7 @@ public class CxWrapper {
 
     public List<LearnMore> learnMore(String queryId) throws CxException, IOException, InterruptedException {
         List<String> arguments = new ArrayList<>();
-        arguments.add(this.executable);
+
         arguments.add(CxConstants.CMD_UTILS);
         arguments.add(CxConstants.SUB_CMD_LEARN_MORE);
         arguments.add(CxConstants.QUERY_ID);
@@ -378,7 +378,7 @@ public class CxWrapper {
         arguments.add(CxConstants.FORMAT);
         arguments.add(CxConstants.FORMAT_JSON);
 
-        List<LearnMore> learnMore = Execution.executeCommand(arguments, logger, LearnMore::listFromLine);
+        List<LearnMore> learnMore = Execution.executeCommand(withConfigArguments(arguments), logger, LearnMore::listFromLine);
         return learnMore;
     }
 
