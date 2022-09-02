@@ -370,6 +370,7 @@ public class CxWrapper {
 
     public List<LearnMore> learnMore(String queryId) throws CxException, IOException, InterruptedException {
         List<String> arguments = new ArrayList<>();
+
         arguments.add(CxConstants.CMD_UTILS);
         arguments.add(CxConstants.SUB_CMD_LEARN_MORE);
         arguments.add(CxConstants.QUERY_ID);
