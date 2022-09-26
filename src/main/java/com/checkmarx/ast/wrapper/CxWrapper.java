@@ -125,13 +125,13 @@ public class CxWrapper {
         return arguments;
     }
 
-    public Object scanCancel(String scanId)
+    public void scanCancel(String scanId)
             throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'scan cancel' command using the CLI.");
 
         List<String> arguments = buildScanCancelArguments(UUID.fromString(scanId));
 
-        return Execution.executeCommand(arguments, logger, line -> null);
+        Execution.executeCommand(arguments, logger, line -> null);
     }
 
     public List<String> buildScanCancelArguments(@NonNull UUID scanId) {
