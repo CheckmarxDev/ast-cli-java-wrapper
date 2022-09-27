@@ -33,6 +33,13 @@ class ScanTest extends BaseTest {
     }
 
     @Test
+    void testScanCancel() throws Exception {
+        Map<String, String> params = commonParams();
+        Scan scan = wrapper.scanCreate(params, "--async --sast-incremental");
+        Assertions.assertDoesNotThrow(() -> wrapper.scanCancel(scan.getId()));
+    }
+
+    @Test
     void testKicsRealtimeScan() throws Exception {
         KicsRealtimeResults scan = wrapper.kicsRealtimeScan("target/test-classes/Dockerfile","","v");
         Assertions.assertTrue(scan.getResults().size() >= 1);
