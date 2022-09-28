@@ -43,15 +43,17 @@ public class CxConfig {
             commands.add(getClientSecret());
         }
 
-        if (StringUtils.isNotBlank(getTenant())) {
+        if (StringUtils.isNotEmpty(getTenant())) {
             commands.add(CxConstants.TENANT);
             commands.add(getTenant());
         }
 
-        commands.add(CxConstants.BASE_URI);
-        commands.add(getBaseUri());
+        if (StringUtils.isNotEmpty(getBaseUri())) {
+            commands.add(CxConstants.BASE_URI);
+            commands.add(getBaseUri());
+        }
 
-        if (StringUtils.isNotBlank(getBaseAuthUri())) {
+        if (StringUtils.isNotEmpty(getBaseAuthUri())) {
             commands.add(CxConstants.BASE_AUTH_URI);
             commands.add(getBaseAuthUri());
         }
