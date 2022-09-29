@@ -48,8 +48,10 @@ public class CxConfig {
             commands.add(getTenant());
         }
 
-        commands.add(CxConstants.BASE_URI);
-        commands.add(getBaseUri());
+        if (StringUtils.isNotBlank(getBaseUri())) {
+            commands.add(CxConstants.BASE_URI);
+            commands.add(getBaseUri());
+        }
 
         if (StringUtils.isNotBlank(getBaseAuthUri())) {
             commands.add(CxConstants.BASE_AUTH_URI);
