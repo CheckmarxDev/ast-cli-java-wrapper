@@ -11,6 +11,7 @@ import com.checkmarx.ast.results.Results;
 import com.checkmarx.ast.results.ResultsSummary;
 import com.checkmarx.ast.results.result.Node;
 import com.checkmarx.ast.scan.Scan;
+import com.checkmarx.ast.tenant.TenantSetting;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -38,13 +39,11 @@ public class CxWrapper {
     @NonNull
     private final String executable;
 
-    public CxWrapper(CxConfig cxConfig)
-            throws CxConfig.InvalidCLIConfigException, IOException {
+    public CxWrapper(CxConfig cxConfig) throws IOException {
         this(cxConfig, LoggerFactory.getLogger(CxWrapper.class));
     }
 
-    public CxWrapper(@NonNull CxConfig cxConfig, @NonNull Logger logger) throws CxConfig.InvalidCLIConfigException,
-            IOException {
+    public CxWrapper(@NonNull CxConfig cxConfig, @NonNull Logger logger) throws IOException {
         this.cxConfig = cxConfig;
         this.logger = logger;
         this.executable = StringUtils.isBlank(this.cxConfig.getPathToExecutable())
@@ -281,24 +280,9 @@ public class CxWrapper {
                 fileName + reportFormat.getExtension());
     }
 
-    public List<String> buildResultsArguments(@NonNull UUID scanId, ReportFormat reportFormat) {
-        return withConfigArguments(buildResultsArgumentsArray(scanId, reportFormat));
-    }
-
-    private List<String> buildResultsArgumentsArray(UUID scanId, ReportFormat reportFormat) {
-        List<String> arguments = new ArrayList<>();
-        arguments.add(CxConstants.CMD_RESULT);
-        arguments.add(CxConstants.SUB_CMD_SHOW);
-        arguments.add(CxConstants.SCAN_ID);
-        arguments.add(scanId.toString());
-        arguments.add(CxConstants.REPORT_FORMAT);
-        arguments.add(reportFormat.toString());
-
-        return arguments;
-    }
-
     public String scaRemediation(String packageFiles, String packages, String packageVersion) throws CxException, IOException, InterruptedException {
         List<String> arguments = new ArrayList<>();
+
         arguments.add(CxConstants.CMD_UTILS);
         arguments.add(CxConstants.CMD_REMEDIATION);
         arguments.add(CxConstants.SUB_CMD_REMEDIATION_SCA);
@@ -347,8 +331,8 @@ public class CxWrapper {
             arguments.add(CxConstants.ENGINE);
             arguments.add(engine);
         }
-        KicsRealtimeResults kicsResults = Execution.executeCommand(withConfigArguments(arguments), logger, KicsRealtimeResults::fromLine);
-        return kicsResults;
+
+        return Execution.executeCommand(withConfigArguments(arguments), logger, KicsRealtimeResults::fromLine);
     }
 
     public KicsRemediation kicsRemediate(@NonNull String resultsFile, String kicsFile, String engine,String similarityIds)
@@ -373,8 +357,8 @@ public class CxWrapper {
             arguments.add(CxConstants.KICS_REMEDIATION_SIMILARITY);
             arguments.add(similarityIds);
         }
-        KicsRemediation remediation = Execution.executeCommand(arguments, logger, KicsRemediation::fromLine);
-        return remediation;
+
+        return Execution.executeCommand(arguments, logger, KicsRemediation::fromLine);
     }
 
     public List<LearnMore> learnMore(String queryId) throws CxException, IOException, InterruptedException {
@@ -387,8 +371,28 @@ public class CxWrapper {
         arguments.add(CxConstants.FORMAT);
         arguments.add(CxConstants.FORMAT_JSON);
 
-        List<LearnMore> learnMore = Execution.executeCommand(withConfigArguments(arguments), logger, LearnMore::listFromLine);
-        return learnMore;
+        return Execution.executeCommand(withConfigArguments(arguments), logger, LearnMore::listFromLine);
+    }
+
+    public boolean ideScansEnabled() throws CxException, IOException, InterruptedException {
+        List<TenantSetting> tenantSettings = tenantSettings();
+        if (tenantSettings == null) {
+            throw new CxException(1, "Unable to parse tenant settings");
+        }
+        return tenantSettings.stream()
+                             .filter(t -> t.getKey().equals(CxConstants.IDE_SCANS_KEY))
+                             .findFirst()
+                             .map(t -> Boolean.parseBoolean(t.getValue()))
+                             .orElse(false);
+    }
+
+    public List<TenantSetting> tenantSettings() throws CxException, IOException, InterruptedException {
+        List<String> arguments = jsonArguments();
+
+        arguments.add(CxConstants.CMD_UTILS);
+        arguments.add(CxConstants.SUB_CMD_TENANT);
+
+        return Execution.executeCommand(withConfigArguments(arguments), logger, TenantSetting::listFromLine);
     }
 
     private int getIndexOfBfLNode(List<Node> bflNodes, List<Node> resultNodes) {
@@ -402,6 +406,22 @@ public class CxWrapper {
             }
         }
         return bflNodeNotFound;
+    }
+
+    public List<String> buildResultsArguments(@NonNull UUID scanId, ReportFormat reportFormat) {
+        return withConfigArguments(buildResultsArgumentsArray(scanId, reportFormat));
+    }
+
+    private List<String> buildResultsArgumentsArray(UUID scanId, ReportFormat reportFormat) {
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_RESULT);
+        arguments.add(CxConstants.SUB_CMD_SHOW);
+        arguments.add(CxConstants.SCAN_ID);
+        arguments.add(scanId.toString());
+        arguments.add(CxConstants.REPORT_FORMAT);
+        arguments.add(reportFormat.toString());
+
+        return arguments;
     }
 
     private List<String> withConfigArguments(List<String> commands) {

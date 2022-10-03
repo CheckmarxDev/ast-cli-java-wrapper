@@ -65,4 +65,6 @@ public final class CxConstants {
     static final String KICS_REMEDIATION_KICS_FILE = "--kics-files";
     static final String KICS_REMEDIATION_SIMILARITY = "--similarity-ids";
     static final String SUB_CMD_LEARN_MORE = "learn-more";
+    static final String SUB_CMD_TENANT = "tenant";
+    static final String IDE_SCANS_KEY = "scan.config.plugins.ideScans";
 }
