@@ -35,7 +35,7 @@ public abstract class CxBaseObject {
         this.tags = tags;
     }
 
-    protected static <T> T parse(String line, JavaType type) {
+    public static <T> T parse(String line, JavaType type) {
         T result = null;
         if (!StringUtils.isBlank(line) && isValidJSON(line)) {
             try {
@@ -47,7 +47,7 @@ public abstract class CxBaseObject {
         return result;
     }
 
-    private static boolean isValidJSON(final String json) {
+    public static boolean isValidJSON(final String json) {
         try {
             final ObjectMapper mapper = new ObjectMapper();
             mapper.readTree(json);
