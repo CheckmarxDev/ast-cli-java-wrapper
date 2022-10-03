@@ -375,11 +375,15 @@ public class CxWrapper {
     }
 
     public boolean ideScansEnabled() throws CxException, IOException, InterruptedException {
-        return tenantSettings().stream()
-                               .filter(t -> t.getKey().equals(CxConstants.IDE_SCANS_KEY))
-                               .findFirst()
-                               .map(t -> Boolean.parseBoolean(t.getValue()))
-                               .orElse(false);
+        List<TenantSetting> tenantSettings = tenantSettings();
+        if (tenantSettings == null) {
+            throw new CxException(1, "Unable to parse tenant settings");
+        }
+        return tenantSettings.stream()
+                             .filter(t -> t.getKey().equals(CxConstants.IDE_SCANS_KEY))
+                             .findFirst()
+                             .map(t -> Boolean.parseBoolean(t.getValue()))
+                             .orElse(false);
     }
 
     public List<TenantSetting> tenantSettings() throws CxException, IOException, InterruptedException {
