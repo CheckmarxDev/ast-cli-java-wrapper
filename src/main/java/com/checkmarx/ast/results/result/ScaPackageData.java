@@ -19,18 +19,21 @@ public class ScaPackageData {
     List<List<DependencyPath>> dependencyPaths;
     boolean outdated;
     boolean supportsQuickFix;
+    boolean isDirectDependency;
 
 
     public ScaPackageData(@JsonProperty("Id") String id,
                           @JsonProperty("fixLink") String fixLink,
                           @JsonProperty("dependencyPaths") List<List<DependencyPath>> dependencyPaths,
                           @JsonProperty("outdated") boolean outdated,
-                          @JsonProperty("supportsQuickFix") boolean supportsQuickFix) {
+                          @JsonProperty("supportsQuickFix") boolean supportsQuickFix,
+                          @JsonProperty("isDirectDependency") boolean isDirectDependency) {
 
         Id = id;
         this.fixLink = fixLink;
         this.dependencyPaths = dependencyPaths;
         this.outdated = outdated;
         this.supportsQuickFix = supportsQuickFix;
+        this.isDirectDependency = isDirectDependency;
     }
 }
