@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 public class Result {
 
     private final String type;
+    private final String scaType;
     private final String id;
     private final String similarityId;
     private final String status;
@@ -48,8 +49,10 @@ public class Result {
                   @JsonProperty("descriptionHTML") String descriptionHTML,
                   @JsonProperty("data") Data data,
                   @JsonProperty("comments") Comments comments,
-                  @JsonProperty("vulnerabilityDetails") VulnerabilityDetails vulnerabilityDetails) {
+                  @JsonProperty("vulnerabilityDetails") VulnerabilityDetails vulnerabilityDetails,
+                  @JsonProperty("scaType") String scaType) {
         this.type = type;
+        this.scaType=scaType;
         this.id = id;
         this.similarityId = similarityId;
         this.status = status;
