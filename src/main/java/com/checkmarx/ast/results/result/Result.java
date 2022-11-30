@@ -14,6 +14,7 @@ public class Result {
 
     private final String type;
     private final String scaType;
+    private final String label;
     private final String id;
     private final String similarityId;
     private final String status;
@@ -33,6 +34,7 @@ public class Result {
     private final VulnerabilityDetails vulnerabilityDetails;
 
     public Result(@JsonProperty("type") String type,
+                  @JsonProperty("label") String label,
                   @JsonProperty("id") String id,
                   @JsonProperty("similarityId") String similarityId,
                   @JsonProperty("status") String status,
@@ -53,6 +55,7 @@ public class Result {
                   @JsonProperty("scaType") String scaType) {
         this.type = type;
         this.scaType=scaType;
+        this.label = label;
         this.id = id;
         this.similarityId = similarityId;
         this.status = status;
