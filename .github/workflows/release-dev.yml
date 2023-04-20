@@ -26,7 +26,7 @@ jobs:
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git tag -a "${tag}" -m "${message}"
-          git push origin "${tag}"
+#          git push origin "${tag}"
 
       - name: Set env
         run: echo "RELEASE_VERSION=${{ inputs.tag }}" >> $GITHUB_ENV
