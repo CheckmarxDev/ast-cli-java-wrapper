@@ -9,8 +9,7 @@ on:
         type: string
       cliTag:
         description: 'Version of the CLI to bundle'
-        required: false
-        default: latest
+        required: true
         type: string
 
 jobs:
