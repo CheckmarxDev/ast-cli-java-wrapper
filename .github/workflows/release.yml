@@ -29,7 +29,7 @@ on:
         type: boolean
       cliTag:
         description: 'Version of the CLI to bundle'
-        required: true
+        required: false
         type: string
 
 jobs:
@@ -40,6 +40,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Download CLI
+        if: inputs.cliTag
+        run: |
+          chmod +x ./.github/scripts/update_cli.sh
+          ./.github/scripts/update_cli.sh ${{ inputs.cliTag }}
 
       - name: Tag
         run: |
