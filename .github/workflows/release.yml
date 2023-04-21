@@ -16,6 +16,21 @@ on:
         description: 'Version of the CLI to bundle'
         required: true
         type: string
+  workflow_call:
+    inputs:
+      tag:
+        description: 'Dev release tag'
+        required: true
+        type: string
+      dev:
+        description: 'Is dev build'
+        required: false
+        default: true
+        type: boolean
+      cliTag:
+        description: 'Version of the CLI to bundle'
+        required: true
+        type: string
 
 jobs:
   release:
