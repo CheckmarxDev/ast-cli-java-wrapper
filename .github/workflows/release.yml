@@ -83,7 +83,7 @@ jobs:
       - name: Build artifactId property
         run: |
           prop=''
-          if [ ${{ inputs.dev }} = true ]; then
+          if [ ${{ inputs.dev }} = true ] && [ ${{ inputs.tag }} != *"SNAPSHOT"* ]; then
             prop='-Dast.wrapper.id=ast-cli-java-wrapper-dev'
           fi
           echo "AID_PROP=${prop}" >> $GITHUB_ENV
@@ -100,4 +100,4 @@ jobs:
         with:
           generate_release_notes: true
           tag_name: ${{ inputs.tag }}
-          prerelease: ${{ inputs.dev }} || contains( ${{ inputs.tag }}, 'SNAPSHOT' )
+          prerelease: ${{ inputs.dev }}
