@@ -100,3 +100,4 @@ jobs:
         with:
           generate_release_notes: true
           tag_name: ${{ inputs.tag }}
+          prerelease: ${{ inputs.tag }} || ${{ inputs.cliTag }}
