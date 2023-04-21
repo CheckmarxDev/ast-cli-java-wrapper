@@ -14,7 +14,7 @@ on:
         type: boolean
       cliTag:
         description: 'Version of the CLI to bundle'
-        required: true
+        required: false
         type: string
   workflow_call:
     inputs:
