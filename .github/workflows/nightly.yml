@@ -21,6 +21,6 @@ jobs:
     uses: CheckmarxDev/ast-cli-java-wrapper/.github/workflows/release.yml@main
     with:
       tag: "0.0.0-SNAPSHOT"
-      dev: false
+      dev: true
       cliTag: "2.0.0-nightly"
     secrets: inherit
