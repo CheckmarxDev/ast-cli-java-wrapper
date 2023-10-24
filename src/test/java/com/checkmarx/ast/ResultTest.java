@@ -23,7 +23,7 @@ class ResultTest extends BaseTest {
 
     @Test
     void testResultsHTML() throws Exception {
-        List<Scan> scanList = wrapper.scanList();
+        List<Scan> scanList = wrapper.scanList("statuses=Completed");
         Assertions.assertTrue(scanList.size() > 0);
         String scanId = scanList.get(0).getId();
         String results = wrapper.results(UUID.fromString(scanId), ReportFormat.summaryHTML);
@@ -32,7 +32,7 @@ class ResultTest extends BaseTest {
 
     @Test
     void testResultsJSON() throws Exception {
-        List<Scan> scanList = wrapper.scanList();
+        List<Scan> scanList = wrapper.scanList("statuses=Completed");
         Assertions.assertTrue(scanList.size() > 0);
         String scanId = scanList.get(0).getId();
         String results = wrapper.results(UUID.fromString(scanId), ReportFormat.json);
@@ -41,7 +41,7 @@ class ResultTest extends BaseTest {
 
     @Test
     void testResultsSummaryJSON() throws Exception {
-        List<Scan> scanList = wrapper.scanList();
+        List<Scan> scanList = wrapper.scanList("statuses=Completed");
         Assertions.assertTrue(scanList.size() > 0);
         String scanId = scanList.get(0).getId();
         ResultsSummary results = wrapper.resultsSummary(UUID.fromString(scanId));
@@ -50,7 +50,7 @@ class ResultTest extends BaseTest {
 
     @Test()
     void testResultsStructure() throws Exception {
-        List<Scan> scanList = wrapper.scanList();
+        List<Scan> scanList = wrapper.scanList("statuses=Completed");
         Assertions.assertTrue(scanList.size() > 0);
         String scanId = scanList.get(0).getId();
         Results results = wrapper.results(UUID.fromString(scanId));
