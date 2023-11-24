@@ -4,6 +4,7 @@ on: [ pull_request ]
 
 jobs:
   integration-tests:
+    environment: DEU_GALACTICA
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,7 +38,6 @@ jobs:
           CX_CLIENT_SECRET: ${{ secrets.CX_CLIENT_SECRET}}
           CX_BASE_URI: ${{ secrets.CX_BASE_URI }}
           CX_TENANT: ${{ secrets.CX_TENANT }}
-          CX_SCAN_ID: ${{ secrets.CX_SCAN_ID }}
           CX_APIKEY: ${{ secrets.CX_APIKEY }}
 
 
