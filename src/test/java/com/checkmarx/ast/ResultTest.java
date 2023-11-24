@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 class ResultTest extends BaseTest {
@@ -68,8 +69,12 @@ class ResultTest extends BaseTest {
 
     @Test
     void testResultsBflJSON() throws Exception {
+        Map<String, String> params = commonParams();
+        Scan scan = wrapper.scanCreate(params);
+        UUID scanId = UUID.fromString(scan.getId());
 
-        UUID scanId = UUID.fromString(CX_SCAN_ID);
+        Assertions.assertEquals("Completed", wrapper.scanShow(scanId).getStatus());
+
         Results results = wrapper.results(scanId);
         Result result = results.getResults().stream().filter(res -> res.getType().equalsIgnoreCase(CxConstants.SAST)).findFirst().get();
         Data data = result.getData();
@@ -77,14 +82,8 @@ class ResultTest extends BaseTest {
         int bflNodeIndex = wrapper.getResultsBfl(scanId, queryId, data.getNodes());
         Assertions.assertTrue(bflNodeIndex == -1 || bflNodeIndex >= 0);
 
-    }
-
-    @Test
-    void testResultsBflWithInvalidQueryId() throws Exception {
-
-        UUID scanId = UUID.fromString(CX_SCAN_ID);
-        String queryId = "0000";
-        int bflNodeIndex = wrapper.getResultsBfl(scanId, queryId, new ArrayList<Node>());
-        Assertions.assertEquals(-1, bflNodeIndex);
+        String queryIdInvalid = "0000";
+        int bflNodeIndexInvalid = wrapper.getResultsBfl(scanId, queryIdInvalid, new ArrayList<Node>());
+        Assertions.assertEquals(-1, bflNodeIndexInvalid);
     }
 }
