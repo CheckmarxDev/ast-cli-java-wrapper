@@ -4,7 +4,6 @@ on: [ pull_request ]
 
 jobs:
   integration-tests:
-    environment: DEU_GALACTICA
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
