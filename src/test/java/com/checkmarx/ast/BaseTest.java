@@ -12,7 +12,6 @@ import java.util.Map;
 
 public abstract class BaseTest {
 
-    public static final String CX_SCAN_ID = getEnvOrNull("CX_SCAN_ID");
     private static final String CX_BASE_URI = getEnvOrNull("CX_BASE_URI");
     private static final String CX_BASE_AUTH_URI = getEnvOrNull("CX_BASE_AUTH_URI");
     private static final String CX_TENANT = getEnvOrNull("CX_TENANT");
