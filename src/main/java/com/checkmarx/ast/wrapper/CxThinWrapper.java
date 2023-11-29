@@ -30,7 +30,7 @@ public class CxThinWrapper {
         this.logger.info("Executing commands with thin wrapper.");
         List<String> argv = new ArrayList<>();
         argv.add(executable);
-        argv.addAll(Arrays.asList(arguments.split(" ")));
+        argv.addAll(CxConfig.parseAdditionalParameters(arguments));
         return Execution.executeCommand(argv, logger, line -> line);
     }
 }
