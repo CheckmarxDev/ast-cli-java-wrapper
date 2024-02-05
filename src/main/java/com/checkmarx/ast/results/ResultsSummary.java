@@ -14,6 +14,7 @@ import java.util.Map;
 public class ResultsSummary {
 
     private int totalIssues;
+    private int criticalIssues;
     private int highIssues;
     private int mediumIssues;
     private int lowIssues;
@@ -37,6 +38,7 @@ public class ResultsSummary {
 
 
     public ResultsSummary(@JsonProperty("TotalIssues") int totalIssues,
+                          @JsonProperty("CriticalIssues") int criticalIssues,
                           @JsonProperty("HighIssues") int highIssues,
                           @JsonProperty("MediumIssues") int mediumIssues,
                           @JsonProperty("LowIssues") int lowIssues,
@@ -58,6 +60,7 @@ public class ResultsSummary {
                           @JsonProperty("BranchName") String branchName,
                           @JsonProperty("ScanInfoMessage") String scanInfoMessage) {
         this.totalIssues = totalIssues;
+        this.criticalIssues = criticalIssues;
         this.highIssues = highIssues;
         this.mediumIssues = mediumIssues;
         this.lowIssues = lowIssues;
