@@ -261,6 +261,12 @@ public class CxWrapper {
                 .readValue(results(scanId, ReportFormat.json));
     }
 
+    public Results results(@NonNull UUID scanId, String agent) throws IOException, InterruptedException, CxException {
+        return new ObjectMapper()
+                .readerFor(Results.class)
+                .readValue(results(scanId, ReportFormat.json, agent));
+    }
+
     public String results(@NonNull UUID scanId, ReportFormat reportFormat)
             throws IOException, InterruptedException, CxException {
         return results(scanId, reportFormat, null);
