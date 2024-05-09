@@ -55,7 +55,6 @@ class ResultTest extends BaseTest {
         Assertions.assertTrue(scanList.size() > 0);
         String scanId = scanList.get(0).getId();
         Results results = wrapper.results(UUID.fromString(scanId));
-        results.getResults().stream().filter(result -> "sast".equalsIgnoreCase(result.getType())).findFirst();
         Assertions.assertEquals(results.getTotalCount(), results.getResults().size());
     }
 

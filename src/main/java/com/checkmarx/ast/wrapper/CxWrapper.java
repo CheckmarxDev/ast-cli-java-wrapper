@@ -263,6 +263,10 @@ public class CxWrapper {
 
     public String results(@NonNull UUID scanId, ReportFormat reportFormat)
             throws IOException, InterruptedException, CxException {
+        return results(scanId, reportFormat, null);
+    }
+    public String results(@NonNull UUID scanId, ReportFormat reportFormat, String agent)
+            throws IOException, InterruptedException, CxException {
         this.logger.info("Retrieving the scan result for scan id {}", scanId);
 
         String tempDir = Files.createTempDirectory("cx").toAbsolutePath().toString();
@@ -274,7 +278,10 @@ public class CxWrapper {
         arguments.add(fileName);
         arguments.add(CxConstants.OUTPUT_PATH);
         arguments.add(tempDir);
-
+        if (agent != null) {
+            arguments.add(CxConstants.AGENT);
+            arguments.add(agent);
+        }
         return Execution.executeCommand(arguments,
                 logger, tempDir,
                 fileName + reportFormat.getExtension());
