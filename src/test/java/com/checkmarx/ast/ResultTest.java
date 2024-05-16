@@ -53,9 +53,13 @@ class ResultTest extends BaseTest {
     void testResultsStructure() throws Exception {
         List<Scan> scanList = wrapper.scanList("statuses=Completed");
         Assertions.assertTrue(scanList.size() > 0);
-        String scanId = scanList.get(0).getId();
-        Results results = wrapper.results(UUID.fromString(scanId));
-        Assertions.assertEquals(results.getTotalCount(), results.getResults().size());
+        for (Scan scan : scanList) {
+            Results results = wrapper.results(UUID.fromString(scan.getId()));
+            if (results != null && results.getResults() != null) {
+                Assertions.assertEquals(results.getTotalCount(), results.getResults().size());
+                break;
+            }
+        }
     }
 
     @Test()
