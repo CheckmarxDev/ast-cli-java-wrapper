@@ -36,7 +36,7 @@ class ResultTest extends BaseTest {
         List<Scan> scanList = wrapper.scanList("statuses=Completed");
         Assertions.assertTrue(scanList.size() > 0);
         String scanId = scanList.get(0).getId();
-        String results = wrapper.results(UUID.fromString(scanId), ReportFormat.json);
+        String results = wrapper.results(UUID.fromString(scanId), ReportFormat.json, "java-wrapper");
         Assertions.assertTrue(results.length() > 0);
     }
 
