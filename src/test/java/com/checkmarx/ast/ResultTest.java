@@ -57,9 +57,10 @@ class ResultTest extends BaseTest {
             Results results = wrapper.results(UUID.fromString(scan.getId()));
             if (results != null && results.getResults() != null) {
                 Assertions.assertEquals(results.getTotalCount(), results.getResults().size());
-                break;
+                return;
             }
         }
+        Assertions.assertTrue(false, "No results found");
     }
 
     @Test()
