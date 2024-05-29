@@ -228,7 +228,6 @@ public class CxWrapper {
         if (vorpalLatestVersion) {
             arguments.add(CxConstants.VORPAL_LATEST_VERSION);
         }
-        //arguments.addAll(jsonArguments());
 
         return Execution.executeCommand(withConfigArguments(arguments), logger, ScanResult::fromLine);
     }
