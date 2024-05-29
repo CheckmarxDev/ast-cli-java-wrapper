@@ -1,5 +1,6 @@
 package com.checkmarx.ast.wrapper;
 
+import com.checkmarx.ast.ScanResult.ScanResult;
 import com.checkmarx.ast.codebashing.CodeBashing;
 import com.checkmarx.ast.kicsRealtimeResults.KicsRealtimeResults;
 import com.checkmarx.ast.learnMore.LearnMore;
@@ -216,6 +217,22 @@ public class CxWrapper {
         return Execution.executeCommand(withConfigArguments(arguments), logger, Project::listFromLine);
     }
 
+    public ScanResult ScanLightweight(String fileSource, Boolean engineVersionUpdate) throws IOException, InterruptedException, CxException {
+        this.logger.info("Fetching lightweight scanResult");
+
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_SCAN);
+        arguments.add(CxConstants.SUB_CMD_LIGHTWEIGHT);
+        arguments.add(CxConstants.FILE_SOURCE);
+        arguments.add(fileSource);
+        if (engineVersionUpdate) {
+            arguments.add(CxConstants.LIGHTWEIGHT_UPDATE_VERSION);
+        }
+        arguments.addAll(jsonArguments());
+
+        return Execution.executeCommand(withConfigArguments(arguments), logger, ScanResult::fromLine);
+    }
+
     public List<String> projectBranches(@NonNull UUID projectId, String filter)
             throws CxException, IOException, InterruptedException {
         this.logger.info("Fetching the branches for project id {} using the filter: {}", projectId, filter);
@@ -336,7 +353,7 @@ public class CxWrapper {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_KICS_REALTIME);
-        arguments.add(CxConstants.FILE_SOURCES);
+        arguments.add(CxConstants.FILE);
         arguments.add(fileSources);
         arguments.add(CxConstants.ADDITONAL_PARAMS);
         arguments.add(additionalParams);

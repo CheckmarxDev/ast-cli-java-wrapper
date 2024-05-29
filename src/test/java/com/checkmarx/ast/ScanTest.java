@@ -1,5 +1,6 @@
 package com.checkmarx.ast;
 
+import com.checkmarx.ast.ScanResult.ScanResult;
 import com.checkmarx.ast.kicsRealtimeResults.KicsRealtimeResults;
 import com.checkmarx.ast.scan.Scan;
 import org.junit.jupiter.api.Assertions;
@@ -17,6 +18,13 @@ class ScanTest extends BaseTest {
         Assertions.assertTrue(scanList.size() > 0);
         Scan scan = wrapper.scanShow(UUID.fromString(scanList.get(0).getId()));
         Assertions.assertEquals(scanList.get(0).getId(), scan.getId());
+    }
+
+    @Test
+    void testScanLightweight() throws Exception {
+        ScanResult scanResult = wrapper.ScanLightweight("my-file.cs", false);
+        Assertions.assertEquals("1234567890", scanResult.getRequestId());
+        Assertions.assertTrue(scanResult.isStatus());
     }
 
     @Test
