@@ -217,18 +217,18 @@ public class CxWrapper {
         return Execution.executeCommand(withConfigArguments(arguments), logger, Project::listFromLine);
     }
 
-    public ScanResult ScanLightweight(String fileSource, Boolean engineVersionUpdate) throws IOException, InterruptedException, CxException {
+    public ScanResult ScanVorpal(String fileSource, Boolean vorpalLatestVersion) throws IOException, InterruptedException, CxException {
         this.logger.info("Fetching lightweight scanResult");
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
-        arguments.add(CxConstants.SUB_CMD_LIGHTWEIGHT);
+        arguments.add(CxConstants.SUB_CMD_VORPAL);
         arguments.add(CxConstants.FILE_SOURCE);
         arguments.add(fileSource);
-        if (engineVersionUpdate) {
-            arguments.add(CxConstants.LIGHTWEIGHT_UPDATE_VERSION);
+        if (vorpalLatestVersion) {
+            arguments.add(CxConstants.VORPAL_LATEST_VERSION);
         }
-        arguments.addAll(jsonArguments());
+        //arguments.addAll(jsonArguments());
 
         return Execution.executeCommand(withConfigArguments(arguments), logger, ScanResult::fromLine);
     }

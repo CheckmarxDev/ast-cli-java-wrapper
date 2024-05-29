@@ -21,10 +21,19 @@ class ScanTest extends BaseTest {
     }
 
     @Test
-    void testScanLightweight() throws Exception {
-        ScanResult scanResult = wrapper.ScanLightweight("my-file.cs", false);
+    void testScanVorpalSuccessfulResponse() throws Exception {
+        ScanResult scanResult = wrapper.ScanVorpal("my-file.cs", true);
         Assertions.assertEquals("1234567890", scanResult.getRequestId());
         Assertions.assertTrue(scanResult.isStatus());
+        Assertions.assertNull(scanResult.getError());
+    }
+
+    @Test
+    void testScanVorpalFailureResponse() throws Exception {
+        ScanResult scanResult = wrapper.ScanVorpal("my-file.cs", false);
+        Assertions.assertEquals("1111", scanResult.getRequestId());
+        Assertions.assertFalse(scanResult.isStatus());
+        Assertions.assertNotNull(scanResult.getError());
     }
 
     @Test
