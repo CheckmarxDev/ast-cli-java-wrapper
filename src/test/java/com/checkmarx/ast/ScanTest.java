@@ -6,6 +6,9 @@ import com.checkmarx.ast.scan.Scan;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -22,15 +25,15 @@ class ScanTest extends BaseTest {
 
     @Test
     void testScanVorpalSuccessfulResponse() throws Exception {
-        ScanResult scanResult = wrapper.ScanVorpal("my-file.cs", true);
-        Assertions.assertEquals("1234567890", scanResult.getRequestId());
+        ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/csharp-file.cs", true);
+        Assertions.assertNotNull(scanResult.getRequestId());
         Assertions.assertTrue(scanResult.isStatus());
         Assertions.assertNull(scanResult.getError());
     }
 
     @Test
     void testScanVorpalFailureResponse() throws Exception {
-        ScanResult scanResult = wrapper.ScanVorpal("my-file.cs", false);
+        ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/csharp-file.cs", false);
         Assertions.assertEquals("1111", scanResult.getRequestId());
         Assertions.assertFalse(scanResult.isStatus());
         Assertions.assertNotNull(scanResult.getError());

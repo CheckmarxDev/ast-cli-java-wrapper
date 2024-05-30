@@ -217,7 +217,7 @@ public class CxWrapper {
         return Execution.executeCommand(withConfigArguments(arguments), logger, Project::listFromLine);
     }
 
-    public ScanResult ScanVorpal(String fileSource, Boolean vorpalLatestVersion) throws IOException, InterruptedException, CxException {
+    public ScanResult ScanVorpal(String fileSource, boolean vorpalLatestVersion) throws IOException, InterruptedException, CxException {
         this.logger.info("Fetching Vorpal scanResult");
 
         List<String> arguments = new ArrayList<>();
