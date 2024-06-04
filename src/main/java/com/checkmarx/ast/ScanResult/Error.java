@@ -3,8 +3,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Error  {
-    int code;
-    String description;
+    public int code;
+    public String description;
 
     @JsonCreator
     public Error(
