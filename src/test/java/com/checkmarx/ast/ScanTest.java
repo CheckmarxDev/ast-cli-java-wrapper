@@ -32,15 +32,15 @@ class ScanTest extends BaseTest {
         Assertions.assertNull(scanResult.getError());
         ScanDetail firstScanDetails = scanResult.getScanDetails().get(0);
         Assertions.assertEquals(37, firstScanDetails.getLine());
-        Assertions.assertEquals("Stored XSS", firstScanDetails.getQueryName());
+        Assertions.assertEquals("Stored XSS", firstScanDetails.getRuleName());
         Assertions.assertEquals("High", firstScanDetails.getSeverity());
-        Assertions.assertNotNull(firstScanDetails.getRemediation());
+        Assertions.assertNotNull(firstScanDetails.getRemediationAdvise());
         Assertions.assertNotNull(firstScanDetails.getDescription());
         ScanDetail secondScanDetails = scanResult.getScanDetails().get(1);
         Assertions.assertEquals(76, secondScanDetails.getLine());
-        Assertions.assertEquals("Missing HSTS Header", secondScanDetails.getQueryName());
+        Assertions.assertEquals("Missing HSTS Header", secondScanDetails.getRuleName());
         Assertions.assertEquals("Medium", secondScanDetails.getSeverity());
-        Assertions.assertNotNull(secondScanDetails.getRemediation());
+        Assertions.assertNotNull(secondScanDetails.getRemediationAdvise());
         Assertions.assertNotNull(secondScanDetails.getDescription());
     }
 

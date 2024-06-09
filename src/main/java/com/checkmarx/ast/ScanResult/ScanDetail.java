@@ -16,34 +16,37 @@ public class ScanDetail {
 
     int ruleID;
     String language;
-    String queryName;
+    String ruleName;
     String severity;
     String fileName;
     int line;
+    int problematicLine;
     int length;
-    String remediation;
+    String remediationAdvise;
     String description;
 
     @JsonCreator
     public ScanDetail(
             @JsonProperty("rule_id") int ruleID,
             @JsonProperty("language") String language,
-            @JsonProperty("query_name") String queryName,
+            @JsonProperty("rule_name") String ruleName,
             @JsonProperty("severity") String severity,
             @JsonProperty("file_name") String fileName,
             @JsonProperty("line") int line,
+            @JsonProperty("problematic_line") int problematicLine,
             @JsonProperty("length") int length,
-            @JsonProperty("remediation") String remediation,
+            @JsonProperty("remediation_advise") String remediationAdvise,
             @JsonProperty("description") String description)
     {
         this.ruleID = ruleID;
         this.language = language;
-        this.queryName = queryName;
+        this.ruleName = ruleName;
         this.severity = severity;
         this.fileName = fileName;
         this.line = line;
+        this.problematicLine = problematicLine;
         this.length = length;
-        this.remediation = remediation;
+        this.remediationAdvise = remediationAdvise;
         this.description = description;
     }
 }
