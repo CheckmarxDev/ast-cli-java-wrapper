@@ -13,6 +13,7 @@ import com.checkmarx.ast.results.ResultsSummary;
 import com.checkmarx.ast.results.result.Node;
 import com.checkmarx.ast.scan.Scan;
 import com.checkmarx.ast.tenant.TenantSetting;
+import com.checkmarx.ast.utils.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -245,7 +246,7 @@ public class CxWrapper {
 
         return Execution.executeCommand(withConfigArguments(arguments),
                 logger,
-                line -> CxBaseObject.parse(line, BRANCHES_TYPE));
+                line -> JsonParser.parse(line, BRANCHES_TYPE));
     }
 
     public List<CodeBashing> codeBashingList(@NonNull String cweId, @NonNull String language, @NonNull String queryName) throws IOException, InterruptedException, CxException {

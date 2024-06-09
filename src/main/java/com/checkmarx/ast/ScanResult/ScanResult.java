@@ -1,5 +1,6 @@
 package com.checkmarx.ast.ScanResult;
 
+import com.checkmarx.ast.utils.JsonParser;
 import com.checkmarx.ast.wrapper.CxBaseObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,7 +13,6 @@ import lombok.ToString;
 import lombok.Value;
 
 import java.util.List;
-import java.util.Map;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
@@ -45,6 +45,6 @@ public class ScanResult extends CxBaseObject {
     }
 
     public static <T> T fromLine(String line) {
-        return parse(line, TypeFactory.defaultInstance().constructType(ScanResult.class));
+        return JsonParser.parse(line, TypeFactory.defaultInstance().constructType(ScanResult.class));
     }
 }

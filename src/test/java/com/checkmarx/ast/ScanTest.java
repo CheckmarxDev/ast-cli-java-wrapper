@@ -5,6 +5,7 @@ import com.checkmarx.ast.ScanResult.ScanDetail;
 import com.checkmarx.ast.ScanResult.ScanResult;
 import com.checkmarx.ast.kicsRealtimeResults.KicsRealtimeResults;
 import com.checkmarx.ast.scan.Scan;
+import com.checkmarx.ast.wrapper.CxException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -62,6 +63,14 @@ class ScanTest extends BaseTest {
         Assertions.assertNotNull(error);
         Assertions.assertEquals("An internal error occurred.", error.description);
         Assertions.assertEquals(2, error.code);
+    }
+
+    @Test
+    void testScanVorpal_WhenMissingFileExtension_ReturnFileExtensionIsRequiredFailure() throws Exception {
+        // ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/python-vul-file", false);
+        Assertions.assertThrowsExactly(CxException.class, () -> {
+            wrapper.ScanVorpal("src/test/resources/python-vul-file", false);
+        }, "file must have an extension");
     }
 
     @Test

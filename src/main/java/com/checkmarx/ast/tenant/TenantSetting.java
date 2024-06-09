@@ -1,5 +1,6 @@
 package com.checkmarx.ast.tenant;
 
+import com.checkmarx.ast.utils.JsonParser;
 import com.checkmarx.ast.wrapper.CxBaseObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -31,7 +32,7 @@ public class TenantSetting {
     }
 
     public static <T> List<T> listFromLine(String line) {
-        return CxBaseObject.parse(line,
+        return JsonParser.parse(line,
                                   TypeFactory.defaultInstance()
                                              .constructCollectionType(List.class, TenantSetting.class));
     }
