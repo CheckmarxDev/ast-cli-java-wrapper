@@ -218,7 +218,7 @@ public class CxWrapper {
         return Execution.executeCommand(withConfigArguments(arguments), logger, Project::listFromLine);
     }
 
-    public ScanResult ScanVorpal(String fileSource, boolean vorpalLatestVersion) throws IOException, InterruptedException, CxException {
+    public ScanResult ScanVorpal(String fileSource, boolean vorpalLatestVersion, String agent) throws IOException, InterruptedException, CxException {
         this.logger.info("Fetching Vorpal scanResult");
 
         List<String> arguments = new ArrayList<>();
@@ -230,7 +230,19 @@ public class CxWrapper {
             arguments.add(CxConstants.VORPAL_LATEST_VERSION);
         }
 
+        appendAgentToArguments(agent, arguments);
+
         return Execution.executeCommand(withConfigArguments(arguments), logger, ScanResult::fromLine);
+    }
+
+    private static void appendAgentToArguments(String agent, List<String> arguments) {
+        arguments.add(CxConstants.AGENT);
+        if (agent != null && !agent.isEmpty()){
+            arguments.add(agent);
+        }
+        else{
+            arguments.add("CLI-Java-Wrapper");
+        }
     }
 
     public List<String> projectBranches(@NonNull UUID projectId, String filter)
