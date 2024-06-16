@@ -24,8 +24,8 @@ class ScanTest extends BaseTest {
     }
 
     @Test
-    void testScanVorpal_WhenFileWithVulnerabilitiesIsSent_ReturnSuccessfulResponseWithCorrectValues() throws Exception {
-        ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/python-vul-file.py", true);
+    void testScanVorpal_WhenFileWithVulnerabilitiesIsSentWithAgent_ReturnSuccessfulResponseWithCorrectValues() throws Exception {
+        ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/python-vul-file.py", true, "vscode");
         Assertions.assertNotNull(scanResult.getRequestId());
         Assertions.assertTrue(scanResult.isStatus());
         Assertions.assertEquals(2, scanResult.getScanDetails().size());
@@ -46,7 +46,7 @@ class ScanTest extends BaseTest {
 
     @Test
     void testScanVorpal_WhenFileWithoutVulnerabilitiesIsSent_ReturnSuccessfulResponseWithCorrectValues() throws Exception {
-        ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/csharp-no-vul.cs", true);
+        ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/csharp-no-vul.cs", true, null);
         Assertions.assertNotNull(scanResult.getRequestId());
         Assertions.assertTrue(scanResult.isStatus());
         Assertions.assertEquals(0, scanResult.getScanDetails().size());
@@ -55,7 +55,7 @@ class ScanTest extends BaseTest {
 
     @Test
     void testScanVorpal_WhenInvalidRequestIsSent_ReturnInternalErrorFailure() throws Exception {
-        ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/python-vul-file.py", false);
+        ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/python-vul-file.py", false, null);
         Assertions.assertEquals("some-request-id", scanResult.getRequestId());
         Assertions.assertFalse(scanResult.isStatus());
         Assertions.assertNull(scanResult.getScanDetails());
@@ -69,7 +69,7 @@ class ScanTest extends BaseTest {
     void testScanVorpal_WhenMissingFileExtension_ReturnFileExtensionIsRequiredFailure() throws Exception {
         // ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/python-vul-file", false);
         Assertions.assertThrowsExactly(CxException.class, () -> {
-            wrapper.ScanVorpal("src/test/resources/python-vul-file", false);
+            wrapper.ScanVorpal("src/test/resources/python-vul-file", false, null);
         }, "file must have an extension");
     }
 
