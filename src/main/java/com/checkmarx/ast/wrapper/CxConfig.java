@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 @Data
 @Builder
 public class CxConfig {
-
+    // check
     private static final Pattern pattern = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 
     private String baseUri;
