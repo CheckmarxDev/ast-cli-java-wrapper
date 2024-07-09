@@ -5,6 +5,11 @@ filename_windows=ast-cli_${release}_windows_x64.zip
 filename_linux=ast-cli_${release}_linux_x64.tar.gz
 filename_darwin=ast-cli_${release}_darwin_x64.tar.gz
 
+# Ensure Git LFS is tracking the large files
+git lfs track "src/main/resources/cx.exe"
+git lfs track "src/main/resources/cx-linux"
+git lfs track "src/main/resources/cx-mac"
+
 #Windows
 echo "Updating windows binary"
 wget https://github.com/checkmarx/ast-cli/releases/download/${release}/${filename_windows}
@@ -30,3 +35,11 @@ tar -xvzf  ${filename_darwin} -C ./tmp/
 mv ./tmp/cx ./src/main/resources/cx-mac
 rm -r tmp
 rm ${filename_darwin}
+
+# Add the updated files to Git LFS
+git add src/main/resources/cx.exe
+git add src/main/resources/cx-linux
+git add src/main/resources/cx-mac
+
+# Add the .gitattributes file to ensure LFS tracking is committed
+git add .gitattributes
