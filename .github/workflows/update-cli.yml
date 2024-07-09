@@ -63,4 +63,4 @@ jobs:
           [1]: https://github.com/Checkmarx/checkmarx-ast-cli
           [2]: https://github.com/peter-evans/create-pull-request
         labels: cxone
-        branch: feature/update_cli
+        branch: feature/elchanan/update_cli
