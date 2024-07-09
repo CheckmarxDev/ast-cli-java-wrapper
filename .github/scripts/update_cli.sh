@@ -8,11 +8,6 @@ filename_windows=ast-cli_${release}_windows_x64.zip
 filename_linux=ast-cli_${release}_linux_x64.tar.gz
 filename_darwin=ast-cli_${release}_darwin_x64.tar.gz
 
-# Ensure Git LFS is tracking the large files
-git lfs track "src/main/resources/cx.exe"
-git lfs track "src/main/resources/cx-linux"
-git lfs track "src/main/resources/cx-mac"
-
 # Ensure the target directory exists
 mkdir -p src/main/resources
 
@@ -27,7 +22,7 @@ rm ${filename_windows}
 # Linux
 echo "Updating Linux binary"
 wget https://github.com/checkmarx/ast-cli/releases/download/${release}/${filename_linux}
-mkdir tmp
+mkdir -p tmp
 tar -xvzf ${filename_linux} -C tmp
 mv tmp/cx src/main/resources/cx-linux
 rm -rf tmp
@@ -36,18 +31,10 @@ rm ${filename_linux}
 # Darwin (Mac)
 echo "Updating Mac binary"
 wget https://github.com/checkmarx/ast-cli/releases/download/${release}/${filename_darwin}
-mkdir tmp
+mkdir -p tmp
 tar -xvzf ${filename_darwin} -C tmp
 mv tmp/cx src/main/resources/cx-mac
 rm -rf tmp
 rm ${filename_darwin}
-
-# Add the updated files to Git LFS
-git add src/main/resources/cx.exe
-git add src/main/resources/cx-linux
-git add src/main/resources/cx-mac
-
-# Add the .gitattributes file to ensure LFS tracking is committed
-git add .gitattributes
 
 echo "Update completed successfully"

@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install Git LFS
         run: |
@@ -39,14 +41,16 @@ jobs:
           chmod +x ./.github/scripts/update_cli.sh
           ./.github/scripts/update_cli.sh ${{ env.latest_tag }}
 
-          # Verify the downloaded CLI
-          if [ -f "/tmp/cx-linux" ]; then
-            echo "cx-linux downloaded successfully."
-            ls -l /tmp/cx-linux
-          else
-            echo "cx-linux download failed."
-            exit 1
-          fi
+          # Verify the downloaded CLIs
+          for cli in cx.exe cx-linux cx-mac; do
+            if [ -f "src/main/resources/$cli" ]; then
+              echo "$cli downloaded successfully."
+              ls -l src/main/resources/$cli
+            else
+              echo "$cli download failed."
+              exit 1
+            fi
+          done
 
           # Track large files with Git LFS
           git lfs track "src/main/resources/cx-linux"
@@ -55,8 +59,11 @@ jobs:
           git add .gitattributes
           git add src/main/resources/cx-linux src/main/resources/cx.exe src/main/resources/cx-mac
 
+      - name: Run Tests
+        run: mvn -B test --file pom.xml
+
       - name: Create Pull Request
-        if: env.current_tag != env.latest_tag
+        if: env.current_tag != env.latest_tag && success()
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
@@ -71,7 +78,4 @@ jobs:
             [1]: https://github.com/Checkmarx/checkmarx-ast-cli
             [2]: https://github.com/peter-evans/create-pull-request
           labels: cxone
-          branch: feature/elchanan/update_cli
-
-      - name: Run Tests
-        run: mvn -B test --file pom.xml
+          branch: feature/update_cli
