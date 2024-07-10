@@ -30,3 +30,4 @@ tar -xvzf  ${filename_darwin} -C ./tmp/
 mv ./tmp/cx ./src/main/resources/cx-mac
 rm -r tmp
 rm ${filename_darwin}
+echo "Update completed successfully"
