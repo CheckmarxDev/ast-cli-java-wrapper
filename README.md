@@ -94,4 +94,4 @@ Checkmarx - AST Integrations Team
 Project Link: [https://github.com/CheckmarxDev/ast-cli-java-wrapper](https://github.com/CheckmarxDev/ast-cli-java-wrapper)
 
 
-© 2021 Checkmarx Ltd. All Rights Reserved.
+© 2021 Checkmarx Ltd. All Rights Reserved..
