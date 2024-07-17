@@ -11,6 +11,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Install Git LFS
+        run: |
+          sudo apt-get update
+          sudo apt-get install git-lfs
+          git lfs install
+
+      - name: Configure Git user
+        run: |
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
 
       - name: Get Latest Checkmarx API version
         id: checkmarx-ast-cli
@@ -25,6 +38,15 @@ jobs:
         run: |
           # Update current release
           echo ${{ steps.checkmarx-ast-cli.outputs.release_tag }} > checkmarx-ast-cli.version
+
+      - name: Track large files with Git LFS
+        run: |
+          git lfs track "src/main/wrapper/resources/cx-linux"
+          git lfs track "src/main/wrapper/resources/cx.exe"
+          git lfs track "src/main/wrapper/resources/cx-mac"
+          git add .gitattributes
+          git add src/main/wrapper/resources/cx-linux src/main/wrapper/resources/cx.exe src/main/wrapper/resources/cx-mac
+          git commit -m "Track Checkmarx CLI binaries with Git LFS"
 
       - name: Download latest cli and update branch
         if: steps.checkmarx-ast-cli.outputs.current_tag != steps.checkmarx-ast-cli.outputs.release_tag
