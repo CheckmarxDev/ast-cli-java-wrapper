@@ -40,17 +40,17 @@ jobs:
 
       - name: Check existence of cx-linux binary
         run: |
-          if [ ! -f "src/main/wrapper/resources/cx-linux" ]; then
+          if [ ! -f "src/main/resources/cx-linux" ]; then
           echo "cx-linux binary does not exist"; exit 1;
           fi
       - name: Check existence of cx.exe binary
         run: |
-          if [ ! -f "src/main/wrapper/resources/cx.exe" ]; then
+          if [ ! -f "src/main/resources/cx.exe" ]; then
             echo "cx.exe binary does not exist"; exit 1;
           fi
       - name: Check existence of cx-mac binary
         run: |
-          if [ ! -f "src/main/wrapper/resources/cx-mac" ]; then
+          if [ ! -f "src/main/resources/cx-mac" ]; then
             echo "cx-mac binary does not exist"; exit 1;
           fi
 

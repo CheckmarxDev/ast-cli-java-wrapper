@@ -41,11 +41,11 @@ jobs:
 
       - name: Track large files with Git LFS
         run: |
-          git lfs track "src/main/wrapper/resources/cx-linux"
-          git lfs track "src/main/wrapper/resources/cx.exe"
-          git lfs track "src/main/wrapper/resources/cx-mac"
+          git lfs track "src/main/resources/cx-linux"
+          git lfs track "src/main/resources/cx.exe"
+          git lfs track "src/main/resources/cx-mac"
           git add .gitattributes
-          git add src/main/wrapper/resources/cx-linux src/main/wrapper/resources/cx.exe src/main/wrapper/resources/cx-mac
+          git add src/main/resources/cx-linux src/main/resources/cx.exe src/main/resources/cx-mac
           git commit -m "Track Checkmarx CLI binaries with Git LFS"
 
       - name: Download latest cli and update branch
