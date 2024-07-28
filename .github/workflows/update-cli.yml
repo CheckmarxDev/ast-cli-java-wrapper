@@ -39,7 +39,15 @@ jobs:
           # Update current release
           echo ${{ steps.checkmarx-ast-cli.outputs.release_tag }} > checkmarx-ast-cli.version
 
+      - name: Download latest cli and update branch
+        if: steps.checkmarx-ast-cli.outputs.current_tag != steps.checkmarx-ast-cli.outputs.release_tag
+        run: |
+          # Update binaries
+          chmod +x ./.github/scripts/update_cli.sh
+          ./.github/scripts/update_cli.sh ${{ steps.checkmarx-ast-cli.outputs.release_tag }}
+
       - name: Track large files with Git LFS
+        if: steps.checkmarx-ast-cli.outputs.current_tag != steps.checkmarx-ast-cli.outputs.release_tag
         run: |
           git lfs track "src/main/resources/cx-linux"
           git lfs track "src/main/resources/cx.exe"
@@ -47,13 +55,6 @@ jobs:
           git add .gitattributes
           git add src/main/resources/cx-linux src/main/resources/cx.exe src/main/resources/cx-mac
           git commit -m "Track Checkmarx CLI binaries with Git LFS"
-
-      - name: Download latest cli and update branch
-        if: steps.checkmarx-ast-cli.outputs.current_tag != steps.checkmarx-ast-cli.outputs.release_tag
-        run: |
-          # Update binaries
-          chmod +x ./.github/scripts/update_cli.sh
-          ./.github/scripts/update_cli.sh ${{ steps.checkmarx-ast-cli.outputs.release_tag }}
 
       - name: Create Pull Request
         if: steps.checkmarx-ast-cli.outputs.current_tag != steps.checkmarx-ast-cli.outputs.release_tag
