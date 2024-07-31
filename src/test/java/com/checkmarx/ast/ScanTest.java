@@ -1,7 +1,11 @@
 package com.checkmarx.ast;
 
+import com.checkmarx.ast.ScanResult.Error;
+import com.checkmarx.ast.ScanResult.ScanDetail;
+import com.checkmarx.ast.ScanResult.ScanResult;
 import com.checkmarx.ast.kicsRealtimeResults.KicsRealtimeResults;
 import com.checkmarx.ast.scan.Scan;
+import com.checkmarx.ast.wrapper.CxException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +21,56 @@ class ScanTest extends BaseTest {
         Assertions.assertTrue(scanList.size() > 0);
         Scan scan = wrapper.scanShow(UUID.fromString(scanList.get(0).getId()));
         Assertions.assertEquals(scanList.get(0).getId(), scan.getId());
+    }
+
+    @Test
+    void testScanVorpal_WhenFileWithVulnerabilitiesIsSentWithAgent_ReturnSuccessfulResponseWithCorrectValues() throws Exception {
+        ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/python-vul-file.py", true, "vscode");
+        Assertions.assertNotNull(scanResult.getRequestId());
+        Assertions.assertTrue(scanResult.isStatus());
+        Assertions.assertEquals(2, scanResult.getScanDetails().size());
+        Assertions.assertNull(scanResult.getError());
+        ScanDetail firstScanDetails = scanResult.getScanDetails().get(0);
+        Assertions.assertEquals(37, firstScanDetails.getLine());
+        Assertions.assertEquals("Stored XSS", firstScanDetails.getRuleName());
+        Assertions.assertEquals("High", firstScanDetails.getSeverity());
+        Assertions.assertNotNull(firstScanDetails.getRemediationAdvise());
+        Assertions.assertNotNull(firstScanDetails.getDescription());
+        ScanDetail secondScanDetails = scanResult.getScanDetails().get(1);
+        Assertions.assertEquals(76, secondScanDetails.getLine());
+        Assertions.assertEquals("Missing HSTS Header", secondScanDetails.getRuleName());
+        Assertions.assertEquals("Medium", secondScanDetails.getSeverity());
+        Assertions.assertNotNull(secondScanDetails.getRemediationAdvise());
+        Assertions.assertNotNull(secondScanDetails.getDescription());
+    }
+
+    @Test
+    void testScanVorpal_WhenFileWithoutVulnerabilitiesIsSent_ReturnSuccessfulResponseWithCorrectValues() throws Exception {
+        ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/csharp-no-vul.cs", true, null);
+        Assertions.assertNotNull(scanResult.getRequestId());
+        Assertions.assertTrue(scanResult.isStatus());
+        Assertions.assertEquals(0, scanResult.getScanDetails().size());
+        Assertions.assertNull(scanResult.getError());
+    }
+
+    @Test
+    void testScanVorpal_WhenInvalidRequestIsSent_ReturnInternalErrorFailure() throws Exception {
+        ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/python-vul-file.py", false, null);
+        Assertions.assertEquals("some-request-id", scanResult.getRequestId());
+        Assertions.assertFalse(scanResult.isStatus());
+        Assertions.assertNull(scanResult.getScanDetails());
+        Error error = scanResult.getError();
+        Assertions.assertNotNull(error);
+        Assertions.assertEquals("An internal error occurred.", error.description);
+        Assertions.assertEquals(2, error.code);
+    }
+
+    @Test
+    void testScanVorpal_WhenMissingFileExtension_ReturnFileExtensionIsRequiredFailure() throws Exception {
+        // ScanResult scanResult = wrapper.ScanVorpal("src/test/resources/python-vul-file", false);
+        Assertions.assertThrowsExactly(CxException.class, () -> {
+            wrapper.ScanVorpal("src/test/resources/python-vul-file", false, null);
+        }, "file must have an extension");
     }
 
     @Test
