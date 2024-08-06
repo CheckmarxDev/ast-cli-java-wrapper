@@ -261,7 +261,17 @@ public class CxWrapper {
                 .readValue(results(scanId, ReportFormat.json));
     }
 
+    public Results results(@NonNull UUID scanId, String agent) throws IOException, InterruptedException, CxException {
+        return new ObjectMapper()
+                .readerFor(Results.class)
+                .readValue(results(scanId, ReportFormat.json, agent));
+    }
+
     public String results(@NonNull UUID scanId, ReportFormat reportFormat)
+            throws IOException, InterruptedException, CxException {
+        return results(scanId, reportFormat, null);
+    }
+    public String results(@NonNull UUID scanId, ReportFormat reportFormat, String agent)
             throws IOException, InterruptedException, CxException {
         this.logger.info("Retrieving the scan result for scan id {}", scanId);
 
@@ -274,7 +284,10 @@ public class CxWrapper {
         arguments.add(fileName);
         arguments.add(CxConstants.OUTPUT_PATH);
         arguments.add(tempDir);
-
+        if (agent != null) {
+            arguments.add(CxConstants.AGENT);
+            arguments.add(agent);
+        }
         return Execution.executeCommand(arguments,
                 logger, tempDir,
                 fileName + reportFormat.getExtension());
