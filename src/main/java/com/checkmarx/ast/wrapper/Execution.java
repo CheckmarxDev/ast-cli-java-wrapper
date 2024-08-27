@@ -51,8 +51,6 @@ public final class Execution {
                 if (parsedLine != null) {
                     if (areAllFieldsNotNull(parsedLine)) {
                         executionResult = parsedLine;
-                    }else{
-                        logger.error("Some fields are null");
                     }
                 }
             }
