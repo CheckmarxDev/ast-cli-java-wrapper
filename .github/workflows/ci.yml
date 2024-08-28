@@ -35,11 +35,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '11'
-          server-id: ossrh
-          server-username: ${{ secrets.OSSRH_USERNAME }}
-          server-password: ${{ secrets.OSSRH_TOKEN }}
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Check existence of cx-linux binary
         run: |
@@ -68,11 +63,7 @@ jobs:
 
 
       - name: Build with Maven
-        run: mvn -B verify -DskipTests --file pom.xml
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: mvn -B verify -DskipTests -Dgpg.skip --file pom.xml
 
       - name: Run SpotBugs Analysis
         if: ${{ github.actor != 'dependabot[bot]' }}
