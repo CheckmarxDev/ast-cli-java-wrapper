@@ -49,9 +49,7 @@ public final class Execution {
                 stringBuilder.append(line).append(LINE_SEPARATOR);
                 T parsedLine = lineParser.apply(line);
                 if (parsedLine != null) {
-                    if (areAllFieldsNotNull(parsedLine)) {
-                        executionResult = parsedLine;
-                    }
+                   executionResult = parsedLine;
                 }
             }
             process.waitFor();
@@ -62,19 +60,6 @@ public final class Execution {
         }
     }
 
-    private static boolean areAllFieldsNotNull(Object obj) {
-        for (Field field : obj.getClass().getDeclaredFields()) {
-            field.setAccessible(true);
-            try {
-                if (field.get(obj) == null) {
-                    return false;
-                }
-            } catch (IllegalAccessException e) {
-                return false;
-            }
-        }
-        return true;
-    }
     static String executeCommand(List<String> arguments,
                                  Logger logger,
                                  String directory,

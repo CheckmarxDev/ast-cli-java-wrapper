@@ -29,7 +29,7 @@ public class Scan extends CxBaseObject {
     String branch;
 
     @JsonCreator
-    public Scan(@JsonProperty("ID") String id, @JsonProperty("ProjectID") String projectId,
+    public Scan(@JsonProperty(value = "ID", required = true) String id, @JsonProperty(value = "ProjectID", required = true) String projectId,
                 @JsonProperty("Status") String status, @JsonProperty("CreatedAt") String createdAt,
                 @JsonProperty("UpdatedAt") String updatedAt, @JsonProperty("Tags") Map<String, String> tags,
                 @JsonProperty("Initiator") String initiator, @JsonProperty("Origin") String origin,

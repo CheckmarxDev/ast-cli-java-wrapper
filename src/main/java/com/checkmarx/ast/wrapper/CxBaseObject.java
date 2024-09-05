@@ -6,8 +6,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,9 +42,12 @@ public abstract class CxBaseObject {
         T result = null;
         if (!StringUtils.isBlank(line) && isValidJSON(line)) {
             try {
-                result = new ObjectMapper().readValue(line, type);
+                ObjectMapper mapper = JsonMapper.builder()
+                        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                        .build();
+                result = mapper.readValue(line, type);
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+              //e.printStackTrace();
             }
         }
         return result;
