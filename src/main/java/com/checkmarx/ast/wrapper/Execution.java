@@ -2,6 +2,7 @@ package com.checkmarx.ast.wrapper;
 
 import org.slf4j.Logger;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -48,7 +49,9 @@ public final class Execution {
                 stringBuilder.append(line).append(LINE_SEPARATOR);
                 T parsedLine = lineParser.apply(line);
                 if (parsedLine != null) {
-                    executionResult = parsedLine;
+                    if (areAllFieldsNotNull(parsedLine)) {
+                        executionResult = parsedLine;
+                    }
                 }
             }
             process.waitFor();
@@ -59,6 +62,19 @@ public final class Execution {
         }
     }
 
+    private static boolean areAllFieldsNotNull(Object obj) {
+        for (Field field : obj.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            try {
+                if (field.get(obj) == null) {
+                    return false;
+                }
+            } catch (IllegalAccessException e) {
+                return false;
+            }
+        }
+        return true;
+    }
     static String executeCommand(List<String> arguments,
                                  Logger logger,
                                  String directory,

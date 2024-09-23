@@ -10,6 +10,17 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          lfs: true
+
+      - name: Install Git LFS
+        run: |
+          sudo apt-get update
+          sudo apt-get install git-lfs
+          git lfs install
+
+      - name: Checkout LFS objects
+        run: git lfs checkout
+
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
@@ -24,11 +35,22 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '11'
-          server-id: ossrh
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Check existence of cx-linux binary
+        run: |
+          if [ ! -f "src/main/resources/cx-linux" ]; then
+          echo "cx-linux binary does not exist"; exit 1;
+          fi
+      - name: Check existence of cx.exe binary
+        run: |
+          if [ ! -f "src/main/resources/cx.exe" ]; then
+            echo "cx.exe binary does not exist"; exit 1;
+          fi
+      - name: Check existence of cx-mac binary
+        run: |
+          if [ ! -f "src/main/resources/cx-mac" ]; then
+            echo "cx-mac binary does not exist"; exit 1;
+          fi
 
       - name: Run tests with Maven
         run: mvn -B test --file pom.xml
@@ -41,14 +63,10 @@ jobs:
 
 
       - name: Build with Maven
-        run: mvn -B verify -DskipTests --file pom.xml
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: mvn -B verify -DskipTests -Dgpg.skip --file pom.xml
 
       - name: Run SpotBugs Analysis
         if: ${{ github.actor != 'dependabot[bot]' }}
-        uses: jwgmeligmeyling/spotbugs-github-action@master
+        uses: jwgmeligmeyling/spotbugs-github-action@b8e2c3523acb34c87f14e18cbcd2d87db8c8584e #v1.2
         with:
           path: '**/spotbugsXml.xml'
