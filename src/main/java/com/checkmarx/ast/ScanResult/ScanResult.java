@@ -1,4 +1,5 @@
 package com.checkmarx.ast.ScanResult;
+
 import com.checkmarx.ast.utils.JsonParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,11 +28,11 @@ public class ScanResult {
     @JsonCreator
     public ScanResult(
             @JsonProperty("request_id") String requestId,
-            @JsonProperty("Status") boolean status,
-            @JsonProperty("Message") String message,
+            @JsonProperty("status") boolean status,
+            @JsonProperty("message") String message,
             @JsonProperty("scan_details") List<ScanDetail> scanDetails,
-            @JsonProperty("error") Error error)
-    {
+            @JsonProperty("error") Error error
+    ) {
         this.requestId = requestId;
         this.status = status;
         this.message = message;

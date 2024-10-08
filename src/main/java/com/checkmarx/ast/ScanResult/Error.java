@@ -1,7 +1,9 @@
 package com.checkmarx.ast.ScanResult;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Value;
 
+@Value
 public class Error  {
     public int code;
     public String description;

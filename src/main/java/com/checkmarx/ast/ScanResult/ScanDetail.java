@@ -1,4 +1,5 @@
 package com.checkmarx.ast.ScanResult;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -20,7 +21,7 @@ public class ScanDetail {
     String severity;
     String fileName;
     int line;
-    int problematicLine;
+    String problematicLine;
     int length;
     String remediationAdvise;
     String description;
@@ -33,11 +34,11 @@ public class ScanDetail {
             @JsonProperty("severity") String severity,
             @JsonProperty("file_name") String fileName,
             @JsonProperty("line") int line,
-            @JsonProperty("problematic_line") int problematicLine,
+            @JsonProperty("problematicLine") String problematicLine,
             @JsonProperty("length") int length,
-            @JsonProperty("remediation_advise") String remediationAdvise,
-            @JsonProperty("description") String description)
-    {
+            @JsonProperty("remediationAdvise") String remediationAdvise,
+            @JsonProperty("description") String description
+    ) {
         this.ruleID = ruleID;
         this.language = language;
         this.ruleName = ruleName;

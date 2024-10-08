@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 
 public class JsonParser {
@@ -29,4 +30,5 @@ public class JsonParser {
             return false;
         }
     }
+
 }
