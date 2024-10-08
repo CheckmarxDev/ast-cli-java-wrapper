@@ -1,11 +1,9 @@
 package com.checkmarx.ast;
 
-import com.checkmarx.ast.ScanResult.Error;
-import com.checkmarx.ast.ScanResult.ScanDetail;
-import com.checkmarx.ast.ScanResult.ScanResult;
+import com.checkmarx.ast.asca.ScanDetail;
+import com.checkmarx.ast.asca.ScanResult;
 import com.checkmarx.ast.kicsRealtimeResults.KicsRealtimeResults;
 import com.checkmarx.ast.scan.Scan;
-import com.checkmarx.ast.wrapper.CxException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -50,6 +48,7 @@ class ScanTest extends BaseTest {
         Assertions.assertNotNull(scanResult.getRequestId());
         Assertions.assertTrue(scanResult.isStatus());
         Assertions.assertNull(scanResult.getError());
+        Assertions.assertNull(scanResult.getScanDetails()); // When no vulnerabilities are found, scan details is null
     }
 
     @Test

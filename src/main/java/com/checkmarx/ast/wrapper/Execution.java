@@ -1,6 +1,5 @@
 package com.checkmarx.ast.wrapper;
 
-import com.checkmarx.ast.ScanResult.ScanResult;
 import org.slf4j.Logger;
 
 import java.io.*;

@@ -1,6 +1,6 @@
 package com.checkmarx.ast.wrapper;
 
-import com.checkmarx.ast.ScanResult.ScanResult;
+import com.checkmarx.ast.asca.ScanResult;
 import com.checkmarx.ast.codebashing.CodeBashing;
 import com.checkmarx.ast.kicsRealtimeResults.KicsRealtimeResults;
 import com.checkmarx.ast.learnMore.LearnMore;
@@ -224,7 +224,7 @@ public class CxWrapper {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_ASCA);
-        arguments.add(CxConstants.FILE);
+        arguments.add(CxConstants.FILE_SOURCE);
         arguments.add(fileSource);
         if (ascaLatestVersion) {
             arguments.add(CxConstants.ASCA_LATEST_VERSION);
@@ -365,7 +365,7 @@ public class CxWrapper {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_KICS_REALTIME);
-        arguments.add(CxConstants.FILE_SOURCE);
+        arguments.add(CxConstants.FILE);
         arguments.add(fileSources);
         arguments.add(CxConstants.ADDITONAL_PARAMS);
         arguments.add(additionalParams);

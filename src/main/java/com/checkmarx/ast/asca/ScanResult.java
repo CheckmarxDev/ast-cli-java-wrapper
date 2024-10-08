@@ -1,4 +1,4 @@
-package com.checkmarx.ast.ScanResult;
+package com.checkmarx.ast.asca;
 
 import com.checkmarx.ast.utils.JsonParser;
 import com.fasterxml.jackson.annotation.JsonCreator;
