@@ -34,26 +34,4 @@ public abstract class CxBaseObject {
         this.updatedAt = updatedAt;
         this.tags = tags;
     }
-
-    public static <T> T parse(String line, JavaType type) {
-        T result = null;
-        if (!StringUtils.isBlank(line) && isValidJSON(line)) {
-            try {
-                result = new ObjectMapper().readValue(line, type);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
-
-    public static boolean isValidJSON(final String json) {
-        try {
-            final ObjectMapper mapper = new ObjectMapper();
-            mapper.readTree(json);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
 }

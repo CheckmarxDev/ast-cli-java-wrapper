@@ -1,5 +1,6 @@
 package com.checkmarx.ast.wrapper;
 
+import com.checkmarx.ast.asca.ScanResult;
 import com.checkmarx.ast.codebashing.CodeBashing;
 import com.checkmarx.ast.kicsRealtimeResults.KicsRealtimeResults;
 import com.checkmarx.ast.learnMore.LearnMore;
@@ -12,6 +13,7 @@ import com.checkmarx.ast.results.ResultsSummary;
 import com.checkmarx.ast.results.result.Node;
 import com.checkmarx.ast.scan.Scan;
 import com.checkmarx.ast.tenant.TenantSetting;
+import com.checkmarx.ast.utils.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -216,6 +218,33 @@ public class CxWrapper {
         return Execution.executeCommand(withConfigArguments(arguments), logger, Project::listFromLine);
     }
 
+    public ScanResult ScanAsca(String fileSource, boolean ascaLatestVersion, String agent) throws IOException, InterruptedException, CxException {
+        this.logger.info("Fetching ASCA scanResult");
+
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_SCAN);
+        arguments.add(CxConstants.SUB_CMD_ASCA);
+        arguments.add(CxConstants.FILE_SOURCE);
+        arguments.add(fileSource);
+        if (ascaLatestVersion) {
+            arguments.add(CxConstants.ASCA_LATEST_VERSION);
+        }
+
+        appendAgentToArguments(agent, arguments);
+
+        return Execution.executeCommand(withConfigArguments(arguments), logger, ScanResult::fromLine);
+    }
+
+    private static void appendAgentToArguments(String agent, List<String> arguments) {
+        arguments.add(CxConstants.AGENT);
+        if (agent != null && !agent.isEmpty()){
+            arguments.add(agent);
+        }
+        else{
+            arguments.add("CLI-Java-Wrapper");
+        }
+    }
+
     public List<String> projectBranches(@NonNull UUID projectId, String filter)
             throws CxException, IOException, InterruptedException {
         this.logger.info("Fetching the branches for project id {} using the filter: {}", projectId, filter);
@@ -229,7 +258,7 @@ public class CxWrapper {
 
         return Execution.executeCommand(withConfigArguments(arguments),
                 logger,
-                line -> CxBaseObject.parse(line, BRANCHES_TYPE));
+                line -> JsonParser.parse(line, BRANCHES_TYPE));
     }
 
     public List<CodeBashing> codeBashingList(@NonNull String cweId, @NonNull String language, @NonNull String queryName) throws IOException, InterruptedException, CxException {
@@ -336,7 +365,7 @@ public class CxWrapper {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_KICS_REALTIME);
-        arguments.add(CxConstants.FILE_SOURCES);
+        arguments.add(CxConstants.FILE);
         arguments.add(fileSources);
         arguments.add(CxConstants.ADDITONAL_PARAMS);
         arguments.add(additionalParams);

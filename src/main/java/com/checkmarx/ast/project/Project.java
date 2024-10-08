@@ -1,5 +1,6 @@
 package com.checkmarx.ast.project;
 
+import com.checkmarx.ast.utils.JsonParser;
 import com.checkmarx.ast.wrapper.CxBaseObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -36,10 +37,10 @@ public class Project extends CxBaseObject {
     }
 
     public static <T> T fromLine(String line) {
-        return parse(line, TypeFactory.defaultInstance().constructType(Project.class));
+        return JsonParser.parse(line, TypeFactory.defaultInstance().constructType(Project.class));
     }
 
     public static <T> List<T> listFromLine(String line) {
-        return parse(line, TypeFactory.defaultInstance().constructCollectionType(List.class, Project.class));
+        return JsonParser.parse(line, TypeFactory.defaultInstance().constructCollectionType(List.class, Project.class));
     }
 }

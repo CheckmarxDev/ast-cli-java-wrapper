@@ -1,6 +1,7 @@
 package com.checkmarx.ast.wrapper;
 
 import org.slf4j.Logger;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -49,7 +50,7 @@ public final class Execution {
                 stringBuilder.append(line).append(LINE_SEPARATOR);
                 T parsedLine = lineParser.apply(line);
                 if (parsedLine != null) {
-                    if (areAllFieldsNotNull(parsedLine)) {
+                    if (areAllFieldsNotNull(parsedLine) || isAscaRequest(arguments)) {
                         executionResult = parsedLine;
                     }
                 }
@@ -60,6 +61,10 @@ public final class Execution {
             }
             return executionResult;
         }
+    }
+
+    public static boolean isAscaRequest(List<String> arguments) {
+        return (arguments.size() >= 3 && arguments.get(1).equals("scan") && arguments.get(2).equals("asca"));
     }
 
     private static boolean areAllFieldsNotNull(Object obj) {
@@ -75,6 +80,7 @@ public final class Execution {
         }
         return true;
     }
+
     static String executeCommand(List<String> arguments,
                                  Logger logger,
                                  String directory,
