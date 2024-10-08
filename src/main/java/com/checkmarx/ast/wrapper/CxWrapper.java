@@ -365,7 +365,7 @@ public class CxWrapper {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_KICS_REALTIME);
-        arguments.add(CxConstants.FILE);
+        arguments.add(CxConstants.FILE_SOURCE);
         arguments.add(fileSources);
         arguments.add(CxConstants.ADDITONAL_PARAMS);
         arguments.add(additionalParams);
