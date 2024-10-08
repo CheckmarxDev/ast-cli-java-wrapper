@@ -218,16 +218,16 @@ public class CxWrapper {
         return Execution.executeCommand(withConfigArguments(arguments), logger, Project::listFromLine);
     }
 
-    public ScanResult ScanVorpal(String fileSource, boolean vorpalLatestVersion, String agent) throws IOException, InterruptedException, CxException {
-        this.logger.info("Fetching Vorpal scanResult");
+    public ScanResult ScanAsca(String fileSource, boolean ascaLatestVersion, String agent) throws IOException, InterruptedException, CxException {
+        this.logger.info("Fetching ASCA scanResult");
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
-        arguments.add(CxConstants.SUB_CMD_VORPAL);
+        arguments.add(CxConstants.SUB_CMD_ASCA);
         arguments.add(CxConstants.FILE_SOURCE);
         arguments.add(fileSource);
-        if (vorpalLatestVersion) {
-            arguments.add(CxConstants.VORPAL_LATEST_VERSION);
+        if (ascaLatestVersion) {
+            arguments.add(CxConstants.ASCA_LATEST_VERSION);
         }
 
         appendAgentToArguments(agent, arguments);

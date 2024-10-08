@@ -27,7 +27,7 @@ public final class CxConstants {
     static final String SUB_CMD_SHOW = "show";
     static final String RESULTS_BFL_SUB_CMD = "bfl";
     static final String SUB_CMD_LIST = "list";
-    static final String SUB_CMD_VORPAL = "vorpal";
+    static final String SUB_CMD_ASCA = "asca";
     static final String SUB_CMD_CREATE = "create";
     static final String SUB_CMD_CANCEL = "cancel";
     static final String CMD_TRIAGE = "triage";
@@ -53,7 +53,7 @@ public final class CxConstants {
     static final String VULNERABILITY_TYPE = "--vulnerability-type";
     static final String FILE = "--file";
     static final String FILE_SOURCE = "--file-source";
-    static final String VORPAL_LATEST_VERSION = "--vorpal-latest-version";
+    static final String ASCA_LATEST_VERSION = "--asca-latest-version";
     static final String ADDITONAL_PARAMS = "--additional-params";
     static final String ENGINE = "--engine";
     static final String SUB_CMD_KICS_REALTIME = "kics-realtime";
