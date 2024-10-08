@@ -224,7 +224,7 @@ public class CxWrapper {
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_SCAN);
         arguments.add(CxConstants.SUB_CMD_ASCA);
-        arguments.add(CxConstants.FILE_SOURCE);
+        arguments.add(CxConstants.FILE);
         arguments.add(fileSource);
         if (ascaLatestVersion) {
             arguments.add(CxConstants.ASCA_LATEST_VERSION);
