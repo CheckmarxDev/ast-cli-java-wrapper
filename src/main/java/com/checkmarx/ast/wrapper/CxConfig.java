@@ -57,8 +57,8 @@ public class CxConfig {
             commands.add(CxConstants.BASE_AUTH_URI);
             commands.add(getBaseAuthUri());
         }
-
-        commands.addAll(getAdditionalParameters());
+        if (getAdditionalParameters() != null)
+            commands.addAll(getAdditionalParameters());
 
         return commands;
     }
