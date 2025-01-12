@@ -28,6 +28,7 @@ public final class Execution {
     private static final String OS_WINDOWS = "windows";
     private static final List<String> OS_MAC = Arrays.asList("mac os x", "darwin", "osx");
     private static final String FILE_NAME_LINUX = "cx-linux";
+    private static final String FILE_NAME_LINUX_ARM = "cx-linux-arm";
     private static final String FILE_NAME_MAC = "cx-mac";
     private static final String FILE_NAME_WINDOWS = "cx.exe";
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
@@ -143,15 +144,21 @@ public final class Execution {
     }
 
     private static String detectBinaryName() {
-        String arch = OS_NAME;
+        String osName = OS_NAME;
+        String osArch = System.getProperty("os.arch").toLowerCase(Locale.ENGLISH);
         String fileName = null;
-        if (arch.contains(OS_LINUX)) {
-            fileName = FILE_NAME_LINUX;
-        } else if (arch.contains(OS_WINDOWS)) {
+
+        if (osName.contains(OS_LINUX)) {
+            if (osArch.contains("arm") || osArch.contains("aarch64")) {
+                fileName = FILE_NAME_LINUX_ARM;
+            } else {
+                fileName = FILE_NAME_LINUX;
+            }
+        } else if (osName.contains(OS_WINDOWS)) {
             fileName = FILE_NAME_WINDOWS;
         } else {
             for (String macStr : OS_MAC) {
-                if (arch.contains(macStr)) {
+                if (osName.contains(macStr)) {
                     fileName = FILE_NAME_MAC;
                     break;
                 }

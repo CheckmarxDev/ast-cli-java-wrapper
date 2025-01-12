@@ -41,6 +41,11 @@ jobs:
           if [ ! -f "src/main/resources/cx-linux" ]; then
           echo "cx-linux binary does not exist"; exit 1;
           fi
+      - name: Check existence of cx-linux-arm binary
+        run: |
+          if [ ! -f "src/main/resources/cx-linux-arm" ]; then
+          echo "cx-linux-arm binary does not exist"; exit 1;
+          fi
       - name: Check existence of cx.exe binary
         run: |
           if [ ! -f "src/main/resources/cx.exe" ]; then
