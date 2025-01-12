@@ -61,8 +61,8 @@ jobs:
 
       - name: Run tests with Maven and Generate Coverage Report
         run: |
-          mvn clean verify
-          mvn jacoco:report
+          mvn clean verify -Dgpg.skip
+          mvn jacoco:report -Dgpg.skip
         env:
           CX_CLIENT_ID: ${{ secrets.CX_CLIENT_ID }}
           CX_CLIENT_SECRET: ${{ secrets.CX_CLIENT_SECRET }}
