@@ -1,6 +1,6 @@
 name: AST Java Wrapper CI
 
-on: [pull_request]
+on: [ pull_request ]
 
 jobs:
   integration-tests:
@@ -35,51 +35,47 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      - name: Set Executable Permissions for Binary Files
-        run: |
-          chmod +x src/main/resources/cx-linux
-          chmod +x src/main/resources/cx.exe
-          chmod +x src/main/resources/cx-mac
-
       - name: Check existence of cx-linux binary
         run: |
           if [ ! -f "src/main/resources/cx-linux" ]; then
-            echo "cx-linux binary does not exist"; exit 1;
+          echo "cx-linux binary does not exist"; exit 1;
           fi
-
       - name: Check existence of cx.exe binary
         run: |
           if [ ! -f "src/main/resources/cx.exe" ]; then
             echo "cx.exe binary does not exist"; exit 1;
           fi
-
       - name: Check existence of cx-mac binary
         run: |
           if [ ! -f "src/main/resources/cx-mac" ]; then
             echo "cx-mac binary does not exist"; exit 1;
           fi
 
-      - name: Run tests with Maven and Generate Coverage Report
-        run: |
-          mvn clean verify -Dgpg.skip
-          mvn jacoco:report -Dgpg.skip
+      - name: Install xmllint
+        run: sudo apt-get install -y libxml2-utils
+
+      - name: Run tests with JaCoCo
+        run: mvn test jacoco:report
         env:
-          CX_CLIENT_ID: ${{ secrets.CX_CLIENT_ID }}
-          CX_CLIENT_SECRET: ${{ secrets.CX_CLIENT_SECRET }}
+          CX_CLIENT_ID: ${{ secrets.CX_CLIENT_ID}}
+          CX_CLIENT_SECRET: ${{ secrets.CX_CLIENT_SECRET}}
           CX_BASE_URI: ${{ secrets.CX_BASE_URI }}
           CX_TENANT: ${{ secrets.CX_TENANT }}
           CX_APIKEY: ${{ secrets.CX_APIKEY }}
 
-      - name: Display Coverage Summary
+      - name: Print total coverage percentage
         run: |
-          echo "Code Coverage Summary:"
-          grep -A 10 "Total" target/site/jacoco/jacoco.csv || echo "Coverage report not found."
+          COVERED_LINES=$(xmllint --xpath "string(//report/counter[@type='LINE']/@covered)" target/site/jacoco/jacoco.xml)
+          MISSED_LINES=$(xmllint --xpath "string(//report/counter[@type='LINE']/@missed)" target/site/jacoco/jacoco.xml)
+          TOTAL_LINES=$((COVERED_LINES + MISSED_LINES))
+          COVERAGE_PERCENTAGE=$(echo "scale=2; $COVERED_LINES / $TOTAL_LINES * 100" | bc)
+          echo "Total coverage percentage: $COVERAGE_PERCENTAGE%"
 
-      - name: Upload JaCoCo Coverage Report
-        uses: actions/upload-artifact@v4
+      - name: Upload JaCoCo coverage report
+        uses: actions/upload-artifact@v3
         with:
-          name: jacoco-report
-          path: target/site/jacoco/*
+          name: jacoco-coverage-report
+          path: target/site/jacoco
 
       - name: Build with Maven
         run: mvn -B verify -DskipTests -Dgpg.skip --file pom.xml
