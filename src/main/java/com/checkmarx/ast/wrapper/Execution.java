@@ -175,7 +175,7 @@ public final class Execution {
         } else if (OS_MAC_NAMES.stream().anyMatch(osName::contains)) {
             return OS_MAC;
         } else {
-            return "UNKNOWN"; // Handle unknown OS (optional)
+            return "UNKNOWN"; // Handle unknown OS
         }
     }
 
