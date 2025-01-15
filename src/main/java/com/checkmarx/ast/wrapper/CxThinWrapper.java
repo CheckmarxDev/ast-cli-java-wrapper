@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CxThinWrapper {
@@ -22,7 +21,7 @@ public class CxThinWrapper {
 
     public CxThinWrapper(@NonNull Logger logger) throws IOException {
         this.logger = logger;
-        this.executable = Execution.getTempBinary();
+        this.executable = Execution.getTempBinary(logger);
         this.logger.info("Executable path: {} ", executable);
     }
 

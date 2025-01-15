@@ -1,5 +1,6 @@
 package com.checkmarx.ast.wrapper;
 
+import lombok.NonNull;
 import org.slf4j.Logger;
 
 import java.io.*;
@@ -23,10 +24,10 @@ public final class Execution {
 
     }
 
-    private static final String OS_NAME = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
     private static final String OS_LINUX = "linux";
     private static final String OS_WINDOWS = "windows";
-    private static final List<String> OS_MAC = Arrays.asList("mac os x", "darwin", "osx");
+    private static final String OS_MAC = "mac";
+    private static final List<String> OS_MAC_NAMES = Arrays.asList("mac os x", "darwin", "osx");
     private static final String FILE_NAME_LINUX = "cx-linux";
     private static final String FILE_NAME_LINUX_ARM = "cx-linux-arm";
     private static final String FILE_NAME_MAC = "cx-mac";
@@ -108,9 +109,9 @@ public final class Execution {
                 StandardCharsets.UTF_8);
     }
 
-    static String getTempBinary() throws IOException {
+    static String getTempBinary(@NonNull Logger logger) throws IOException {
         if (executable == null) {
-            String fileName = detectBinaryName();
+            String fileName = detectBinaryName(logger);
             if (fileName == null) {
                 throw new IOException("Unsupported architecture");
             }
@@ -143,28 +144,39 @@ public final class Execution {
         return lmBuilder.start();
     }
 
-    private static String detectBinaryName() {
-        String osName = OS_NAME;
+    private static String detectBinaryName(@NonNull Logger logger) {
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         String osArch = System.getProperty("os.arch").toLowerCase(Locale.ENGLISH);
         String fileName = null;
 
-        if (osName.contains(OS_LINUX)) {
-            if (osArch.contains("arm") || osArch.contains("aarch64")) {
-                fileName = FILE_NAME_LINUX_ARM;
-            } else {
-                fileName = FILE_NAME_LINUX;
-            }
-        } else if (osName.contains(OS_WINDOWS)) {
-            fileName = FILE_NAME_WINDOWS;
-        } else {
-            for (String macStr : OS_MAC) {
-                if (osName.contains(macStr)) {
-                    fileName = FILE_NAME_MAC;
-                    break;
-                }
-            }
+        switch (getOperatingSystemType(osName)) {
+            case OS_LINUX:
+                fileName = osArch.contains("arm") || osArch.contains("aarch64") ? FILE_NAME_LINUX_ARM : FILE_NAME_LINUX;
+                break;
+            case OS_WINDOWS:
+                fileName = FILE_NAME_WINDOWS;
+                break;
+            case OS_MAC:
+                fileName = FILE_NAME_MAC;
+                break;
+            default:
+                // Handle unknown OS
+                logger.error("Unsupported operating system: {} Architecture: {}", osName, osArch);
+                break;
         }
         return fileName;
+    }
+
+    private static String getOperatingSystemType(String osName) {
+        if (osName.contains(OS_LINUX)) {
+            return OS_LINUX;
+        } else if (osName.contains(OS_WINDOWS)) {
+            return OS_WINDOWS;
+        } else if (OS_MAC_NAMES.stream().anyMatch(osName::contains)) {
+            return OS_MAC;
+        } else {
+            return "UNKNOWN"; // Handle unknown OS (optional)
+        }
     }
 
     private static void copyURLToFile(URL source, File destination) throws IOException {
