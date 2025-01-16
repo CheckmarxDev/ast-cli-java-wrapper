@@ -50,10 +50,11 @@ jobs:
         if: steps.checkmarx-ast-cli.outputs.current_tag != steps.checkmarx-ast-cli.outputs.release_tag
         run: |
           git lfs track "src/main/resources/cx-linux"
+          git lfs track "src/main/resources/cx-linux-arm"          
           git lfs track "src/main/resources/cx.exe"
           git lfs track "src/main/resources/cx-mac"
           git add .gitattributes
-          git add src/main/resources/cx-linux src/main/resources/cx.exe src/main/resources/cx-mac
+          git add src/main/resources/cx-linux src/main/resources/cx-linux-arm src/main/resources/cx.exe src/main/resources/cx-mac
           git commit -m "Track Checkmarx CLI binaries with Git LFS"
 
       - name: Create Pull Request

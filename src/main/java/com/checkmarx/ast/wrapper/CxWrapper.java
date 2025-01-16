@@ -49,7 +49,7 @@ public class CxWrapper {
         this.cxConfig = cxConfig;
         this.logger = logger;
         this.executable = StringUtils.isBlank(this.cxConfig.getPathToExecutable())
-                ? Execution.getTempBinary()
+                ? Execution.getTempBinary(logger)
                 : this.cxConfig.getPathToExecutable();
         this.logger.info("Executable path: {} ", executable);
     }
