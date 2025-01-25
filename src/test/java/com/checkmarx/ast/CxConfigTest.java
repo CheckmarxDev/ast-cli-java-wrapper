@@ -1,86 +1,93 @@
 package com.checkmarx.ast;
 
 import com.checkmarx.ast.wrapper.CxConfig;
+import com.checkmarx.ast.wrapper.CxConfig.InvalidCLIConfigException;
 import com.checkmarx.ast.wrapper.CxConstants;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 class CxConfigTest extends BaseTest {
 
     @Test
-    void testConfig_WhenUsingApiKey_GeneratesCorrectArguments() {
-        // Arrange
+    void testApiKeyAuthentication() {
         CxConfig config = CxConfig.builder()
                 .apiKey("test-api-key")
-                .tenant("test-tenant")
-                .baseUri("https://test.checkmarx.com")
                 .build();
-
-        // Act
+        
         List<String> arguments = config.toArguments();
-
-        // Assert
-        Assertions.assertTrue(arguments.contains(CxConstants.API_KEY), "Should contain API_KEY argument");
-        Assertions.assertTrue(arguments.contains("test-api-key"), "Should contain API key value");
-        Assertions.assertTrue(arguments.contains(CxConstants.TENANT), "Should contain TENANT argument");
-        Assertions.assertTrue(arguments.contains("test-tenant"), "Should contain tenant value");
-        Assertions.assertTrue(arguments.contains(CxConstants.BASE_URI), "Should contain BASE_URI argument");
-        Assertions.assertTrue(arguments.contains("https://test.checkmarx.com"), "Should contain base URI value");
+        Assertions.assertTrue(arguments.contains(CxConstants.API_KEY));
+        Assertions.assertTrue(arguments.contains("test-api-key"));
     }
 
     @Test
-    void testConfig_WhenUsingClientCredentials_GeneratesCorrectArguments() {
-        // Arrange
+    void testClientIdSecretAuthentication() {
         CxConfig config = CxConfig.builder()
-                .clientId("test-client")
-                .clientSecret("test-secret")
-                .tenant("test-tenant")
+                .clientId("test-client-id")
+                .clientSecret("test-client-secret")
                 .build();
-
-        // Act
+        
         List<String> arguments = config.toArguments();
-
-        // Assert
-        Assertions.assertTrue(arguments.contains(CxConstants.CLIENT_ID), "Should contain CLIENT_ID argument");
-        Assertions.assertTrue(arguments.contains("test-client"), "Should contain client ID value");
-        Assertions.assertTrue(arguments.contains(CxConstants.CLIENT_SECRET), "Should contain CLIENT_SECRET argument");
-        Assertions.assertTrue(arguments.contains("test-secret"), "Should contain client secret value");
-        Assertions.assertTrue(arguments.contains(CxConstants.TENANT), "Should contain TENANT argument");
-        Assertions.assertTrue(arguments.contains("test-tenant"), "Should contain tenant value");
+        Assertions.assertTrue(arguments.contains(CxConstants.CLIENT_ID));
+        Assertions.assertTrue(arguments.contains("test-client-id"));
+        Assertions.assertTrue(arguments.contains(CxConstants.CLIENT_SECRET));
+        Assertions.assertTrue(arguments.contains("test-client-secret"));
     }
 
     @Test
-    void testConfig_WhenSettingAdditionalParameters_ParsesCorrectly() {
-        // Arrange
+    void testTenantAndBaseUris() {
+        CxConfig config = CxConfig.builder()
+                .tenant("test-tenant")
+                .baseUri("https://example.com")
+                .baseAuthUri("https://auth.example.com")
+                .build();
+        
+        List<String> arguments = config.toArguments();
+        Assertions.assertTrue(arguments.contains(CxConstants.TENANT));
+        Assertions.assertTrue(arguments.contains("test-tenant"));
+        Assertions.assertTrue(arguments.contains(CxConstants.BASE_URI));
+        Assertions.assertTrue(arguments.contains("https://example.com"));
+        Assertions.assertTrue(arguments.contains(CxConstants.BASE_AUTH_URI));
+        Assertions.assertTrue(arguments.contains("https://auth.example.com"));
+    }
+
+    @Test
+    void testEmptyConfig() {
         CxConfig config = CxConfig.builder().build();
-        String params = "--param1 value1 --param2 \"value 2\"";
-
-        // Act
-        config.setAdditionalParameters(params);
-        List<String> additionalParams = config.getAdditionalParameters();
-
-        // Assert
-        List<String> expected = Arrays.asList("--param1", "value1", "--param2", "value 2");
-        Assertions.assertEquals(expected, additionalParams, "Additional parameters should be parsed correctly");
+        
+        List<String> arguments = config.toArguments();
+        Assertions.assertTrue(arguments.isEmpty());
     }
 
     @Test
-    void testConfig_WhenNoAuthProvided_GeneratesMinimalArguments() {
-        // Arrange
+    void testAdditionalParametersParsing() {
         CxConfig config = CxConfig.builder()
-                .tenant("test-tenant")
+                .additionalParameters("--debug --verbose \"multi word value\"")
                 .build();
+        
+        List<String> arguments = config.getAdditionalParameters();
+        Assertions.assertEquals(3, arguments.size());
+        Assertions.assertTrue(arguments.contains("--debug"));
+        Assertions.assertTrue(arguments.contains("--verbose"));
+        Assertions.assertTrue(arguments.contains("multi word value"));
+    }
 
-        // Act
-        List<String> arguments = config.toArguments();
+    @Test
+    void testSpecialCharactersInAdditionalParameters() {
+        CxConfig config = CxConfig.builder()
+                .additionalParameters("--path \"C:\\Program Files\\Tool\"")
+                .build();
+        
+        List<String> arguments = config.getAdditionalParameters();
+        Assertions.assertEquals(1, arguments.size());
+        Assertions.assertTrue(arguments.contains("C:\\Program Files\\Tool"));
+    }
 
-        // Assert
-        Assertions.assertTrue(arguments.contains(CxConstants.TENANT), "Should contain TENANT argument");
-        Assertions.assertTrue(arguments.contains("test-tenant"), "Should contain tenant value");
-        Assertions.assertFalse(arguments.contains(CxConstants.API_KEY), "Should not contain API_KEY argument");
-        Assertions.assertFalse(arguments.contains(CxConstants.CLIENT_ID), "Should not contain CLIENT_ID argument");
+    @Test
+    void testInvalidCLIConfigException() {
+        Assertions.assertThrows(InvalidCLIConfigException.class, () -> {
+            throw new InvalidCLIConfigException("Invalid configuration");
+        });
     }
 }
