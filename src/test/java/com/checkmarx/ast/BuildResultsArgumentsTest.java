@@ -15,6 +15,7 @@ class BuildResultsArgumentsTest extends BaseTest {
         ReportFormat format = ReportFormat.json;
 
         List<String> arguments = wrapper.buildResultsArguments(scanId, format);
+        //
 
         Assertions.assertNotNull(arguments, "Arguments list should not be null");
         Assertions.assertFalse(arguments.isEmpty(), "Arguments list should not be empty");
