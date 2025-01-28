@@ -65,9 +65,24 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.8</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/com/checkmarx/ast/results/**</exclude>
+                        <exclude>**/com/checkmarx/ast/kicsRealtimeResults/**</exclude>
+                        <exclude>**/com/checkmarx/ast/asca/**</exclude>
+                        <exclude>**/com/checkmarx/ast/learnMore/**</exclude>
+                        <exclude>**/com/checkmarx/ast/predicate/**</exclude>
+                        <exclude>**/com/checkmarx/ast/scan/**</exclude>
+                        <exclude>**/com/checkmarx/ast/codebashing/**</exclude>
+                        <exclude>**/com/checkmarx/ast/remediation/**</exclude>
+                        <exclude>**/com/checkmarx/ast/project/**</exclude>
+                        <exclude>**/com/checkmarx/ast/tenant/**</exclude>
+                        <exclude>**/com/checkmarx/ast/wrapper/Execution**</exclude>
+                        <!-- Add other patterns as needed -->
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
@@ -78,23 +93,6 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/com/checkmarx/ast/results/**</exclude>
-                                <exclude>**/com/checkmarx/ast/kicsRealtimeResults/**</exclude>
-                                <exclude>**/com/checkmarx/ast/asca/**</exclude>
-                                <exclude>**/com/checkmarx/ast/learnMore/**</exclude>
-                                <exclude>**/com/checkmarx/ast/predicate/**</exclude>
-                                <exclude>**/com/checkmarx/ast/scan/**</exclude>
-                                <exclude>**/com/checkmarx/ast/codebashing/**</exclude>
-                                <exclude>**/com/checkmarx/ast/remediation/**</exclude>
-                                <exclude>**/com/checkmarx/ast/project/**</exclude>
-                                <exclude>**/com/checkmarx/ast/tenant/**</exclude>
-                                <exclude>**/com/checkmarx/ast/wrapper/Execution**</exclude>
-                            </excludes>
-
-
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
