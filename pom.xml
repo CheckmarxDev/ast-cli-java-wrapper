@@ -81,6 +81,9 @@
                         <exclude>**/com/checkmarx/ast/wrapper/CxConstants.class</exclude>
                         <exclude>**/com/checkmarx/ast/wrapper/CxException.class</exclude>
                         <exclude>**/com/checkmarx/ast/wrapper/CxConfig.class</exclude>
+                        <exclude>**/com/checkmarx/ast/wrapper/CxBaseObject.class</exclude>
+                        <exclude>**/com/checkmarx/ast/wrapper/CxConfig$*.class</exclude>
+
 
                         <!-- Add other patterns as needed -->
                     </excludes>
