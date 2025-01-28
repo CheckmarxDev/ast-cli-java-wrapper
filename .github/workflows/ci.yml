@@ -70,9 +70,33 @@ jobs:
 
       - name: Print filtered coverage percentage
         run: |
-          COVERED_LINES=$(xmllint --xpath "sum(//report/package[not(contains(@name, 'results')) and not(contains(@name, 'kicsRealtimeResults')) and not(contains(@name, 'asca')) and not(contains(@name, 'learnMore')) and not(contains(@name, 'predicate')) and not(contains(@name, 'scan')) and not(contains(@name, 'codebashing')) and not(contains(@name, 'remediation')) and not(contains(@name, 'project')) and not(contains(@name, 'tenant'))]/counter[@type='LINE']/@covered)" target/site/jacoco/jacoco.xml)
+          COVERED_LINES=$(xmllint --xpath "sum(//report/package[
+            not(starts-with(@name, 'com.checkmarx.ast.results')) and
+            not(starts-with(@name, 'com.checkmarx.ast.kicsRealtimeResults')) and
+            not(starts-with(@name, 'com.checkmarx.ast.asca')) and
+            not(starts-with(@name, 'com.checkmarx.ast.learnMore')) and
+            not(starts-with(@name, 'com.checkmarx.ast.predicate')) and
+            not(starts-with(@name, 'com.checkmarx.ast.scan')) and
+            not(starts-with(@name, 'com.checkmarx.ast.codebashing')) and
+            not(starts-with(@name, 'com.checkmarx.ast.remediation')) and
+            not(starts-with(@name, 'com.checkmarx.ast.project')) and
+            not(starts-with(@name, 'com.checkmarx.ast.tenant')) and
+            not(starts-with(@name, 'com.checkmarx.ast.wrapper.Execution'))
+          ]/counter[@type='LINE']/@covered)" target/site/jacoco/jacoco.xml)
 
-          MISSED_LINES=$(xmllint --xpath "sum(//report/package[not(contains(@name, 'results')) and not(contains(@name, 'kicsRealtimeResults')) and not(contains(@name, 'asca')) and not(contains(@name, 'learnMore')) and not(contains(@name, 'predicate')) and not(contains(@name, 'scan')) and not(contains(@name, 'codebashing')) and not(contains(@name, 'remediation')) and not(contains(@name, 'project')) and not(contains(@name, 'tenant'))]/counter[@type='LINE']/@missed)" target/site/jacoco/jacoco.xml)
+          MISSED_LINES=$(xmllint --xpath "sum(//report/package[
+            not(starts-with(@name, 'com.checkmarx.ast.results')) and
+            not(starts-with(@name, 'com.checkmarx.ast.kicsRealtimeResults')) and
+            not(starts-with(@name, 'com.checkmarx.ast.asca')) and
+            not(starts-with(@name, 'com.checkmarx.ast.learnMore')) and
+            not(starts-with(@name, 'com.checkmarx.ast.predicate')) and
+            not(starts-with(@name, 'com.checkmarx.ast.scan')) and
+            not(starts-with(@name, 'com.checkmarx.ast.codebashing')) and
+            not(starts-with(@name, 'com.checkmarx.ast.remediation')) and
+            not(starts-with(@name, 'com.checkmarx.ast.project')) and
+            not(starts-with(@name, 'com.checkmarx.ast.tenant')) and
+            not(starts-with(@name, 'com.checkmarx.ast.wrapper.Execution'))
+          ]/counter[@type='LINE']/@missed)" target/site/jacoco/jacoco.xml)
 
           if [ -z "$COVERED_LINES" ] || [ -z "$MISSED_LINES" ]; then
             echo "Error: Could not extract coverage data from jacoco.xml"
@@ -88,6 +112,7 @@ jobs:
           fi
 
           echo "Filtered coverage percentage: $COVERAGE_PERCENTAGE%"
+      
       
       
 
