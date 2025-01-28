@@ -68,13 +68,26 @@ jobs:
           CX_TENANT: ${{ secrets.CX_TENANT }}
           CX_APIKEY: ${{ secrets.CX_APIKEY }}
 
-      - name: Print total coverage percentage
+      - name: Print filtered coverage percentage
         run: |
-          COVERED_LINES=$(xmllint --xpath "string(//report/counter[@type='LINE']/@covered)" target/site/jacoco/jacoco.xml)
-          MISSED_LINES=$(xmllint --xpath "string(//report/counter[@type='LINE']/@missed)" target/site/jacoco/jacoco.xml)
+          COVERED_LINES=$(xmllint --xpath "sum(//report/package[not(matches(@name, 'com.checkmarx.ast.(results|kicsRealtimeResults|asca|learnMore|predicate|scan|codebashing|remediation|project|tenant)'))]/counter[@type='LINE']/@covered)" target/site/jacoco/jacoco.xml)
+          MISSED_LINES=$(xmllint --xpath "sum(//report/package[not(matches(@name, 'com.checkmarx.ast.(results|kicsRealtimeResults|asca|learnMore|predicate|scan|codebashing|remediation|project|tenant)'))]/counter[@type='LINE']/@missed)" target/site/jacoco/jacoco.xml)
+
+          if [ -z "$COVERED_LINES" ] || [ -z "$MISSED_LINES" ]; then
+            echo "Error: Could not extract coverage data from jacoco.xml"
+            exit 1
+          fi
+
           TOTAL_LINES=$((COVERED_LINES + MISSED_LINES))
-          COVERAGE_PERCENTAGE=$(echo "scale=2; $COVERED_LINES / $TOTAL_LINES * 100" | bc)
-          echo "Total coverage percentage: $COVERAGE_PERCENTAGE%"
+
+          if [ "$TOTAL_LINES" -eq 0 ]; then
+            COVERAGE_PERCENTAGE=0
+          else
+            COVERAGE_PERCENTAGE=$(echo "scale=2; $COVERED_LINES / $TOTAL_LINES * 100" | bc)
+          fi
+
+          echo "Filtered coverage percentage: $COVERAGE_PERCENTAGE%"
+      
 
       - name: Generate JaCoCo Badge
         uses: cicirello/jacoco-badge-generator@f33476a5a3fd5a4f77cb5eef2ebe728c1dd5b921 #v2.11.0

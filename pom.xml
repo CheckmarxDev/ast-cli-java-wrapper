@@ -80,18 +80,21 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <exclude>**/com/checkmarx/ast/results/**/*.class</exclude>
-                                <exclude>**/com/checkmarx/ast/kicsRealtimeResults/**/*.class</exclude>
-                                <exclude>**/com/checkmarx/ast/asca/**/*.class</exclude>
-                                <exclude>**/com/checkmarx/ast/learnMore/**/*.class</exclude>
-                                <exclude>**/com/checkmarx/ast/predicate/**/*.class</exclude>
-                                <exclude>**/com/checkmarx/ast/scan/**/*.class</exclude>
-                                <exclude>**/com/checkmarx/ast/codebashing/**/*.class</exclude>
-                                <exclude>**/com/checkmarx/ast/remediation/**/*.class</exclude>
-                                <exclude>**/com/checkmarx/ast/project/**/*.class</exclude>
-                                <exclude>**/com/checkmarx/ast/tenant/**/*.class</exclude>
-                                <exclude>**/com/checkmarx/ast/wrapper/Execution**/*.class</exclude>
+                                <exclude>com/checkmarx/ast/results/**</exclude>
+                                <exclude>com/checkmarx/ast/results/result/**</exclude>
+                                <exclude>com/checkmarx/ast/kicsRealtimeResults/**</exclude>
+                                <exclude>com/checkmarx/ast/kicsRealtimeResults/ast/kicsRealtimeResult/**</exclude>
+                                <exclude>com/checkmarx/ast/asca/**</exclude>
+                                <exclude>com/checkmarx/ast/learnMore/**</exclude>
+                                <exclude>com/checkmarx/ast/predicate/**</exclude>
+                                <exclude>com/checkmarx/ast/scan/**</exclude>
+                                <exclude>com/checkmarx/ast/codebashing/**</exclude>
+                                <exclude>com/checkmarx/ast/remediation/**</exclude>
+                                <exclude>com/checkmarx/ast/project/**</exclude>
+                                <exclude>com/checkmarx/ast/tenant/**</exclude>
+                                <exclude>com/checkmarx/ast/wrapper/Execution**</exclude>
                             </excludes>
+
 
                         </configuration>
                     </execution>
