@@ -63,11 +63,6 @@ public class CxConfig {
         return commands;
     }
 
-    public static final class InvalidCLIConfigException extends Exception {
-        public InvalidCLIConfigException(String message) {
-            super(message);
-        }
-    }
 
     @SuppressWarnings("ALL")
     public static class CxConfigBuilder {

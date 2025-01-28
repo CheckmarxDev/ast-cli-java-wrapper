@@ -78,6 +78,10 @@
                         <exclude>**/com/checkmarx/ast/project/**</exclude>
                         <exclude>**/com/checkmarx/ast/tenant/**</exclude>
                         <exclude>**/com/checkmarx/ast/wrapper/Execution**</exclude>
+                        <exclude>**/com/checkmarx/ast/wrapper/CxConstants**</exclude>
+                        <exclude>**/com/checkmarx/ast/wrapper/CxException**</exclude>
+                        <exclude>**/com/checkmarx/ast/wrapper/CxConfig**</exclude>
+
                         <!-- Add other patterns as needed -->
                     </excludes>
                 </configuration>
