@@ -35,6 +35,9 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      TAG_NAME: ${{ steps.set_tag_name.outputs.TAG_NAME }}
+      CLI_VERSION: ${{ steps.extract_cli_version.outputs.CLI_VERSION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,6 +52,7 @@ jobs:
           ./.github/scripts/update_cli.sh ${{ inputs.cliTag }}
 
       - name: Tag
+        id: set_tag_name
         run: |
           echo ${{ inputs.tag }}
           tag=${{ inputs.tag }}
@@ -58,6 +62,7 @@ jobs:
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git tag -a "${tag}" -m "${message}"
           git push origin "${tag}"
+          echo "::set-output name=TAG_NAME::${tag}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
@@ -77,9 +82,7 @@ jobs:
           server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
-          
 
-        
       - name: Update the POM version.
         run: mvn -B versions:set -DnewVersion='${{ env.RELEASE_VERSION }}' --file pom.xml -DskipTests
 
@@ -90,6 +93,14 @@ jobs:
             prop='-Dast.wrapper.id=ast-cli-java-wrapper-dev'
           fi
           echo "AID_PROP=${prop}" >> $GITHUB_ENV
+
+      - name: Extract CLI version
+        id: extract_cli_version
+        run: |
+          CLI_VERSION=$(./src/main/resources/cx-linux version | grep -Eo '^[0-9]+\.[0-9]+\.[0-9]+')
+          echo "CLI version being packed is $CLI_VERSION"
+          echo "CLI_VERSION=$CLI_VERSION" >> $GITHUB_ENV
+          echo "::set-output name=CLI_VERSION::$CLI_VERSION"
 
       - name: Publish package
         run: mvn --batch-mode deploy -DskipTests ${{ env.AID_PROP }}
@@ -104,3 +115,16 @@ jobs:
           generate_release_notes: true
           tag_name: ${{ inputs.tag }}
           prerelease: ${{ inputs.dev }}
+
+  notify:
+    if: inputs.dev == false || input.tag == 'test-notify'
+    needs: release
+    uses: Checkmarx/plugins-release-workflow/.github/workflows/release-notify.yml@main
+    with:
+      product_name: Java Wrapper
+      release_version: ${{ needs.release.outputs.TAG_NAME }}
+      cli_release_version: ${{ needs.release.outputs.CLI_VERSION }}
+      release_author: "Phoenix Team"
+      release_url: https://github.com/CheckmarxDev/ast-cli-java-wrapper/releases/tag/${{ needs.release.outputs.TAG_NAME }}
+      jira_product_name: JAVA_WRAPPER
+    secrets: inherit
