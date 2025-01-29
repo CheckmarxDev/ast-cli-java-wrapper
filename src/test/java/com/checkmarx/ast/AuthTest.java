@@ -16,7 +16,7 @@ class AuthTest extends BaseTest {
     void testAuthValidate() throws CxException, IOException, InterruptedException {
         Assertions.assertNotNull(wrapper.authValidate());
     }
-
+//
     @Test
     void testAuthFailure() {
         CxConfig cxConfig = getConfig();
