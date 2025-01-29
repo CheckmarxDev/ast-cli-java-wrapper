@@ -62,7 +62,7 @@ jobs:
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git tag -a "${tag}" -m "${message}"
           git push origin "${tag}"
-          echo "::set-output name=TAG_NAME::${env.RELEASE_VERSION}"
+          echo "::set-output name=TAG_NAME::${{ inputs.tag }}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
