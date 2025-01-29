@@ -116,7 +116,7 @@ jobs:
           prerelease: ${{ inputs.dev }}
 
   notify:
-    if: inputs.dev == false || inputs.tag == 'test-notify'
+    if: inputs.dev == false || inputs.tag == 'test-notify1'
     needs: release
     uses: Checkmarx/plugins-release-workflow/.github/workflows/release-notify.yml@main
     with:
