@@ -36,7 +36,6 @@ jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
-      TAG_NAME: ${{ steps.set_tag_name.outputs.TAG_NAME }}
       CLI_VERSION: ${{ steps.extract_cli_version.outputs.CLI_VERSION }}
     steps:
       - name: Checkout
@@ -62,7 +61,7 @@ jobs:
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git tag -a "${tag}" -m "${message}"
           git push origin "${tag}"
-          echo "::set-output name=TAG_NAME::${tag}"
+          echo "::set-output name=TAG_NAME::${env.RELEASE_VERSION}"
 
       - name: Cache local Maven repository
         uses: actions/cache@v4
