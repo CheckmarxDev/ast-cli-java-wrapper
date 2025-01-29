@@ -37,6 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       CLI_VERSION: ${{ steps.extract_cli_version.outputs.CLI_VERSION }}
+      TAG_NAME: ${{ steps.set_tag_name.outputs.TAG_NAME }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
