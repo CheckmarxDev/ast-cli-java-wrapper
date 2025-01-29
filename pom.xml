@@ -65,6 +65,28 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.8</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/com/checkmarx/ast/results/**</exclude>
+                        <exclude>**/com/checkmarx/ast/kicsRealtimeResults/**</exclude>
+                        <exclude>**/com/checkmarx/ast/asca/**</exclude>
+                        <exclude>**/com/checkmarx/ast/learnMore/**</exclude>
+                        <exclude>**/com/checkmarx/ast/predicate/**</exclude>
+                        <exclude>**/com/checkmarx/ast/scan/**</exclude>
+                        <exclude>**/com/checkmarx/ast/codebashing/**</exclude>
+                        <exclude>**/com/checkmarx/ast/remediation/**</exclude>
+                        <exclude>**/com/checkmarx/ast/project/**</exclude>
+                        <exclude>**/com/checkmarx/ast/tenant/**</exclude>
+                        <exclude>**/com/checkmarx/ast/wrapper/CxConstants.class</exclude>
+                        <exclude>**/com/checkmarx/ast/wrapper/CxException.class</exclude>
+                        <exclude>**/com/checkmarx/ast/wrapper/CxConfig.class</exclude>
+                        <exclude>**/com/checkmarx/ast/wrapper/CxBaseObject.class</exclude>
+                        <exclude>**/com/checkmarx/ast/wrapper/CxConfig$*.class</exclude>
+
+
+                        <!-- Add other patterns as needed -->
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -77,15 +99,10 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
-                        <configuration>
-                            <includes>
-                                <include>**/src/main/java/**</include>
-                                <!-- Add other patterns as needed -->
-                            </includes>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
