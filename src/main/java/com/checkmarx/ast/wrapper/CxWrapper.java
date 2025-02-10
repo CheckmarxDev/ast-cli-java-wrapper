@@ -166,12 +166,15 @@ public class CxWrapper {
         return Execution.executeCommand(withConfigArguments(arguments), logger, Predicate::listFromLine, Predicate::validator);
     }
 
-    public List<Predicate> triageGetStates() throws IOException, InterruptedException, CxException {
+    public List<Predicate> triageGetStates(boolean all) throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'triage get-states' command using the CLI.");
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_TRIAGE);
-        arguments.add(CxConstants.SUB_CMD_SHOW);
+        arguments.add(CxConstants.SUB_CMD_GET_STATES);
+        if (all) {
+            arguments.add(CxConstants.ALL_STATES_FLAG);
+        }
 
         return Execution.executeCommand(withConfigArguments(arguments), logger, CustomState::listFromLine);
     }

@@ -64,7 +64,7 @@ public final class Execution {
                     if (Objects.isNull(customValidator)) {
                         executionResult = areAllFieldsNotNull(parsedLine) ? parsedLine : null;
                     } else {
-                        executionResult = (areAllFieldsNotNull(parsedLine) || customValidator.apply(arguments, parsedLine)) ? parsedLine : null;
+                        executionResult = (customValidator.apply(arguments, parsedLine) || areAllFieldsNotNull(parsedLine)) ? parsedLine : null;
                     }
                 }
             }
