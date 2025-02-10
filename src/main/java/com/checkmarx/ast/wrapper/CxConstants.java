@@ -45,6 +45,7 @@ public final class CxConstants {
     static final String STATE = "--state";
     static final String COMMENT = "--comment";
     static final String SEVERITY = "--severity";
+    static final String CUSTOM_STATE_ID = "--custom-state-id";
     static final String REPORT_FORMAT = "--report-format";
     static final String OUTPUT_NAME = "--output-name";
     static final String OUTPUT_PATH = "--output-path";

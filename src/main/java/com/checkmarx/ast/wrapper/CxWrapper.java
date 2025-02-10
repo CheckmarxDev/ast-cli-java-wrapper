@@ -177,8 +177,15 @@ public class CxWrapper {
     }
 
     public void triageUpdate(@NonNull UUID projectId, String similarityId, String scanType, String state, String comment, String severity) throws IOException, InterruptedException, CxException {
+        triageUpdate(projectId, similarityId, scanType, state, comment, severity, null);
+    }
+
+    public void triageUpdate(@NonNull UUID projectId, String similarityId, String scanType, String state, String comment, String severity, String customStateId) throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'triage update' command using the CLI.");
-        this.logger.info("Updating the similarityId {} with state {} and severity {}.", similarityId, state, severity);
+        this.logger.info("Updating the similarityId {} with state {} with customStateId {} and severity {}.", similarityId, state, customStateId, severity);
+
+        boolean emptyState = state == null || state.isEmpty();
+        boolean emptyCustomStateId = customStateId == null || customStateId.isEmpty();
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_TRIAGE);
@@ -189,8 +196,14 @@ public class CxWrapper {
         arguments.add(similarityId);
         arguments.add(CxConstants.SCAN_TYPE);
         arguments.add(scanType);
-        arguments.add(CxConstants.STATE);
-        arguments.add(state);
+        if (!emptyState) {
+            arguments.add(CxConstants.STATE);
+            arguments.add(state);
+        }
+        if (!emptyCustomStateId) {
+            arguments.add(CxConstants.CUSTOM_STATE_ID);
+            arguments.add(customStateId);
+        }
         if (!StringUtils.isBlank(comment)) {
             arguments.add(CxConstants.COMMENT);
             arguments.add(comment);
