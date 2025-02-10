@@ -32,6 +32,7 @@ public final class CxConstants {
     static final String SUB_CMD_CANCEL = "cancel";
     static final String CMD_TRIAGE = "triage";
     static final String SUB_CMD_UPDATE = "update";
+    static final String SUB_CMD_GET_STATES = "get-states";
     static final String CMD_RESULT = "results";
     static final String FORMAT = "--format";
     static final String SCAN_INFO_FORMAT = "--scan-info-format";

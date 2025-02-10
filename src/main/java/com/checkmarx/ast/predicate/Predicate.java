@@ -12,6 +12,7 @@ import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.List;
 
 @Value
@@ -29,13 +30,14 @@ public class Predicate {
     String createdBy;
     String createdAt;
     String updatedAt;
+    Long stateId;
 
     @JsonCreator
     public Predicate(@JsonProperty("ID") String id, @JsonProperty("SimilarityID") String similarityId,
                      @JsonProperty("ProjectID") String projectId, @JsonProperty("State") String state,
                      @JsonProperty("Severity") String severity, @JsonProperty("Comment") String comment,
                      @JsonProperty("CreatedBy") String createdBy, @JsonProperty("CreatedAt") String createdAt,
-                     @JsonProperty("UpdatedAt") String updatedAt) {
+                     @JsonProperty("UpdatedAt") String updatedAt, @JsonProperty("StateId") Long stateId) {
         this.id = id;
         this.similarityId = similarityId;
         this.projectId = projectId;
@@ -45,6 +47,7 @@ public class Predicate {
         this.createdBy = createdBy;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.stateId = stateId;
     }
 
     public static <T> T fromLine(String line) {
@@ -66,6 +69,22 @@ public class Predicate {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static boolean validator(List<String> arguments, Object parsedLine) {
+        {
+            for (Field field : parsedLine.getClass().getDeclaredFields()) {
+                field.setAccessible(true);
+                try {
+                    if (field.get(parsedLine) == null && field.getName().equals("stateId")) {
+                        return false;
+                    }
+                } catch (IllegalAccessException e) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     private static boolean isValidJSON(final String json) {

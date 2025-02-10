@@ -4,6 +4,7 @@ import com.checkmarx.ast.asca.ScanResult;
 import com.checkmarx.ast.codebashing.CodeBashing;
 import com.checkmarx.ast.kicsRealtimeResults.KicsRealtimeResults;
 import com.checkmarx.ast.learnMore.LearnMore;
+import com.checkmarx.ast.predicate.CustomState;
 import com.checkmarx.ast.predicate.Predicate;
 import com.checkmarx.ast.project.Project;
 import com.checkmarx.ast.remediation.KicsRemediation;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,7 +163,17 @@ public class CxWrapper {
 
         arguments.addAll(jsonArguments());
 
-        return Execution.executeCommand(withConfigArguments(arguments), logger, Predicate::listFromLine);
+        return Execution.executeCommand(withConfigArguments(arguments), logger, Predicate::listFromLine, Predicate::validator);
+    }
+
+    public List<Predicate> triageGetStates() throws IOException, InterruptedException, CxException {
+        this.logger.info("Executing 'triage get-states' command using the CLI.");
+
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_TRIAGE);
+        arguments.add(CxConstants.SUB_CMD_SHOW);
+
+        return Execution.executeCommand(withConfigArguments(arguments), logger, CustomState::listFromLine);
     }
 
     public void triageUpdate(@NonNull UUID projectId, String similarityId, String scanType, String state, String comment, String severity) throws IOException, InterruptedException, CxException {
@@ -232,7 +244,9 @@ public class CxWrapper {
 
         appendAgentToArguments(agent, arguments);
 
-        return Execution.executeCommand(withConfigArguments(arguments), logger, ScanResult::fromLine);
+        return Execution.executeCommand(withConfigArguments(arguments), logger, ScanResult::fromLine,
+                (args, ignored) ->
+                        (args.size() >= 3 && args.get(1).equals(CxConstants.CMD_SCAN) && args.get(2).equals(CxConstants.SUB_CMD_ASCA)));
     }
 
     private static void appendAgentToArguments(String agent, List<String> arguments) {

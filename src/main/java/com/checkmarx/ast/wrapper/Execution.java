@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class Execution {
@@ -42,32 +43,39 @@ public final class Execution {
                                 Logger logger,
                                 Function<String, T> lineParser)
             throws IOException, InterruptedException, CxException {
+        return executeCommand(arguments, logger, lineParser, null);
+    }
+
+    static <T> T executeCommand(List<String> arguments,
+                                Logger logger,
+                                Function<String, T> lineParser,
+                                BiFunction<List<String>, T, Boolean> customValidator)
+            throws IOException, InterruptedException, CxException {
         Process process = buildProcess(arguments);
         try (BufferedReader br = getReader(process)) {
             T executionResult = null;
             String line;
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder output = new StringBuilder();
             while ((line = br.readLine()) != null) {
                 logger.info(line);
-                stringBuilder.append(line).append(LINE_SEPARATOR);
+                output.append(line).append(LINE_SEPARATOR);
                 T parsedLine = lineParser.apply(line);
                 if (parsedLine != null) {
-                    if (areAllFieldsNotNull(parsedLine) || isAscaRequest(arguments)) {
-                        executionResult = parsedLine;
+                    if (Objects.isNull(customValidator)) {
+                        executionResult = areAllFieldsNotNull(parsedLine) ? parsedLine : null;
+                    } else {
+                        executionResult = (areAllFieldsNotNull(parsedLine) || customValidator.apply(arguments, parsedLine)) ? parsedLine : null;
                     }
                 }
             }
             process.waitFor();
             if (process.exitValue() != 0) {
-                throw new CxException(process.exitValue(), stringBuilder.toString());
+                throw new CxException(process.exitValue(), output.toString());
             }
             return executionResult;
         }
     }
 
-    public static boolean isAscaRequest(List<String> arguments) {
-        return (arguments.size() >= 3 && arguments.get(1).equals("scan") && arguments.get(2).equals("asca"));
-    }
 
     private static boolean areAllFieldsNotNull(Object obj) {
         for (Field field : obj.getClass().getDeclaredFields()) {
