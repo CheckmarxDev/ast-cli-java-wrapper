@@ -199,10 +199,8 @@ public class CxWrapper {
         arguments.add(similarityId);
         arguments.add(CxConstants.SCAN_TYPE);
         arguments.add(scanType);
-        if (!emptyState) {
-            arguments.add(CxConstants.STATE);
-            arguments.add(state);
-        }
+        arguments.add(CxConstants.STATE);
+        arguments.add(state);
         if (!emptyCustomStateId) {
             arguments.add(CxConstants.CUSTOM_STATE_ID);
             arguments.add(customStateId);
