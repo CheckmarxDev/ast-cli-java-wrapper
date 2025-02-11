@@ -4,6 +4,7 @@ import com.checkmarx.ast.asca.ScanResult;
 import com.checkmarx.ast.codebashing.CodeBashing;
 import com.checkmarx.ast.kicsRealtimeResults.KicsRealtimeResults;
 import com.checkmarx.ast.learnMore.LearnMore;
+import com.checkmarx.ast.predicate.CustomState;
 import com.checkmarx.ast.predicate.Predicate;
 import com.checkmarx.ast.project.Project;
 import com.checkmarx.ast.remediation.KicsRemediation;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,12 +163,32 @@ public class CxWrapper {
 
         arguments.addAll(jsonArguments());
 
-        return Execution.executeCommand(withConfigArguments(arguments), logger, Predicate::listFromLine);
+        return Execution.executeCommand(withConfigArguments(arguments), logger, Predicate::listFromLine, Predicate::validator);
+    }
+
+    public List<Predicate> triageGetStates(boolean all) throws IOException, InterruptedException, CxException {
+        this.logger.info("Executing 'triage get-states' command using the CLI.");
+
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_TRIAGE);
+        arguments.add(CxConstants.SUB_CMD_GET_STATES);
+        if (all) {
+            arguments.add(CxConstants.ALL_STATES_FLAG);
+        }
+
+        return Execution.executeCommand(withConfigArguments(arguments), logger, CustomState::listFromLine);
     }
 
     public void triageUpdate(@NonNull UUID projectId, String similarityId, String scanType, String state, String comment, String severity) throws IOException, InterruptedException, CxException {
+        triageUpdate(projectId, similarityId, scanType, state, comment, severity, null);
+    }
+
+    public void triageUpdate(@NonNull UUID projectId, String similarityId, String scanType, String state, String comment, String severity, String customStateId) throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'triage update' command using the CLI.");
-        this.logger.info("Updating the similarityId {} with state {} and severity {}.", similarityId, state, severity);
+        this.logger.info("Updating the similarityId {} with state {} with customStateId {} and severity {}.", similarityId, state, customStateId, severity);
+
+        boolean emptyState = state == null || state.isEmpty();
+        boolean emptyCustomStateId = customStateId == null || customStateId.isEmpty();
 
         List<String> arguments = new ArrayList<>();
         arguments.add(CxConstants.CMD_TRIAGE);
@@ -179,6 +201,10 @@ public class CxWrapper {
         arguments.add(scanType);
         arguments.add(CxConstants.STATE);
         arguments.add(state);
+        if (!emptyCustomStateId) {
+            arguments.add(CxConstants.CUSTOM_STATE_ID);
+            arguments.add(customStateId);
+        }
         if (!StringUtils.isBlank(comment)) {
             arguments.add(CxConstants.COMMENT);
             arguments.add(comment);
@@ -232,7 +258,9 @@ public class CxWrapper {
 
         appendAgentToArguments(agent, arguments);
 
-        return Execution.executeCommand(withConfigArguments(arguments), logger, ScanResult::fromLine);
+        return Execution.executeCommand(withConfigArguments(arguments), logger, ScanResult::fromLine,
+                (args, ignored) ->
+                        (args.size() >= 3 && args.get(1).equals(CxConstants.CMD_SCAN) && args.get(2).equals(CxConstants.SUB_CMD_ASCA)));
     }
 
     private static void appendAgentToArguments(String agent, List<String> arguments) {
