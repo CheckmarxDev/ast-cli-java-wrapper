@@ -43,7 +43,7 @@ public final class Execution {
                                 Logger logger,
                                 Function<String, T> lineParser)
             throws IOException, InterruptedException, CxException {
-        return executeCommand(arguments, logger, lineParser, null);
+        return executeCommand(arguments, logger, lineParser, Execution::areAllFieldsNotNull);
     }
 
     static <T> T executeCommand(List<String> arguments,
@@ -61,11 +61,7 @@ public final class Execution {
                 output.append(line).append(LINE_SEPARATOR);
                 T parsedLine = lineParser.apply(line);
                 if (parsedLine != null) {
-                    if (Objects.isNull(customValidator)) {
-                        executionResult = areAllFieldsNotNull(parsedLine) ? parsedLine : null;
-                    } else {
-                        executionResult = (customValidator.apply(arguments, parsedLine) || areAllFieldsNotNull(parsedLine)) ? parsedLine : null;
-                    }
+                    executionResult = customValidator.apply(arguments, parsedLine) ? parsedLine : null;
                 }
             }
             process.waitFor();
@@ -77,7 +73,7 @@ public final class Execution {
     }
 
 
-    private static boolean areAllFieldsNotNull(Object obj) {
+    private static boolean areAllFieldsNotNull(List<String> arguments, Object obj) {
         for (Field field : obj.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             try {
