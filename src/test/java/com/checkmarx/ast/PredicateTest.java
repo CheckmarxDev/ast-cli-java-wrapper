@@ -7,6 +7,7 @@ import com.checkmarx.ast.scan.Scan;
 import com.checkmarx.ast.wrapper.CxConstants;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -47,7 +48,7 @@ class PredicateTest extends BaseTest {
     }
 
     @Test
-    @Ignore("Ignore this tests until get states api will be in production")
+    @Disabled("Ignore this tests until get states api will be in production")
     void testGetStates() throws Exception {
         List<Predicate> states = wrapper.triageGetStates(false);
         Assertions.assertNotNull(states);
