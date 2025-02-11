@@ -76,7 +76,7 @@ public class Predicate {
             for (Field field : parsedLine.getClass().getDeclaredFields()) {
                 field.setAccessible(true);
                 try {
-                    if (field.get(parsedLine) == null && field.getName().equals("stateId")) {
+                    if (field.get(parsedLine) == null && !field.getName().equals("stateId")) {
                         return false;
                     }
                 } catch (IllegalAccessException e) {

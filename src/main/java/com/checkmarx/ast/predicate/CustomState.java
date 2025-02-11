@@ -15,9 +15,9 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomState {
-    private Long id;
-    private String name;
-    private String type;
+    Long id;
+    String name;
+    String type;
 
     public CustomState(@JsonProperty("id") Long id,
                        @JsonProperty("name") String name,
