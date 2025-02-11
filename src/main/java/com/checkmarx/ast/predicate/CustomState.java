@@ -15,11 +15,11 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomState {
-    Long id;
+    Integer id;
     String name;
     String type;
 
-    public CustomState(@JsonProperty("id") Long id,
+    public CustomState(@JsonProperty("id") Integer id,
                        @JsonProperty("name") String name,
                        @JsonProperty("type") String type) {
         this.id = id;
