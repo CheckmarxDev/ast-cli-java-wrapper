@@ -30,14 +30,14 @@ public class Predicate {
     String createdBy;
     String createdAt;
     String updatedAt;
-    String stateId;
+    Integer stateId;
 
     @JsonCreator
     public Predicate(@JsonProperty("ID") String id, @JsonProperty("SimilarityID") String similarityId,
                      @JsonProperty("ProjectID") String projectId, @JsonProperty("State") String state,
                      @JsonProperty("Severity") String severity, @JsonProperty("Comment") String comment,
                      @JsonProperty("CreatedBy") String createdBy, @JsonProperty("CreatedAt") String createdAt,
-                     @JsonProperty("UpdatedAt") String updatedAt, @JsonProperty("StateId") String stateId) {
+                     @JsonProperty("UpdatedAt") String updatedAt, @JsonProperty("StateId") Integer stateId) {
         this.id = id;
         this.similarityId = similarityId;
         this.projectId = projectId;
