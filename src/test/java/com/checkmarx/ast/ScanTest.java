@@ -73,6 +73,13 @@ class ScanTest extends BaseTest {
     }
 
     @Test
+    void testScanCreateWithAsyncAndDebugFlag_ShouldParseScanResponseSuccessfully() throws Exception {
+        Map<String, String> params = commonParams();
+        Scan scan = wrapper.scanCreate(params, "--debug --async");
+        Assertions.assertNotNull(scan);
+    }
+
+    @Test
     void testScanCancel() throws Exception {
         Map<String, String> params = commonParams();
         Scan scan = wrapper.scanCreate(params, "--async --sast-incremental");
