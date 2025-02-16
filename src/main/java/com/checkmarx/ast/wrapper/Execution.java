@@ -61,7 +61,7 @@ public final class Execution {
                 output.append(line).append(LINE_SEPARATOR);
                 T parsedLine = lineParser.apply(line);
                 if (parsedLine != null) {
-                    executionResult = customValidator.apply(arguments, parsedLine) ? parsedLine : null;
+                    executionResult = customValidator.apply(arguments, parsedLine) ? parsedLine : executionResult;
                 }
             }
             process.waitFor();
