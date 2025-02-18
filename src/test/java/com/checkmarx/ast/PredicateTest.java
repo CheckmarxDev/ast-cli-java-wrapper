@@ -1,11 +1,11 @@
 package com.checkmarx.ast;
 
+import com.checkmarx.ast.predicate.CustomState;
 import com.checkmarx.ast.predicate.Predicate;
 import com.checkmarx.ast.results.Results;
 import com.checkmarx.ast.results.result.Result;
 import com.checkmarx.ast.scan.Scan;
 import com.checkmarx.ast.wrapper.CxConstants;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -48,9 +48,8 @@ class PredicateTest extends BaseTest {
     }
 
     @Test
-    @Disabled("Ignore this tests until get states api will be in production")
     void testGetStates() throws Exception {
-        List<Predicate> states = wrapper.triageGetStates(false);
+        List<CustomState> states = wrapper.triageGetStates(false);
         Assertions.assertNotNull(states);
     }
 }
