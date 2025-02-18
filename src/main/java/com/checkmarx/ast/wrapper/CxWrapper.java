@@ -166,7 +166,7 @@ public class CxWrapper {
         return Execution.executeCommand(withConfigArguments(arguments), logger, Predicate::listFromLine, Predicate::validator);
     }
 
-    public List<Predicate> triageGetStates(boolean all) throws IOException, InterruptedException, CxException {
+    public List<CustomState> triageGetStates(boolean all) throws IOException, InterruptedException, CxException {
         this.logger.info("Executing 'triage get-states' command using the CLI.");
 
         List<String> arguments = new ArrayList<>();
@@ -187,7 +187,6 @@ public class CxWrapper {
         this.logger.info("Executing 'triage update' command using the CLI.");
         this.logger.info("Updating the similarityId {} with state {} with customStateId {} and severity {}.", similarityId, state, customStateId, severity);
 
-        boolean emptyState = state == null || state.isEmpty();
         boolean emptyCustomStateId = customStateId == null || customStateId.isEmpty();
 
         List<String> arguments = new ArrayList<>();
