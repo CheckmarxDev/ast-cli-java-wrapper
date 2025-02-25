@@ -74,7 +74,7 @@ public final class Execution {
 
 
     private static boolean areAllFieldsNotNull(List<String> arguments, Object obj) {
-        for (Field field : obj.getClass().getDeclaredFields()) {
+        for (Field field : obj.getClass().getFields()) {
             field.setAccessible(true);
             try {
                 if (field.get(obj) == null) {
