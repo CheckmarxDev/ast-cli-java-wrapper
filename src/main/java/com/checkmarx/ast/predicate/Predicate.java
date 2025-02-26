@@ -73,7 +73,7 @@ public class Predicate {
 
     public static boolean validator(List<String> arguments, Object parsedLine) {
         {
-            for (Field field : parsedLine.getClass().getDeclaredFields()) {
+            for (Field field : parsedLine.getClass().getFields()) {
                 field.setAccessible(true);
                 try {
                     if (field.get(parsedLine) == null && !field.getName().equals("stateId")) {
