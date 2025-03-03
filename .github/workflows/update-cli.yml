@@ -2,11 +2,11 @@ name: Update checkmarx ast cli
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 * * * *'
+  repository_dispatch:
+    types: [cli-version-update]
 
 jobs:
-  updateCheckmarxJenkins:
+  update_cli:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
