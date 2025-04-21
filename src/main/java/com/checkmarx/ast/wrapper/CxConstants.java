@@ -24,9 +24,12 @@ public final class CxConstants {
     static final String CMD_PROJECT = "project";
     static final String SUB_CMD_BRANCHES = "branches";
     static final String CMD_SCAN = "scan";
+    static final String ENGINE_CMD="engine";
     static final String SUB_CMD_SHOW = "show";
+    static final String ENGINE_NAME="--engine-name";
     static final String RESULTS_BFL_SUB_CMD = "bfl";
     static final String SUB_CMD_LIST = "list";
+    static final String SUB_CMD_ENGINE_LIST="list-api";
     static final String SUB_CMD_ASCA = "asca";
     static final String SUB_CMD_CREATE = "create";
     static final String SUB_CMD_CANCEL = "cancel";
@@ -36,6 +39,7 @@ public final class CxConstants {
     static final String ALL_STATES_FLAG = "--all";
     static final String CMD_RESULT = "results";
     static final String FORMAT = "--format";
+    static final String OUTPUT_FORMAT="--output-format";
     static final String SCAN_INFO_FORMAT = "--scan-info-format";
     static final String FORMAT_JSON = "json";
     static final String FILTER = "--filter";
