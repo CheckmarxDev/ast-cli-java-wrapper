@@ -2,6 +2,7 @@ package com.checkmarx.ast.wrapper;
 
 import com.checkmarx.ast.asca.ScanResult;
 import com.checkmarx.ast.codebashing.CodeBashing;
+import com.checkmarx.ast.engine.Engine;
 import com.checkmarx.ast.kicsRealtimeResults.KicsRealtimeResults;
 import com.checkmarx.ast.learnMore.LearnMore;
 import com.checkmarx.ast.predicate.CustomState;
@@ -26,10 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class CxWrapper {
 
@@ -94,6 +92,23 @@ public class CxWrapper {
 
         return Execution.executeCommand(withConfigArguments(arguments), logger, Scan::listFromLine);
     }
+
+
+    public List<Engine> engineList( String engineName,  String outputFormat) throws IOException, InterruptedException, CxException {
+        this.logger.info("Fetching the engine list");
+
+        List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.ENGINE_CMD);
+        arguments.add(CxConstants.SUB_CMD_ENGINE_LIST);
+        if(engineName!=null){
+            arguments.add(CxConstants.ENGINE_NAME);
+            arguments.add(engineName);
+        }
+        arguments.addAll(jsonArugumentsOutput());
+
+        return Execution.executeCommand(withConfigArguments(arguments), logger, Engine::listFromLine);
+    }
+
 
     public Scan scanCreate(@NonNull Map<String, String> params) throws IOException, InterruptedException, CxException {
         return scanCreate(params, "");
@@ -292,6 +307,7 @@ public class CxWrapper {
         this.logger.info("Fetching the codebashing link");
 
         List<String> arguments = new ArrayList<>();
+        arguments.add(CxConstants.CMD_RESULT);
         arguments.add(CxConstants.CMD_RESULT);
         arguments.add(CxConstants.SUB_CMD_CODE_BASHING);
         arguments.add(CxConstants.LANGUAGE);
@@ -511,6 +527,15 @@ public class CxWrapper {
 
         return arguments;
     }
+
+    private List<String>jsonArugumentsOutput(){
+        List<String> arguments= new ArrayList<>();
+        arguments.add(CxConstants.OUTPUT_FORMAT);
+        arguments.add(CxConstants.FORMAT_JSON);
+        return  arguments;
+    }
+
+
 
     private List<String> filterArguments(String filter) {
         List<String> arguments = new ArrayList<>();
