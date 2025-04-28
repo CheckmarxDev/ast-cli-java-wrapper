@@ -41,6 +41,10 @@ public final class CxConstants {
     static final String FILTER = "--filter";
     static final String SCAN_ID = "--scan-id";
     static final String PROJECT_ID = "--project-id";
+    static final String ENGINE_CMD="engine";
+    static final String ENGINE_NAME="--engine-name";
+    static final String SUB_CMD_ENGINE_LIST="list-api";
+    static final String ENGINE = "--engine";
     static final String SIMILARITY_ID = "--similarity-id";
     static final String QUERY_ID = "--query-id";
     static final String STATE = "--state";
