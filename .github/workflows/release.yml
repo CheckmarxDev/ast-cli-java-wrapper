@@ -105,7 +105,7 @@ jobs:
       - name: Check if CLI version is latest
         id: check_latest_cli_version
         run: |
-          LATEST_CLI_VERSION=$(curl -s https://api.github.com/repos/Checkmarx/ast-cli/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+          LATEST_CLI_VERSION=$(curl -s https://api.github.com/repos/Checkmarx/ast-cli/releases/latest | grep '"tag":' | sed -E 's/.*"([^"]+)".*/\1/')
           echo "CLI_VERSION=[$CLI_VERSION]"
           echo "LATEST_CLI_VERSION=[$LATEST_CLI_VERSION]"
           echo "Latest CLI version from GitHub: $LATEST_CLI_VERSION"
