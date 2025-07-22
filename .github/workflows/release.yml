@@ -60,7 +60,7 @@ jobs:
           echo "::set-output name=CLI_VERSION::$CLI_VERSION"
 
       - name: Check if CLI version is latest
-        if: ${{ github.event.inputs.dev == 'false' }}
+        if: ${{ github.event.inputs.dev == 'false' && !github.event.inputs.cliTag && github.ref == 'refs/heads/main' }}
         id: check_latest_cli_version
         run: |
           LATEST_CLI_VERSION=$(curl -s https://api.github.com/repos/Checkmarx/ast-cli/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
