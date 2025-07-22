@@ -117,40 +117,40 @@ jobs:
           fi
           echo "AID_PROP=${prop}" >> $GITHUB_ENV
 
-      - name: Publish package
-        run: mvn --batch-mode deploy -DskipTests ${{ env.AID_PROP }}
-        env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-
-      - name: Release
-        uses: softprops/action-gh-release@a6c7483a42ee9d5daced968f6c217562cd680f7f #v2
-        with:
-          generate_release_notes: true
-          tag_name: ${{ inputs.tag }}
-          prerelease: ${{ inputs.dev }}
-
-  notify:
-    if: inputs.dev == false
-    needs: release
-    uses: Checkmarx/plugins-release-workflow/.github/workflows/release-notify.yml@main
-    with:
-      product_name: Java Wrapper
-      release_version: ${{ needs.release.outputs.TAG_NAME }}
-      cli_release_version: ${{ needs.release.outputs.CLI_VERSION }}
-      release_author: "Phoenix Team"
-      release_url: https://github.com/CheckmarxDev/ast-cli-java-wrapper/releases/tag/${{ needs.release.outputs.TAG_NAME }}
-      jira_product_name: JAVA_WRAPPER
-    secrets: inherit
-
-  dispatch_auto_release:
-    name: Update Jenkins/Jetbrains/Eclipse Extensions With new Wrapper Version
-    if: inputs.dev == false
-    needs: notify
-    uses: Checkmarx/plugins-release-workflow/.github/workflows/dispatch-workflow.yml@main
-    with:
-      cli_version: ${{ needs.release.outputs.CLI_VERSION }}
-      is_cli_release: false
-      is_java_release: true
-    secrets: inherit
+#      - name: Publish package
+#        run: mvn --batch-mode deploy -DskipTests ${{ env.AID_PROP }}
+#        env:
+#          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+#          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+#          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+#
+#      - name: Release
+#        uses: softprops/action-gh-release@a6c7483a42ee9d5daced968f6c217562cd680f7f #v2
+#        with:
+#          generate_release_notes: true
+#          tag_name: ${{ inputs.tag }}
+#          prerelease: ${{ inputs.dev }}
+#
+#  notify:
+#    if: inputs.dev == false
+#    needs: release
+#    uses: Checkmarx/plugins-release-workflow/.github/workflows/release-notify.yml@main
+#    with:
+#      product_name: Java Wrapper
+#      release_version: ${{ needs.release.outputs.TAG_NAME }}
+#      cli_release_version: ${{ needs.release.outputs.CLI_VERSION }}
+#      release_author: "Phoenix Team"
+#      release_url: https://github.com/CheckmarxDev/ast-cli-java-wrapper/releases/tag/${{ needs.release.outputs.TAG_NAME }}
+#      jira_product_name: JAVA_WRAPPER
+#    secrets: inherit
+#
+#  dispatch_auto_release:
+#    name: Update Jenkins/Jetbrains/Eclipse Extensions With new Wrapper Version
+#    if: inputs.dev == false
+#    needs: notify
+#    uses: Checkmarx/plugins-release-workflow/.github/workflows/dispatch-workflow.yml@main
+#    with:
+#      cli_version: ${{ needs.release.outputs.CLI_VERSION }}
+#      is_cli_release: false
+#      is_java_release: true
+#    secrets: inherit
