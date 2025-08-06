@@ -165,17 +165,17 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.8.0</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                    <stagingProgressTimeoutMinutes>10</stagingProgressTimeoutMinutes>
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish> <!-- Optional -->
                 </configuration>
             </plugin>
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -199,16 +199,14 @@
         </plugins>
     </build>
 
+
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>central</id>
+            <url>https://central.sonatype.com/api/v1/publish</url>
         </repository>
     </distributionManagement>
+
 
     <licenses>
         <license>
@@ -230,8 +228,8 @@
 
     <developers>
         <developer>
-            <name>Jay Nanduri</name>
-            <email>jay.nanduri@checkmarx.com</email>
+            <name>Anand Nandeshwar</name>
+            <email>anand.nandeshwar@checkmarx.com</email>
             <organization>Checkmarx</organization>
             <organizationUrl>https://www.checkmarx.com/</organizationUrl>
         </developer>

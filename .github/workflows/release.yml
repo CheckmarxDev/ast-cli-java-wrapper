@@ -51,6 +51,29 @@ jobs:
           chmod +x ./.github/scripts/update_cli.sh
           ./.github/scripts/update_cli.sh ${{ inputs.cliTag }}
 
+      - name: Extract CLI version
+        id: extract_cli_version
+        run: |
+          CLI_VERSION=$(./src/main/resources/cx-linux version | grep -Eo '^[0-9]+\.[0-9]+\.[0-9]+')
+          echo "CLI version being packed is $CLI_VERSION"
+          echo "CLI_VERSION=$CLI_VERSION" >> $GITHUB_ENV
+          echo "::set-output name=CLI_VERSION::$CLI_VERSION"
+
+      - name: Check if CLI version is latest
+        if: ${{ github.event.inputs.dev == 'false' && !github.event.inputs.cliTag && github.ref == 'refs/heads/main' }}
+        id: check_latest_cli_version
+        run: |
+          LATEST_CLI_VERSION=$(curl -s https://api.github.com/repos/Checkmarx/ast-cli/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+          echo "CLI_VERSION=[$CLI_VERSION]"
+          echo "LATEST_CLI_VERSION=[$LATEST_CLI_VERSION]"
+          echo "Latest CLI version from GitHub: $LATEST_CLI_VERSION"
+          if [ "$CLI_VERSION" = "$LATEST_CLI_VERSION" ]; then
+            echo "CLI_VERSION ($CLI_VERSION) matches the latest released version ($LATEST_CLI_VERSION). Proceeding."
+          else
+            echo "CLI_VERSION ($CLI_VERSION) does not match the latest released version ($LATEST_CLI_VERSION). Failing workflow."
+            exit 1
+          fi    
+
       - name: Tag
         id: set_tag_name
         run: |
@@ -77,7 +100,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-          server-id: ossrh
+          server-id: central
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
@@ -93,14 +116,6 @@ jobs:
             prop='-Dast.wrapper.id=ast-cli-java-wrapper-dev'
           fi
           echo "AID_PROP=${prop}" >> $GITHUB_ENV
-
-      - name: Extract CLI version
-        id: extract_cli_version
-        run: |
-          CLI_VERSION=$(./src/main/resources/cx-linux version | grep -Eo '^[0-9]+\.[0-9]+\.[0-9]+')
-          echo "CLI version being packed is $CLI_VERSION"
-          echo "CLI_VERSION=$CLI_VERSION" >> $GITHUB_ENV
-          echo "::set-output name=CLI_VERSION::$CLI_VERSION"
 
       - name: Publish package
         run: mvn --batch-mode deploy -DskipTests ${{ env.AID_PROP }}

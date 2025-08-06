@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -33,7 +34,15 @@ public class CxConfig {
     List<String> toArguments() {
         List<String> commands = new ArrayList<>();
 
-        if (StringUtils.isNotBlank(getApiKey())) {
+        if (StringUtils.isNotBlank(getClientId()) && StringUtils.isNotBlank(getApiKey())) {
+            /*
+             * Added dynamic client-id support for refresh_token grant flow
+             */
+            commands.add(CxConstants.CLIENT_ID);
+            commands.add(getClientId());
+            commands.add(CxConstants.API_KEY);
+            commands.add(getApiKey());
+        } else if (StringUtils.isNotBlank(getApiKey())) {
             commands.add(CxConstants.API_KEY);
             commands.add(getApiKey());
         } else if (StringUtils.isNotBlank(getClientId()) && StringUtils.isNotBlank(getClientSecret())) {
