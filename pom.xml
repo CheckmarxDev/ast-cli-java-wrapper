@@ -228,12 +228,6 @@
 
     <developers>
         <developer>
-            <name>Rahul Pidde</name>
-            <email>rahul.pidde@checkmarx.com</email>
-            <organization>Checkmarx</organization>
-            <organizationUrl>https://www.checkmarx.com/</organizationUrl>
-        </developer>
-        <developer>
             <name>Anand Nandeshwar</name>
             <email>anand.nandeshwar@checkmarx.com</email>
             <organization>Checkmarx</organization>
