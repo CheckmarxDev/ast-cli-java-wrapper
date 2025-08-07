@@ -134,12 +134,12 @@ jobs:
   notify:
     if: inputs.dev == false
     needs: release
-    uses: Checkmarx/plugins-release-workflow/.github/workflows/release-notify.yml@main
+    uses: Checkmarx/plugins-release-workflow/.github/workflows/release-notify.yml@update-jira-release-token
     with:
       product_name: Java Wrapper
       release_version: ${{ needs.release.outputs.TAG_NAME }}
       cli_release_version: ${{ needs.release.outputs.CLI_VERSION }}
-      release_author: "Phoenix Team"
+      release_author: "Sypher Team"
       release_url: https://github.com/CheckmarxDev/ast-cli-java-wrapper/releases/tag/${{ needs.release.outputs.TAG_NAME }}
       jira_product_name: JAVA_WRAPPER
     secrets: inherit
