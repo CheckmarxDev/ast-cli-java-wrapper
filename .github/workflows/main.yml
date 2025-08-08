@@ -1,4 +1,4 @@
-name: ReleaseCreation
+name: TEST_ReleaseCreation
 
 on:
   workflow_dispatch:
