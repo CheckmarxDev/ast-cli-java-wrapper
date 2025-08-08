@@ -1,0 +1,33 @@
+name: TEST_ReleaseCreation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  say-hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Say Hello
+        run: echo "Hello, World!"
+
+      - name: Get Current Date
+        id: current-date
+        run: echo "date=$(date +%Y-%m-%d)" >> $GITHUB_ENV
+
+      - name: Create New JIRA Release
+        uses: satak/webrequest-action@master
+        with:
+          url: ${{ secrets.JIRA_RELEASE_WEBHOOK_URL }}
+          headers: '{"X-Automation-Webhook-Token": "${{ secrets.JIRA_RELEASE_WEBHOOK_TOKEN }}"}'
+          method: POST
+          payload: |
+            {
+              "data": {
+                "version": "${{ steps.generate_jira_release_version.outputs.jira_release_version }}",
+                "startDate": "${{ env.date }}",
+                "date": "${{ env.date }}"
+              }
+            }
