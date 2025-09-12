@@ -13,6 +13,7 @@ public final class CxConstants {
     public static final String AGENT = "--agent";
     public static final String SAST = "sast";
     public static final String DEBUG = "--debug";
+    public static final String SECRET_DETECTION = "scs";
     static final String CLIENT_ID = "--client-id";
     static final String CLIENT_SECRET = "--client-secret";
     static final String API_KEY = "--apikey";
