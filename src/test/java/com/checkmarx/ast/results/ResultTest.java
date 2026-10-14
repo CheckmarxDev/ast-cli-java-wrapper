@@ -7,6 +7,7 @@ import com.checkmarx.ast.results.result.Node;
 import com.checkmarx.ast.results.result.Result;
 import com.checkmarx.ast.scan.Scan;
 import com.checkmarx.ast.wrapper.CxConstants;
+import com.checkmarx.ast.wrapper.CxException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,8 @@ class ResultTest extends BaseTest {
     private static String CWE_ID = "79";
     private static String LANGUAGE = "PHP";
     private static String QUERY_NAME = "Reflected XSS All Clients";
+    private static final int CODEBASHING_LICENSE_NOT_FOUND_EXIT_CODE = 3;
+    private static final int CODEBASHING_LESSON_NOT_FOUND_EXIT_CODE = 4;
 
     @Test
     void testResultsHTML() throws Exception {
@@ -64,7 +67,16 @@ class ResultTest extends BaseTest {
 
     @Test()
     void testResultsCodeBashing() throws Exception {
-        List<CodeBashing> codeBashingList = wrapper.codeBashingList(CWE_ID, LANGUAGE, QUERY_NAME);
+        List<CodeBashing> codeBashingList;
+        try {
+            codeBashingList = wrapper.codeBashingList(CWE_ID, LANGUAGE, QUERY_NAME);
+        } catch (CxException e) {
+            // The CLI exits with 3 (no CodeBashing license) or 4 (no lesson mapped, "No codebashing link available").
+            // Both depend on the tenant/backend mapping, not on the wrapper.
+            Assumptions.assumeFalse(e.getExitCode() == CODEBASHING_LICENSE_NOT_FOUND_EXIT_CODE
+                    || e.getExitCode() == CODEBASHING_LESSON_NOT_FOUND_EXIT_CODE, e.getMessage());
+            throw e;
+        }
         Assertions.assertTrue(codeBashingList.size() > 0);
         String path = codeBashingList.get(0).getPath();
         Assertions.assertTrue(path.length() > 0);
